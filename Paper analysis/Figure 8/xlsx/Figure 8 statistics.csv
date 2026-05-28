@@ -1,0 +1,5 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type (unpaired)","ctrl vs test","8 vs 6","Wilcoxon rank sum exact test","two.sided","W",0,0.000666000666000666,0.000666000666000666
+"charge_transfer","within cell_type (unpaired)","ctrl vs test","8 vs 6","Wilcoxon rank sum exact test","two.sided","W",48,0.000666000666000666,0.000666000666000666
+"tau","within condition fast (unpaired)","ctrl vs test","8 vs 6","Wilcoxon rank sum exact test","two.sided","W",15,0.282384282384282,0.564768564768565
+"tau","within condition slow (unpaired)","ctrl vs test","8 vs 6","Wilcoxon rank sum exact test","two.sided","W",29,0.572760572760573,0.572760572760573
