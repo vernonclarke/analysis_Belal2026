@@ -1,0 +1,30 @@
+# Ignore specified analysis folders
+Paper analysis/
+
+
+# Ignore specific file types globally
+*.mov
+*.txt
+*.zip
+*.RData
+*.ai
+*.svg
+*.abf
+.DS_store
+*.Rapp.history
+*.command
+*.pdf
+
+# Unignore .svg files in images/ but still ignore elsewhere
+!images/**/*.svg
+!images/**/*.png
+
+
+# Ignore everything in the root directory 'Rfits'
+/Rfits/
+
+# Ignore all .R files, but allow specific ones
+*.R
+
+
+
