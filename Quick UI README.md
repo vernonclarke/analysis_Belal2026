@@ -15,11 +15,11 @@ cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
 
 mkdir -p NWBData
 
-dandi download "DANDI:001832/draft" -o NWBData
+dandi download "DANDI:001832/draft" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/0.XXXXX" -o NWBData
+dandi download "DANDI:001832/0.XXXXX" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
 
-
+dandi download "DANDI:001832/draft" -o NWBData --existing REFRESH --format PYOUT --path-type EXACT
 
 ```
 
