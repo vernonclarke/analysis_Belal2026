@@ -8,6 +8,24 @@
   - [Clickable App to launch R based UI](#clickable-app-to-launch-R-based-UI)
 
 
+
+```bash
+
+cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
+
+mkdir -p NWBData
+
+dandi download "DANDI:001832/draft" -o NWBData
+
+dandi download "DANDI:001832/0.XXXXX" -o NWBData
+
+
+
+```
+
+
+
+
 ## Initial Set Up
 
 All analysis was performed using the R graphical user interface (GUI) and tested on R version 4.4.1 "Race for Your Life" through to 4.5.0 "How About a Twenty-Six".
