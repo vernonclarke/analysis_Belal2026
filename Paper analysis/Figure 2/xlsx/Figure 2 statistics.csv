@@ -1,0 +1,7 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",42,0.21978021978022,0.21978021978022
+"charge_transfer","within cell_type (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",18,0.21978021978022,0.21978021978022
+"tau","within condition fast (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",31,0.957792207792208,1
+"tau","within condition slow (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",30,1,1
+"tau","within cell_type dSPN (paired)","fast vs slow","10","Wilcoxon signed rank exact test","two.sided","V",0,0.001953125,0.00390625
+"tau","within cell_type iSPN (paired)","fast vs slow","6","Wilcoxon signed rank exact test","two.sided","V",0,0.03125,0.03125
