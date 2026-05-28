@@ -1,0 +1,9 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type dSPN (paired)","ctrl vs GABAzine","10","Wilcoxon signed rank exact test","two.sided","V",0,0.001953125,0.00390625
+"amplitude","within cell_type iSPN (paired)","ctrl vs GABAzine","6","Wilcoxon signed rank exact test","two.sided","V",0,0.03125,0.03125
+"amplitude","within condition ctrl (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",39,0.367632367632368,0.735264735264735
+"amplitude","within condition GABAzine (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",26,0.712787212787213,0.735264735264735
+"charge_transfer","within cell_type dSPN (paired)","ctrl vs GABAzine","10","Wilcoxon signed rank exact test","two.sided","V",55,0.001953125,0.00390625
+"charge_transfer","within cell_type iSPN (paired)","ctrl vs GABAzine","6","Wilcoxon signed rank exact test","two.sided","V",21,0.03125,0.03125
+"charge_transfer","within condition ctrl (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",20,0.313186813186813,0.626373626373626
+"charge_transfer","within condition GABAzine (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",33,0.792457542457542,0.792457542457542

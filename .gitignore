@@ -1,5 +1,4 @@
 # Ignore specified analysis folders
-Paper analysis/
 NWBdata/
 
 # Ignore specific file types globally
