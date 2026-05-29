@@ -17,6 +17,7 @@
 cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
 conda create -n image_analysis python=3.12 -y
 conda activate image_analysis
+
 pip install matplotlib seaborn python-dotenv remfile
 pip install notebook jupyterlab
 pip install plotly
@@ -24,7 +25,10 @@ pip install -U kaleido
 pip install ipykernel
 pip install ipympl
 pip install pytz
+pip install dandi
 pip install pynwb hdmf
+
+python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
 
 
 ```
