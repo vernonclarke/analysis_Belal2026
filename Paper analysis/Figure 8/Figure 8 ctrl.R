@@ -14,27 +14,33 @@ load_required_packages <- function(packages) {
 }
 load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
 
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
+# Paths
+repo_root <- normalizePath(
+  '~/Documents/Repositories/analysis_Belal2026',
+  mustWork = TRUE
+)
+
+identifier <- 'Figure 8'
+analysis_path <- file.path(repo_root, 'Paper analysis', identifier)
+xlsx_path <- file.path(analysis_path, 'xlsx')
+svg_path <- file.path(analysis_path, 'svg')
+
+# Source helper functions
+nNLS_functions_path <- file.path(repo_root, 'R functions', 'nNLS functions.R')
+if (!file.exists(nNLS_functions_path)) {
+  stop('nNLS functions.R not found at: ', nNLS_functions_path)
 }
-config <- yaml::read_yaml(config_path)
-
-# Construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+source(nNLS_functions_path)
 
 # Settings
-identifier <- 'Figure 8'
-analysis_path <- paste0(file_path2, '/', identifier)
-xlsx_path <- paste0(analysis_path, '/xlsx')
-svg_path <- paste0(analysis_path, '/xlsx')
+if (!dir.exists(analysis_path)) {
+  stop('Analysis folder not found at: ', analysis_path)
+}
 
-svg_path <- paste0(analysis_path, '/svg')
+if (!dir.exists(xlsx_path)) {
+  stop('XLSX folder not found at: ', xlsx_path)
+}
+
 if (!dir.exists(svg_path)) {
   dir.create(svg_path, recursive = TRUE)
 }
@@ -247,7 +253,7 @@ ctrl_fits
 #         A1 τrise τdecay tpeak r20_80 d80_20  delay half_width    area1       A1  τrise  τdecay  tpeak r20_80  d80_20  delay half_width    area1
 # 1 -100.262 2.407  7.228 3.968  1.521 10.927 17.439     10.724 1254.885 -148.460 23.715 181.256 55.492 20.126 253.599 14.358    195.086 36547.86
 # 2  -89.222 2.283 16.275 5.217  1.902 22.818 17.147     17.868 2000.751 -224.536 38.027 259.234 85.538 31.287 363.991 14.334    288.332 80961.67
-# 3  -44.309 6.049  6.053 6.051  2.372 13.130 20.968     14.803  728.791  -98.728 20.298 109.626 42.012 15.612 155.599 24.370    131.118 15877.83
+# 3  -44.309 6.049  6.053 6.051  2.372 13.130 20.968     14.803  728.790  -98.728 20.298 109.626 42.012 15.612 155.599 24.370    131.118 15877.83
 # 4  -71.638 4.324  9.477 6.241  2.418 15.310 15.765     16.048 1311.611 -144.206 23.122 237.756 59.689 21.131 330.783 12.739    237.006 44070.23
 # 5  -30.310 6.983  7.024 7.004  2.745 15.197 22.551     17.134  577.041  -60.592 24.346 241.547 62.129 22.063 336.214 18.367    242.868 18928.71
 # 6 -112.088 5.167  5.174 5.171  2.027 11.220 16.033     12.649 1575.402 -255.573 25.873 187.838 59.483 21.657 263.198 18.679    205.132 65891.19
@@ -288,40 +294,41 @@ load_required_packages <- function(packages) {
 }
 load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
 
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-
-# construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+# Paths
+repo_root <- normalizePath(
+  '~/Documents/Repositories/analysis_Belal2026',
+  mustWork = TRUE
+)
 
 identifier <- 'Figure 8'
-analysis_path <- paste0(file_path2, '/', identifier)
+analysis_path <- file.path(repo_root, 'Paper analysis', identifier)
+
+# Source helper functions
+nNLS_functions_path <- file.path(repo_root, 'R functions', 'nNLS functions.R')
+if (!file.exists(nNLS_functions_path)) {
+  stop('nNLS functions.R not found at: ', nNLS_functions_path)
+}
+source(nNLS_functions_path)
+
+if (!dir.exists(analysis_path)) {
+  stop('Analysis folder not found at: ', analysis_path)
+}
 
 name <- 'Control for MCI-Park'
 
 load(paste0(analysis_path, '/', name, '.RData'))
 
 ctrl_fits
-
 #         A1 τrise τdecay tpeak r20_80 d80_20  delay half_width    area1       A1  τrise  τdecay  tpeak r20_80  d80_20  delay half_width    area1
 # 1 -100.262 2.407  7.228 3.968  1.521 10.927 17.439     10.724 1254.885 -148.460 23.715 181.256 55.492 20.126 253.599 14.358    195.086 36547.86
 # 2  -89.222 2.283 16.275 5.217  1.902 22.818 17.147     17.868 2000.751 -224.536 38.027 259.234 85.538 31.287 363.991 14.334    288.332 80961.67
-# 3  -44.309 6.049  6.053 6.051  2.372 13.130 20.968     14.803  728.791  -98.728 20.298 109.626 42.012 15.612 155.599 24.370    131.118 15877.83
+# 3  -44.309 6.049  6.053 6.051  2.372 13.130 20.968     14.803  728.790  -98.728 20.298 109.626 42.012 15.612 155.599 24.370    131.118 15877.83
 # 4  -71.638 4.324  9.477 6.241  2.418 15.310 15.765     16.048 1311.611 -144.206 23.122 237.756 59.689 21.131 330.783 12.739    237.006 44070.23
 # 5  -30.310 6.983  7.024 7.004  2.745 15.197 22.551     17.134  577.041  -60.592 24.346 241.547 62.129 22.063 336.214 18.367    242.868 18928.71
 # 6 -112.088 5.167  5.174 5.171  2.027 11.220 16.033     12.649 1575.402 -255.573 25.873 187.838 59.483 21.657 263.198 18.679    205.132 65891.19
 # 7  -54.341 2.729  2.730 2.729  1.070  5.922 12.671      6.677  403.156  -88.457 12.766 164.094 35.350 12.264 227.840 15.420    155.596 18004.56
 # 8  -42.510 9.455  9.536 9.495  3.722 20.604 13.302     23.229 1097.229 -108.880 18.795 198.672 48.951 17.288 276.316 23.355    196.756 27675.17
 
-# save
 setwd(analysis_path)
 
 # path where all graphs are stored
@@ -337,14 +344,6 @@ if (!dir.exists(xlsx_path)) {
 }
 
 save <- TRUE
-
-# setwd(xlsx_path)
-# if (save){
-#   write.csv(ctrl_fits, file = 'ctrl_fits.csv', row.names = FALSE)
-#   write.csv(ctrl_peaks, file = 'ctrl_peaks.csv', row.names = FALSE)
-#   write.csv(ctrl_areas, file = 'ctrl_areas.csv', row.names = FALSE)
-#   }
-
 setwd(svg_path)
 for (ii in 1:length(ctrl_summary)){
   fit_plot(traces=ctrl_summary[[ii]]$traces, func=product2N, filename=paste0(name, '_', ii, '.svg'), 
