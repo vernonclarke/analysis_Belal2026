@@ -28,6 +28,7 @@ pip install pytz
 pip install dandi
 pip install pynwb hdmf
 pip install neuroconv xmltodict
+pip install ndx-optogenetics
 
 python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
 
