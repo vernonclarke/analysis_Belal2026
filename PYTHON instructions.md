@@ -60,7 +60,7 @@ pip freeze > requirements.txt
 
 ## Run Jupyter Notebook
 ```bash
-cd /Users/euo9382/Documents/Repositories/CatalystNeuro
+cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
 conda activate image_analysis
 jupyter notebook
 ```
