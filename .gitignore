@@ -7,7 +7,6 @@ NWBdata/
 *.zip
 *.RData
 *.ai
-*.svg
 *.abf
 .DS_store
 *.Rapp.history
@@ -22,8 +21,6 @@ NWBdata/
 # Ignore everything in the root directory 'Rfits'
 /Rfits/
 
-# Ignore all .R files, but allow specific ones
-*.R
 
 
 
