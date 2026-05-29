@@ -25,8 +25,6 @@ pip install ipykernel
 pip install ipympl
 pip install pytz
 
-python -m ipykernel install --user --name=surmeier-lab-to-nwb --display-name "Python (surmeier-lab-to-nwb)"
-pip install --editable .
 
 ```
 
