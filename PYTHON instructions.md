@@ -1,4 +1,4 @@
-# Surmeier Lab to NWB: Zhai 2025 Instructions
+# Analysis instructions for ACHGRAB and RNAscope data
 
 ## Index
 - [Setup Instructions](#setup-instructions)
@@ -14,9 +14,9 @@
 
 ## Setup Instructions
 ```bash
-cd /Users/euo9382/Documents/Repositories/CatalystNeuro
-conda create -n surmeier-lab-to-nwb python=3.12 -y
-conda activate surmeier-lab-to-nwb
+cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
+conda create -n image_analysis python=3.12 -y
+conda activate image_analysis
 pip install matplotlib seaborn python-dotenv remfile
 pip install notebook jupyterlab
 pip install plotly
@@ -25,7 +25,7 @@ pip install ipykernel
 pip install ipympl
 pip install pytz
 
-python -m ipykernel install --user --name=surmeier-lab-to-nwb --display-name "Python (surmeier-lab-to-nwb)"
+python -m ipykernel install --user --name=image_analysis --display-name "Python (image_analysis)"
 pip install --editable .
 
 ```
@@ -63,7 +63,7 @@ pip freeze > requirements.txt
 ## Run Jupyter Notebook
 ```bash
 cd /Users/euo9382/Documents/Repositories/CatalystNeuro
-conda activate surmeier-lab-to-nwb
+conda activate image_analysis
 jupyter notebook
 ```
 
