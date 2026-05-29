@@ -20,6 +20,8 @@ mkdir -p NWBdata
 
 dandi download "DANDI:001832/draft" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
 
+dandi download "DANDI:001832/draft" -o NWBData --existing error --format pyout --path-type exact
+
 dandi download "DANDI:001832/0.XXXXX" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
 
 dandi download "DANDI:001832/draft" -o NWBData --existing REFRESH --format PYOUT --path-type EXACT
