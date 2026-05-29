@@ -25,8 +25,6 @@ pip install ipykernel
 pip install ipympl
 pip install pytz
 
-python -m ipykernel install --user --name=image_analysis --display-name "Python (image_analysis)"
-pip install --editable .
 
 ```
 
