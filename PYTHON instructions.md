@@ -24,6 +24,7 @@ pip install -U kaleido
 pip install ipykernel
 pip install ipympl
 pip install pytz
+pip install pynwb hdmf
 
 
 ```
