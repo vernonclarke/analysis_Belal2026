@@ -1,6 +1,6 @@
 # Ignore specified analysis folders
 NWBdata/
-Raw RNAscope data/
+RNAscope data/
 
 # Ignore specific file types globally
 *.mov
