@@ -1,6 +1,8 @@
 # Ignore specified analysis folders
 NWBdata/
 RNAscope data/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 
 # Ignore specific file types globally
 *.mov
@@ -9,7 +11,7 @@ RNAscope data/
 *.RData
 *.ai
 *.abf
-.DS_store
+.DS_Store
 *.Rapp.history
 *.command
 *.pdf
@@ -21,7 +23,6 @@ RNAscope data/
 
 # Ignore everything in the root directory 'Rfits'
 /Rfits/
-
 
 
 

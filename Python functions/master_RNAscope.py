@@ -1345,6 +1345,7 @@ def RNAscopeAnalysisFinish(
     show_detected=False,
     verify_circle_radius=2,
     verify_circle_color="white",
+    verify_image="group",
 ):
     for ui in state.get("_ui", {}).values():
         fig = ui.get("fig")
@@ -1386,7 +1387,13 @@ def RNAscopeAnalysisFinish(
         axes = np.atleast_1d(axes)
 
         for idx, group in enumerate(groups):
-            key = state["verify_keys"][group]
+            if verify_image == "count":
+                key = _display_channel_key(count_channel)
+            elif verify_image == "group":
+                key = state["verify_keys"][group]
+            else:
+                raise ValueError("verify_image must be 'group' or 'count'")
+
             axes[idx].imshow(state["images"][key])
             axes[idx].axis("off")
             roi_channel = _roi_channel_for_group(state, group)
@@ -1681,3 +1688,72 @@ def sort_experimenter_style(df):
         ],
         kind="stable",
     ).reset_index(drop=True)
+
+def parse_field_metadata(field_name):
+    match = FIELD_RE.match(str(field_name))
+    if match is None:
+        raise ValueError(f"Could not parse field name: {field_name}")
+
+    hemisphere = match.group("hemisphere")
+    return {
+        "slice_id": match.group("slice_id"),
+        "hemisphere": hemisphere,
+        "field_index": int(match.group("field_index")),
+        "condition": "Intact" if hemisphere == "UL" else "Lesioned",
+    }
+
+def counts_from_roi_jsons(json_paths, session_group=None):
+    rows = []
+
+    for json_path in sorted(map(Path, json_paths)):
+        payload = json.loads(json_path.read_text())
+        field_name = str(payload["field"])
+        field_meta = parse_field_metadata(field_name)
+        session = str(payload.get("session") or session_group or json_path.parents[1].name)
+
+        for group, rois in payload.get("groups", {}).items():
+            for roi in rois:
+                rows.append(
+                    {
+                        "condition": field_meta["condition"],
+                        "cell_type": str(group),
+                        "slice_id": field_meta["slice_id"],
+                        "field": field_name,
+                        "hemisphere": field_meta["hemisphere"],
+                        "field_index": field_meta["field_index"],
+                        "replicate": int(roi["roi_index"]),
+                        "count": int(roi.get("dot_count", 0)),
+                        "session": session,
+                        "session_group": session_group or session,
+                        "count_channel": str(payload.get("count_channel", "")),
+                        "analysis_json": json_path.name,
+                    }
+                )
+
+    columns = [
+        "condition",
+        "cell_type",
+        "slice_id",
+        "field",
+        "hemisphere",
+        "field_index",
+        "replicate",
+        "count",
+        "session",
+        "session_group",
+        "count_channel",
+        "analysis_json",
+    ]
+
+    if not rows:
+        return pd.DataFrame(columns=columns)
+
+    return (
+        pd.DataFrame(rows, columns=columns)
+        .sort_values(
+            ["session", "condition", "cell_type", "hemisphere", "field_index", "field", "replicate"],
+            kind="stable",
+        )
+        .reset_index(drop=True)
+    )
+

@@ -333,6 +333,14 @@ def boxplot_rtype_plotly(
     point_color="gray",
     point_edgecolor="black",
     positions=None,
+    widths=0.6,
+    xrange=None,
+    yrange=None,
+    title=None,
+    xaxis_title=None,
+    yaxis_title=None,
+    width=None,
+    height=None,
     paired=False,
     subjects=None,
 ):
@@ -345,26 +353,42 @@ def boxplot_rtype_plotly(
         raise ValueError("subjects must align with data (one array per dataset)")
     if positions is None:
         positions = list(range(1, len(stats) + 1))
+    xaxis_range = [min(positions) - 0.5, max(positions) + 0.5] if xrange is None else list(xrange)
+    widths_seq = list(widths) if isinstance(widths, (list, tuple, np.ndarray)) else [float(widths)] * len(stats)
+    capwidths = [0.25 * w for w in widths_seq]
+
+    def _point_color_for_dataset(index, values):
+        if isinstance(point_color, (list, tuple, np.ndarray, pd.Series)):
+            if len(point_color) == len(datasets):
+                dataset_color = point_color[index]
+                if isinstance(dataset_color, (list, tuple, np.ndarray, pd.Series)):
+                    if len(dataset_color) != len(values):
+                        raise ValueError("Each point_color sequence must match its dataset length")
+                    return list(dataset_color)
+                return dataset_color
+            if len(point_color) == len(values):
+                return list(point_color)
+        return point_color
 
     fig = go.Figure()
-    for xpos, stat in zip(positions, stats):
+    for xpos, stat, box_width, cap_width in zip(positions, stats, widths_seq, capwidths):
         fig.add_shape(
             type="rect",
-            x0=xpos - 0.3,
-            x1=xpos + 0.3,
+            x0=xpos - 0.5 * box_width,
+            x1=xpos + 0.5 * box_width,
             y0=stat["q1"],
             y1=stat["q3"],
-            line={"color": "black", "width": box_linewidth},
-            fillcolor="rgba(255,255,255,0)",
+            line={"color": "gray", "width": box_linewidth},
+            fillcolor="rgba(0,0,0,0)",
             layer="above",
         )
         fig.add_shape(
             type="line",
-            x0=xpos - 0.3 - median_overhang,
-            x1=xpos + 0.3 + median_overhang,
+            x0=xpos - 0.5 * box_width - median_overhang,
+            x1=xpos + 0.5 * box_width + median_overhang,
             y0=stat["med"],
             y1=stat["med"],
-            line={"color": "black", "width": 3 * box_linewidth},
+            line={"color": "gray", "width": 3 * box_linewidth},
         )
         fig.add_shape(
             type="line",
@@ -372,7 +396,7 @@ def boxplot_rtype_plotly(
             x1=xpos,
             y0=stat["whislo"],
             y1=stat["q1"],
-            line={"color": "black", "width": box_linewidth},
+            line={"color": "gray", "width": box_linewidth},
         )
         fig.add_shape(
             type="line",
@@ -380,23 +404,23 @@ def boxplot_rtype_plotly(
             x1=xpos,
             y0=stat["q3"],
             y1=stat["whishi"],
-            line={"color": "black", "width": box_linewidth},
+            line={"color": "gray", "width": box_linewidth},
         )
         fig.add_shape(
             type="line",
-            x0=xpos - 0.15,
-            x1=xpos + 0.15,
+            x0=xpos - 0.5 * cap_width,
+            x1=xpos + 0.5 * cap_width,
             y0=stat["whislo"],
             y1=stat["whislo"],
-            line={"color": "black", "width": box_linewidth},
+            line={"color": "gray", "width": box_linewidth},
         )
         fig.add_shape(
             type="line",
-            x0=xpos - 0.15,
-            x1=xpos + 0.15,
+            x0=xpos - 0.5 * cap_width,
+            x1=xpos + 0.5 * cap_width,
             y0=stat["whishi"],
             y1=stat["whishi"],
-            line={"color": "black", "width": box_linewidth},
+            line={"color": "gray", "width": box_linewidth},
         )
 
         if showfliers and stat["fliers"].size > 0:
@@ -418,8 +442,8 @@ def boxplot_rtype_plotly(
     subject_coords = {} if paired else None
     if showpoints:
         subject_iter = subjects if paired else [None] * len(datasets)
-        for xpos, d, subs in zip(positions, datasets, subject_iter):
-            half_span = 0.25 * jitter_frac
+        for dataset_index, (xpos, d, subs, w, cap_width) in enumerate(zip(positions, datasets, subject_iter, widths_seq, capwidths)):
+            half_span = min(0.5 * float(w), 0.5 * float(cap_width)) * jitter_frac
             offsets = np.linspace(-half_span, half_span, num=len(d)) if paired else (np.random.rand(d.size) - 0.5) * (2.0 * half_span)
             x = xpos + offsets
             fig.add_trace(
@@ -429,7 +453,7 @@ def boxplot_rtype_plotly(
                     mode="markers",
                     marker={
                         "size": point_diameter,
-                        "color": point_color,
+                        "color": _point_color_for_dataset(dataset_index, d),
                         "opacity": point_alpha,
                         "line": {"color": point_edgecolor, "width": 0.5},
                     },
@@ -459,10 +483,50 @@ def boxplot_rtype_plotly(
     if tick_labels is not None and manage_ticks:
         fig.update_xaxes(tickmode="array", tickvals=positions, ticktext=tick_labels)
 
+    y_max_values = []
+    for stat in stats:
+        y_max_values.extend([stat["whishi"], stat["q3"], stat["med"]])
+        if showfliers and stat["fliers"].size > 0:
+            y_max_values.extend(stat["fliers"].tolist())
+    for dataset in datasets:
+        if dataset.size:
+            y_max_values.append(float(np.nanmax(dataset)))
+    y_max = max(y_max_values) if y_max_values else 1.0
+    y_range_top = y_max * 1.05 if y_max > 0 else 1.0
+    yaxis_range = [0, y_range_top] if yrange is None else list(yrange)
+
     fig.update_layout(
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis={"showline": True, "linewidth": 1, "linecolor": "black", "ticks": "outside"},
-        yaxis={"showline": True, "linewidth": 1, "linecolor": "black", "ticks": "outside"},
+        paper_bgcolor="rgba(0,0,0,0)",
+        title={"text": title, "x": 0.5, "xanchor": "center", "xref": "paper"},
+        font={"color": "gray"},
+        width=width,
+        height=height,
+        xaxis={
+            "showline": True,
+            "showgrid": False,
+            "zeroline": False,
+            "range": xaxis_range,
+            "linewidth": 1,
+            "linecolor": "gray",
+            "ticks": "outside",
+            "tickcolor": "gray",
+            "tickfont": {"color": "gray"},
+            "tickangle": 45,
+            "title": {"text": xaxis_title, "font": {"color": "gray"}},
+        },
+        yaxis={
+            "showline": True,
+            "showgrid": False,
+            "zeroline": False,
+            "range": yaxis_range,
+            "linewidth": 1,
+            "linecolor": "gray",
+            "ticks": "outside",
+            "tickcolor": "gray",
+            "tickfont": {"color": "gray"},
+            "title": {"text": yaxis_title, "font": {"color": "gray"}},
+        },
     )
     return fig
 
