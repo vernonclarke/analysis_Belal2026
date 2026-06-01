@@ -1,11 +1,3 @@
-# analyse without fast.decay.limit
-# analyse to 0.1 peak
-# not weighted to peak fit as slow component should not be present
-
-# Remove all objects from the environment
-rm(list = ls(all = TRUE))
-graphics.off()
-
 # ==============================================
 # ANALYSE DATA FROM XLSX FILES
 # Performs fits to averaged traces
@@ -26,8 +18,8 @@ svg_path <- paths$svg_path
 setwd(analysis_path)
 name <- 'NPY Cre X iSPN WT' # iSPN data
 NPY_Cre_X_iSPN_WT_data <- load_data2(wd=xlsx_path, name=name)[[1]]
-NPY_Cre_X_iSPN_WT_data[1:10,]
 
+NPY_Cre_X_iSPN_WT_data[1:10,]
 #       23331001    23331004   23331006   23d20000   23d20003   23d20010
 # 1   0.61978146 -0.05711364  1.1205749 -0.2655640  0.6435791 -0.7521565
 # 2   0.54348752 -0.24021910  0.8459167  0.1616821  1.4248290 -0.3045654
@@ -219,12 +211,6 @@ if (!dir.exists(xlsx_path)) {
 }
 
 save <- TRUE
-
-# setwd(xlsx_path)
-# if (save){
-#   write.csv(NPY_Cre_X_iSPN_WT_fits, file = 'NPY_Cre_X_iSPN_WT_fits.csv', row.names = FALSE)
-#   write.csv(NPY_Cre_X_iSPN_WT_peaks, file = 'NPY_Cre_X_iSPN_WT_peaks.csv', row.names = FALSE)
-#   }
 
 setwd(svg_path)
 for (ii in 1:length(NPY_Cre_X_iSPN_WT_summary)){

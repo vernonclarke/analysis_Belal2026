@@ -1,0 +1,17 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type dSPN (unpaired)","control vs 6OHDA","10 vs 9","Wilcoxon rank sum exact test","two.sided","W",6,0.000649505293468142,0.00259802117387257
+"amplitude","within cell_type iSPN (unpaired)","control vs 6OHDA","6 vs 5","Wilcoxon rank sum exact test","two.sided","W",0,0.00432900432900433,0.012987012987013
+"amplitude","within condition control (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",33,0.792457542457542,1
+"amplitude","within condition 6OHDA (unpaired)","dSPN vs iSPN","9 vs 5","Wilcoxon rank sum exact test","two.sided","W",18,0.606393606393606,1
+"charge_transfer","within cell_type dSPN (unpaired)","control vs 6OHDA","10 vs 9","Wilcoxon rank sum exact test","two.sided","W",77,0.0076208621100262,0.0228625863300786
+"charge_transfer","within cell_type iSPN (unpaired)","control vs 6OHDA","6 vs 5","Wilcoxon rank sum exact test","two.sided","W",30,0.00432900432900433,0.0173160173160173
+"charge_transfer","within condition control (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",23,0.492257742257742,0.984515484515485
+"charge_transfer","within condition 6OHDA (unpaired)","dSPN vs iSPN","9 vs 5","Wilcoxon rank sum exact test","two.sided","W",28,0.518481518481518,0.984515484515485
+"tau","within cell_type dSPN (unpaired)","ctrl vs 6OHDA","10 vs 8","Wilcoxon rank sum exact test","two.sided","W",44,0.761826408885232,1
+"tau","within cell_type iSPN (unpaired)","ctrl vs 6OHDA","6 vs 4","Wilcoxon rank sum exact test","two.sided","W",11,0.914285714285714,1
+"tau","within condition ctrl (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",39,0.367632367632368,1
+"tau","within condition 6OHDA (unpaired)","dSPN vs iSPN","8 vs 4","Wilcoxon rank sum exact test","two.sided","W",15,0.933333333333333,1
+"tau","within cell_type dSPN (unpaired)","ctrl vs 6OHDA","10 vs 9","Wilcoxon rank sum exact test","two.sided","W",48,0.842105263157895,1
+"tau","within cell_type iSPN (unpaired)","ctrl vs 6OHDA","6 vs 4","Wilcoxon rank sum exact test","two.sided","W",17,0.352380952380952,1
+"tau","within condition ctrl (unpaired)","dSPN vs iSPN","10 vs 6","Wilcoxon rank sum exact test","two.sided","W",21,0.367632367632368,1
+"tau","within condition 6OHDA (unpaired)","dSPN vs iSPN","9 vs 4","Wilcoxon rank sum exact test","two.sided","W",20,0.825174825174825,1

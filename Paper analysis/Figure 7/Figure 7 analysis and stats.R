@@ -22,7 +22,7 @@ svg_path <- paths$svg_path
 # import ACh_GRAB.xlsx from 'xlsx' folder
 
 setwd(analysis_path)
-name <- 'ACh_GRAB'
+name <- 'results'
 
 d <- load_data2(wd=paste0(analysis_path, '/xlsx'), name=name)[[1]]
 names(d)[names(d) == "(F1-F0)/F0"] <- "dff"
@@ -272,7 +272,7 @@ if (file.exists(RData_path)) {
 
 }
 
-plotsave <- FALSE
+plotsave <- TRUE
 
 # graph settings
 wid <- 0.3
