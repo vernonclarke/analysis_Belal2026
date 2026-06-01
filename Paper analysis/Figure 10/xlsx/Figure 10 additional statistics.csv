@@ -1,0 +1,25 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type dSPN (unpaired)","6OHDA vs ctrl","8 vs 13","Wilcoxon rank sum exact test","two.sided","W",61,0.546631284092584,0.831048208757187
+"amplitude","within cell_type iSPN (unpaired)","6OHDA vs ctrl","9 vs 6","Wilcoxon rank sum exact test","two.sided","W",17,0.272127872127872,0.816383616383616
+"amplitude","within condition 6OHDA (unpaired)","dSPN vs iSPN","8 vs 9","Wilcoxon rank sum exact test","two.sided","W",52,0.138790621143562,0.555162484574249
+"amplitude","within condition ctrl (unpaired)","dSPN vs iSPN","13 vs 6","Wilcoxon rank sum exact test","two.sided","W",49,0.415524104378594,0.831048208757187
+"amplitude","within cell_type dSPN (unpaired)","6OHDA vs ctrl","8 vs 13","Wilcoxon rank sum exact test","two.sided","W",42,0.500211312595214,1
+"amplitude","within cell_type iSPN (unpaired)","6OHDA vs ctrl","9 vs 6","Wilcoxon rank sum exact test","two.sided","W",10,0.0495504495504496,0.198201798201798
+"amplitude","within condition 6OHDA (unpaired)","dSPN vs iSPN","8 vs 9","Wilcoxon rank sum exact test","two.sided","W",46,0.370382558617853,1
+"amplitude","within condition ctrl (unpaired)","dSPN vs iSPN","13 vs 6","Wilcoxon rank sum exact test","two.sided","W",30,0.467049977885891,1
+"charge_transfer","within cell_type dSPN (unpaired)","6OHDA vs ctrl","8 vs 13","Wilcoxon rank sum exact test","two.sided","W",62,0.500211312595214,1
+"charge_transfer","within cell_type iSPN (unpaired)","6OHDA vs ctrl","9 vs 6","Wilcoxon rank sum exact test","two.sided","W",36,0.327672327672328,1
+"charge_transfer","within condition 6OHDA (unpaired)","dSPN vs iSPN","8 vs 9","Wilcoxon rank sum exact test","two.sided","W",27,0.4234471410942,1
+"charge_transfer","within condition ctrl (unpaired)","dSPN vs iSPN","13 vs 6","Wilcoxon rank sum exact test","two.sided","W",40,0.96609169983783,1
+"charge_transfer","within cell_type dSPN (unpaired)","6OHDA vs ctrl","8 vs 13","Wilcoxon rank sum exact test","two.sided","W",77,0.0756007666224385,0.226802299867315
+"charge_transfer","within cell_type iSPN (unpaired)","6OHDA vs ctrl","9 vs 6","Wilcoxon rank sum exact test","two.sided","W",46,0.0255744255744256,0.102297702297702
+"charge_transfer","within condition 6OHDA (unpaired)","dSPN vs iSPN","8 vs 9","Wilcoxon rank sum exact test","two.sided","W",31,0.672974084738791,1
+"charge_transfer","within condition ctrl (unpaired)","dSPN vs iSPN","13 vs 6","Wilcoxon rank sum exact test","two.sided","W",38,0.96609169983783,1
+"tau","within kinetics fast (unpaired)","ctrl vs 6OHDA","13 vs 8","Wilcoxon rank sum exact test","two.sided","W",34,0.210260946483857,0.369335102462037
+"tau","within kinetics slow (unpaired)","ctrl vs 6OHDA","13 vs 8","Wilcoxon rank sum exact test","two.sided","W",33,0.184667551231019,0.369335102462037
+"tau","within condition ctrl (paired)","fast vs slow","13","Wilcoxon signed rank exact test","two.sided","V",0,0.000244140625,0.00048828125
+"tau","within condition 6OHDA (paired)","fast vs slow","8","Wilcoxon signed rank exact test","two.sided","V",0,0.0078125,0.0078125
+"tau","within kinetics fast (unpaired)","ctrl vs 6OHDA","6 vs 9","Wilcoxon rank sum exact test","two.sided","W",26,0.954645354645355,1
+"tau","within kinetics slow (unpaired)","ctrl vs 6OHDA","6 vs 9","Wilcoxon rank sum exact test","two.sided","W",23,0.688911088911089,1
+"tau","within condition ctrl (paired)","fast vs slow","6","Wilcoxon signed rank exact test","two.sided","V",0,0.03125,0.03125
+"tau","within condition 6OHDA (paired)","fast vs slow","9","Wilcoxon signed rank exact test","two.sided","V",0,0.00390625,0.0078125
