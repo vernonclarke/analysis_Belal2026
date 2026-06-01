@@ -1,4 +1,5 @@
 # Ignore specified analysis folders
+Final figures/
 NWBdata/
 RNAscope data/
 .ipynb_checkpoints/

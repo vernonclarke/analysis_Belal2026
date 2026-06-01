@@ -143,58 +143,7 @@ if (plotsave){
 
   # save to excel spreadsheet
   list2excel(data_list, paste0(identifier, '.xlsx'), wd=xlsx_path)
+  list2csv(data_list, paste0(identifier, '.csv'), wd=xlsx_path)
 }
 
 
-
-############################################################### Vcmd ################################################################
-file_path3 <- paste0(repo_root, '/Paper analysis/Raw ABF data summaries/', identifier)
-setwd(file_path3)
-expt_id <- list.dirs(path = '.', full.names = FALSE, recursive = FALSE)
-
-# initial raw summaries; good for approx amplitudes and exact command potential
-summary2 <- setNames(lapply(expt_id, function(expt) {
-  folder_base <- file.path(file_path3, expt, 'xlsx')
-  folders <- list.dirs(path = folder_base, full.names = FALSE, recursive = FALSE)
-  
-  if (length(folders) == 0) return(list())
-  
-  out_summary <- lapply(folders, function(folder) {
-    folder_path <- file.path(folder_base, folder)
-    out1 <- load_data2(wd = folder_path, name = folder, header = TRUE)
-    out1$summary
-  })
-  names(out_summary) <- folders
-  out_summary
-}), expt_id)
-
-Vcmd <-  setNames(lapply(1:length(summary2), function(iii){
-  sapply(1:length(summary2[[iii]]), function(ii) mean(summary2[[iii]][[ii]][, 'holding.potential.(mV)']))
-}), expt_id)
-
-
-Vcmd_NDNF <- do.call(rbind, lapply(names(Vcmd), function(name) {
-  data.frame(
-    condition = if (grepl('control', name)) 'control' else '6OHDA',
-    Vcmd = Vcmd[[name]]
-  )
-}))
-
-Vcmd_NDNF <- Vcmd_NDNF[order(Vcmd_NDNF$condition, decreasing = TRUE), ]
-rownames(Vcmd_NDNF) <- 1:dim(Vcmd_NDNF)[1]
-
-Vcmd_NDNF$condition <- factor(Vcmd_NDNF$condition, levels = c("control", "6OHDA"))
-
-width <- 3
-height <- 3.5
-
-# update graph properties
-ylab <- expression(V[cmd]~(mV))
-yrange <- c(-100, -60)
-y_tick_interval <- 10
-
-
-BoxPlot3(formula= Vcmd~condition, data=Vcmd_NDNF, wid=wid, cap=cap, xlab='', ylab = ylab, xrange=xrange, 
-  yrange=yrange, xlabel_angle=45, tick_length=tick_length, y_tick_interval=y_tick_interval, lwd=lwd, type=type, amount=amount, 
-  p.cex=p.cex, height=height, width=width)
-if (plotsave) save_graph(svg_path=svg_path, filename='Vcmd_SPN.svg', width=width, height=height, bg='transparent')

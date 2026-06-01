@@ -656,7 +656,7 @@ if (plotsave){
     )
   # save to excel spreadsheet
   list2excel(data_list, paste0(identifier, '.xlsx'), wd=xlsx_path)
-    list2csv(data_list, paste0(identifier, '.csv'), wd=xlsx_path)
+  list2csv(data_list, paste0(identifier, '.csv'), wd=xlsx_path)
 }
 
 
