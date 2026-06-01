@@ -6,45 +6,26 @@
 # remove all objects from the environment
 rm(list = ls(all = TRUE))
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 library(reticulate)
 reticulate::py_config()
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 
 
 # construct local paths and identifiers
 identifier1 <- 'Figure 11'
 identifier2 <- 'Figure 11 full'
-file_path1 <- paste0('/Users/', username, path_repository)
-file_path2 <- paste0('/Users/', username, path_analysis)
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path2 <- paste0(repo_root, '/Paper analysis')
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')
+file_path5 <- paste0(repo_root, '/R functions')
 
-# source(paste0(file_path1, '/nNLS functions.R'))
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
 # path where all graphs are stored
@@ -59,8 +40,8 @@ if (!dir.exists(svg_path)) {
 }
 
 # retrieve the names of all folders (directories) in the working directory
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier2)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier2, '/')
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier2)
+file_path4 <- paste0(file_path2, '/',  identifier2, '/')
 
 setwd(file_path3)
 expt_id <- list.dirs(path = '.', full.names = FALSE, recursive = FALSE)
@@ -321,8 +302,8 @@ HP
 
 ############
 # retrieve the names of all folders (directories) in the working directory
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')      
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')      
 setwd(file_path3)
 
 experimental_dict <- list(
@@ -405,8 +386,8 @@ experimental_dict <- list(
 )
 
 # retrieve the names of all folders (directories) in the working directory
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')      
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')      
 setwd(file_path3)
 
 width <- 6 * 0.7
@@ -477,8 +458,8 @@ experimental_dict <- list(
   )
 )
 # retrieve the names of all folders (directories) in the working directory
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')      
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')      
 setwd(file_path3)
 
 force_batch <- TRUE

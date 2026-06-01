@@ -6,17 +6,8 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-
-required.packages <- c(
-  'dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp',
-  'reticulate', 'robustbase', 'signal', 'readABF', 'yaml'
-)
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
 
 env_name <- 'NWBenv'
 if (!env_name %in% reticulate::conda_list()$name) {
@@ -26,23 +17,16 @@ if (!env_name %in% reticulate::conda_list()$name) {
 reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 
-# paths
-repo_root <- normalizePath(
-  '~/Documents/Repositories/analysis_Belal2026',
-  mustWork = TRUE
-)
-
 identifier <- 'Figure 3B'
-analysis_path <- file.path(repo_root, 'Paper analysis', identifier)
-xlsx_path <- file.path(analysis_path, 'xlsx')
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
+
 dandi_root <- file.path(repo_root, 'NWBdata', '001832')
 
 if (!dir.exists(dandi_root)) {
   stop('Downloaded DANDI folder not found: ', dandi_root)
-}
-
-if (!dir.exists(analysis_path)) {
-  stop('Analysis folder not found at: ', analysis_path)
 }
 
 # source helper functions
@@ -116,6 +100,8 @@ names(summary) <- cell_ids
 
 expt_name <- 'NDNF GABA PSCs'
 
+save <- TRUE
+
 if (save) {
   list2excel(
     summary,
@@ -149,7 +135,7 @@ summary2[1:10, ]
 #  [9,] -0.28097533 2.549133 -1.163879 -0.9394043  3.1371153  0.52548215  0.44736326  0.46293129
 # [10,]  0.20730590 1.236877 -1.621643 -1.4765136  2.9234923  0.09823608  0.88681636 -0.71708167
 
-save <- TRUE
+
 if (save) {
   wb <- createWorkbook()
   addWorksheet(wb, 'Sheet1')

@@ -3,37 +3,13 @@ graphics.off()
 
 plotsave <- TRUE
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
-
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-
-# Construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
 
 identifier <- 'Figure 11'
-analysis_path <- paste0(file_path2, '/', identifier)
-xlsx_path <- paste0(analysis_path, '/xlsx')
-svg_path <- paste0(analysis_path, '/xlsx')
-
-svg_path <- paste0(analysis_path, '/svg')
-if (!dir.exists(svg_path)) {
-  dir.create(svg_path, recursive = TRUE)
-}
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
 
 setwd(analysis_path)
 
@@ -172,8 +148,7 @@ if (plotsave){
 
 
 ############################################################### Vcmd ################################################################
-path_analysis <- config$path_analysis
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data summaries/', identifier)
+file_path3 <- paste0(repo_root, '/Paper analysis/Raw ABF data summaries/', identifier)
 setwd(file_path3)
 expt_id <- list.dirs(path = '.', full.names = FALSE, recursive = FALSE)
 

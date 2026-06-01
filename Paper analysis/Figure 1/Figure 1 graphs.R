@@ -1,50 +1,23 @@
-##################################### CREATE GRAPHS AND PERFORM STATISTICAL TESTS #####################################
+# =========================================# ==============================================
+# CREATE GRAPHS AND PERFORM STATISTICAL TESTS
+# Processed data in stored in '.RDATA' form
+# '.RDATA' created by '~ analysis.R'
+# ==============================================
 
 rm(list = ls(all = TRUE))
 graphics.off()
 
 plotsave <- TRUE
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
-
-# Paths
-repo_root <- normalizePath(
-  '~/Documents/Repositories/analysis_Belal2026',
-  mustWork = TRUE
-)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
 
 identifier <- 'Figure 1'
-analysis_path <- file.path(repo_root, 'Paper analysis', identifier)
-xlsx_path <- file.path(analysis_path, 'xlsx')
-svg_path <- file.path(analysis_path, 'svg')
-
-# Source helper functions
-nNLS_functions_path <- file.path(repo_root, 'R functions', 'nNLS functions.R')
-if (!file.exists(nNLS_functions_path)) {
-  stop('nNLS functions.R not found at: ', nNLS_functions_path)
-}
-
-source(nNLS_functions_path)
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
 
 # Settings
-if (!dir.exists(analysis_path)) {
-  stop('Analysis folder not found at: ', analysis_path)
-}
-
-if (!dir.exists(xlsx_path)) {
-  stop('XLSX folder not found at: ', xlsx_path)
-}
-
-if (!dir.exists(svg_path)) {
-  dir.create(svg_path, recursive = TRUE)
-}
-
 # load RDATA
 load(file.path(analysis_path, paste0(identifier, '.RData')))
 

@@ -6,44 +6,18 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
-
-# Paths
-repo_root <- normalizePath(
-  '~/Documents/Repositories/analysis_Belal2026',
-  mustWork = TRUE
-)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
 
 identifier <- 'Figure 1'
-analysis_path <- file.path(repo_root, 'Paper analysis', identifier)
-xlsx_path <- file.path(analysis_path, 'xlsx')
-
-# Source helper functions
-nNLS_functions_path <- file.path(repo_root, 'R functions', 'nNLS functions.R')
-if (!file.exists(nNLS_functions_path)) {
-  stop('nNLS functions.R not found at: ', nNLS_functions_path)
-}
-
-source(nNLS_functions_path)
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
 
 # Settings
 baseline <- 100
 stimulation_time <- 100
 dt <- 0.1
-
-if (!dir.exists(analysis_path)) {
-  stop('Analysis folder not found at: ', analysis_path)
-}
-
-if (!dir.exists(xlsx_path)) {
-  stop('XLSX folder not found at: ', xlsx_path)
-}
 
 setwd(analysis_path)
 

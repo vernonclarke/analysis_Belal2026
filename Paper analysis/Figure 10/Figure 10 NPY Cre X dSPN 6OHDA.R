@@ -6,38 +6,14 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
-
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-
-# Construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
 
 # Settings
 identifier <- 'Figure 10'
-analysis_path <- paste0(file_path2, '/', identifier)
-xlsx_path <- paste0(analysis_path, '/xlsx')
-svg_path <- paste0(analysis_path, '/xlsx')
-
-svg_path <- paste0(analysis_path, '/svg')
-if (!dir.exists(svg_path)) {
-  dir.create(svg_path, recursive = TRUE)
-}
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
 
 setwd(analysis_path)
 
@@ -216,30 +192,14 @@ save.image(file = file.path(analysis_path, paste0(name, ".RData")))
 rm(list = ls(all = TRUE))
 graphics.off()
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-load_required_packages(c('robustbase', 'minpack.lm', 'openxlsx', 'Rcpp', 'signal', 'dbscan'))
-
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-
-# construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
 
 identifier <- 'Figure 10'
-analysis_path <- paste0(file_path2, '/', identifier)
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
+
 name <- 'NPY Cre X dSPN 6OHDA' # dSPN data
 
 load(paste0(analysis_path, '/', name, '.RData'))

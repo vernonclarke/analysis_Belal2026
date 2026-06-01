@@ -9,38 +9,15 @@ graphics.off()
 
 plotsave <- FALSE
 
-# Load required packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('bayesplot', 'brms', 'dbscan', 'lme4', 'minpack.lm', 'openxlsx', 'parallel', 'Rcpp', 'robustbase', 'robustlmm', 'sciplot', 'signal')
-load_required_packages(required.packages)
-
-# Load user config
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-
-# Construct paths
-username <- config$username
-file_path1 <- paste0('/Users/', username, config$path_repository)
-file_path2 <- paste0('/Users/', username, config$path_analysis)
-
-source(paste0(file_path1, '/nNLS functions.R'))
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('bayesplot', 'brms', 'lme4', 'parallel', 'robustlmm', 'sciplot'))
 
 # settings
 identifier <- 'Figure 7'
-analysis_path <- paste0(file_path2, '/', identifier)
-xlsx_path <- paste0(analysis_path, '/xlsx')
-# path where all graphs are stored
-svg_path <- paste0(analysis_path, '/svg')
-if (!dir.exists(svg_path)) {
-  dir.create(svg_path, recursive = TRUE)
-}
+paths <- make_paths(identifier)
+analysis_path <- paths$analysis_path
+xlsx_path <- paths$xlsx_path
+svg_path <- paths$svg_path
 
 # import ACh_GRAB.xlsx from 'xlsx' folder
 
@@ -133,12 +110,20 @@ if (file.exists(RData_path)) {
     unname(fixef(fit)[coef_name])
   }
 
-  n_cores <- max(1, detectCores() - 1)
+  n_cores <- as.integer(Sys.getenv('FIGURE7_BOOT_CORES', unset='1'))
+  n_cores <- max(1, n_cores)
 
-  est <- unlist(
-    mclapply(seq_len(B), boot_one, mc.cores = n_cores),
-    use.names = FALSE
-  )
+  if (n_cores == 1) {
+    est <- unlist(
+      lapply(seq_len(B), boot_one),
+      use.names = FALSE
+    )
+  } else {
+    est <- unlist(
+      mclapply(seq_len(B), boot_one, mc.cores = n_cores),
+      use.names = FALSE
+    )
+  }
 
   est <- est[is.finite(est)]
 
@@ -494,6 +479,5 @@ if (plotsave) save_graph(svg_path=svg_path, filename='Bayesian_Analysis.svg', wi
 # In summary
 #   • Want a yes/no decision at α=0.05? Use p-value = 0.014.
 #   • Want the probability the effect is positive, accounting for prior uncertainty? Use P(effect > 0) = 0.945 (i.e. 1 – 0.055).
-
 
 

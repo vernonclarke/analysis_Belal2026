@@ -8,42 +8,23 @@ rm(list = ls(all = TRUE))
 
 save <- FALSE
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 library(reticulate)
 reticulate::py_config()
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 # construct local paths and identifiers
 identifier1 <- 'Figure 11'
-file_path1 <- paste0('/Users/', username, path_repository)
-file_path2 <- paste0('/Users/', username, path_analysis)
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path2 <- paste0(repo_root, '/Paper analysis')
+file_path3 <- paste0(file_path2, '/Raw ABF data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')
+file_path5 <- paste0(repo_root, '/R functions')
 
-# source(paste0(file_path1, '/nNLS functions.R'))
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
 # path where all graphs are stored
@@ -118,39 +99,20 @@ rm(list = ls(all = TRUE))
 
 save <- FALSE
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 # construct local paths and identifiers
 identifier1 <- 'Figure 11'
-file_path1 <- paste0('/Users/', username, path_repository)
-file_path2 <- paste0('/Users/', username, path_analysis)
-file_path3 <- paste0('/Users/', username, path_analysis, '/Raw ABF data summaries/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path2 <- paste0(repo_root, '/Paper analysis')
+file_path3 <- paste0(file_path2, '/Raw ABF data summaries/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')
+file_path5 <- paste0(repo_root, '/R functions')
 
-# source(paste0(file_path1, '/nNLS functions.R'))
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
 # path where all graphs are stored
@@ -267,14 +229,10 @@ if (save) {
 # remove all objects from the environment
 rm(list = ls(all = TRUE))
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 env_name <- "NWBenv"
 if (!env_name %in% conda_list()$name) {
@@ -287,21 +245,9 @@ py_config()  # show NWBenv path
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 identifier1 <- 'Figure 11'
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path2 <- paste0(repo_root, '/Paper analysis')
+file_path5 <- paste0(repo_root, '/R functions')
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
 # Define experimental data
@@ -390,14 +336,10 @@ rm(list = ls(all = TRUE))
 
 save <- FALSE
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 env_name <- "NWBenv"
 if (!env_name %in% conda_list()$name) {
@@ -410,28 +352,13 @@ py_config()  # show NWBenv path
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 # construct local paths and identifiers
 identifier1 <- 'Figure 11'
-file_path1 <- paste0('/Users/', username, path_repository)
-file_path2 <- paste0('/Users/', username, path_analysis)
-file_path3 <- paste0('/Users/', username, path_analysis, '/NWB data/', identifier1)
-file_path4 <- paste0('/Users/', username, path_analysis, '/',  identifier1, '/')
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path2 <- paste0(repo_root, '/Paper analysis')
+file_path3 <- paste0(file_path2, '/NWB data/', identifier1)
+file_path4 <- paste0(file_path2, '/',  identifier1, '/')
+file_path5 <- paste0(repo_root, '/R functions')
 
-# source(paste0(file_path1, '/nNLS functions.R'))
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
 # path where all graphs are stored
@@ -532,8 +459,8 @@ names(summary2_nwb) <- expt_id
 
 # Sort alphabetically
 summary2_nwb <- summary2_nwb[order(names(summary2_nwb))]
-   names(summary2_nwb)
-[1] "ChI-NGF 6OHDA"   "ChI-NGF control"
+names(summary2_nwb)
+# [1] "ChI-NGF 6OHDA"   "ChI-NGF control"
 
 summary2_nwb[[1]][1:10,]
 #         25310000    25310001   25310005    25310006    25310007   25310012   25311000    25311002  25311007    25312000     25312010
@@ -597,20 +524,20 @@ if (save) {
 # dandi validate 
 
 
-# Validate with PyNWB directly
-python -c "
-from pynwb import validate, NWBHDF5IO
-import os
-
-for folder in os.listdir('.'):
-    if folder.startswith('sub-'):
-        nwb_file = os.path.join(folder, f'{folder}_icephys.nwb')
-        if os.path.exists(nwb_file):
-            with NWBHDF5IO(nwb_file, 'r') as io:
-                errors = validate(io)
-                status = '✓' if len(errors) == 0 else f'✗ ({len(errors)} errors)'
-                print(f'{folder}: {status}')
-"
+# Validate with PyNWB directly:
+# python -c "
+# from pynwb import validate, NWBHDF5IO
+# import os
+#
+# for folder in os.listdir('.'):
+#     if folder.startswith('sub-'):
+#         nwb_file = os.path.join(folder, f'{folder}_icephys.nwb')
+#         if os.path.exists(nwb_file):
+#             with NWBHDF5IO(nwb_file, 'r') as io:
+#                 errors = validate(io)
+#                 status = 'OK' if len(errors) == 0 else f'{len(errors)} errors'
+#                 print(f'{folder}: {status}')
+# "
 
 
 ###################################################################################################
@@ -622,15 +549,10 @@ for folder in os.listdir('.'):
 # remove all objects from the environment
 rm(list = ls(all = TRUE))
 
-# load and install necessary packages
-load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-
-required.packages <- c('dbscan', 'jsonlite', 'minpack.lm', 'openxlsx', 'Rcpp', 'reticulate', 'robustbase', 'signal', 'readABF', 'yaml')
-load_required_packages(required.packages)
+source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
+username <- basename(path.expand('~'))
+path_analysis <- sub(paste0('/Users/', username, '/'), '', paste0(repo_root, '/Paper analysis'))
 
 env_name <- "NWBenv"
 if (!env_name %in% conda_list()$name) {
@@ -643,26 +565,14 @@ py_config()  # show NWBenv path
 
 graphics.off()
 
-# load user config which contains local paths
-config_path <- file.path(Sys.getenv("HOME"), ".abf2nwb_config.yaml")
-if (!file.exists(config_path)) {
-  stop("Config file not found. Create ~/.abf2nwb_config.yaml with your settings.")
-}
-config <- yaml::read_yaml(config_path)
-print(config$username)
-
-username <- config$username
-path_repository <- config$path_repository
-ABF2NWB_repository <- config$ABF2NWB_repository
-path_analysis <- config$path_analysis
-
 identifier1 <- 'Figure 11'
+file_path2 <- paste0(repo_root, '/Paper analysis')
 
-file_path3 <- paste0('/Users/', username, path_analysis, '/NWB data/', identifier1)
+file_path3 <- paste0(file_path2, '/NWB data/', identifier1)
 setwd(file_path3)
 folders <- list.dirs(path = '.', full.names = FALSE, recursive = FALSE)
 
-file_path5 <- paste0('/Users/', username, ABF2NWB_repository)
+file_path5 <- paste0(repo_root, '/R functions')
 
 source(file.path(file_path5, 'ABF2NWB_functions.R'))
 
