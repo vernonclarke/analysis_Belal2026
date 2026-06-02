@@ -782,7 +782,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
       The box plot output is illustrated:
 
-      ![boxplot](./images/boxplot.svg)
+      ![boxplot](./examples/boxplot.svg)
 
       If data is unpaired, then simply create a data frame omitting the subject column 's' and use `formula = y ~ x` in place of `formula = y ~ x + Error(s)`.
 
