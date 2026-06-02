@@ -571,7 +571,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
    wd <- file.path(root_dir, 'examples') 
 
    # load example CSV data
-   data <- load_data(wd=wd, name='data')
+   # data <- load_data(wd=wd, name='data')
+
+   # load example XLSX data
+   data_list <- load_data2(wd = wd, name = "data")
+   data <- data_list[[1]]
 
    # use analyse_PSC to determine fit.limits for each response in turn with setting return.output=FALSE:
    # analyse_PSC(response=data[,1], dt=0.1, func=product2N, stimulation_time=150, baseline=50, return.output=FALSE) 
