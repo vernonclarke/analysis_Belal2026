@@ -1,4 +1,4 @@
-# <center>RNAscope Imaging Analysis</center>
+<h1 align="center">RNAscope Imaging Analysis</h1>
 
 These instructions describe the RNAscope workflow used for Figure 11 in this repository.
 

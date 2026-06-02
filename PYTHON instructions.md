@@ -1,99 +1,120 @@
-# <center>Analysis instructions for ACHGRAB and RNAscope data</center>
+<h1 align="center">Python Analysis Instructions</h1>
+
+These instructions describe the Python environment used by this repository for:
+
+- fluorescence biosensor imaging analysis for Figure 7
+- RNAscope NWB conversion, metadata inspection, ROI analysis, and reanalysis for Figure 11
 
 ## Index
+
 - [Setup Instructions](#setup-instructions)
-- [Create .env for token](#create-env-for-token)
-- [Quick Checks](#quick-checks)
-- [Export environment](#export-environment)
-- [Run Jupyter Notebook](#run-jupyter-notebook)
-- [Download DANDI dataset](#download-dandi-dataset)
-- [Ensure Git ignore](#ensure-git-ignore)
-- [Create html](#create-html)
-
-
+- [Run Jupyter Notebooks](#run-jupyter-notebooks)
+- [Download DANDI Data](#download-dandi-data)
+- [Python Workflow Files](#python-workflow-files)
+- [Export Environment](#export-environment)
 
 ## Setup Instructions
+
+Run from the repository root:
+
 ```bash
-cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
+cd "$HOME/Documents/Repositories/analysis_Belal2026"
+
 conda create -n image_analysis python=3.12 -y
 conda activate image_analysis
 
-pip install matplotlib seaborn python-dotenv remfile
-pip install notebook jupyterlab
-pip install plotly
-pip install -U kaleido
-pip install ipykernel
-pip install ipympl
-pip install pytz
-pip install dandi
-pip install pynwb hdmf
-pip install neuroconv xmltodict
-pip install ndx-optogenetics
-pip install openpyxl
-pip install scipy
+pip install numpy pandas matplotlib seaborn plotly kaleido
+pip install notebook jupyterlab ipykernel ipympl
+pip install pynwb hdmf dandi ndx-optogenetics
+pip install pillow scipy openpyxl
 
 python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
-
-
 ```
 
----
+Use the `Python (image_analysis)` kernel in the notebooks.
 
-## Create .env for token
+## Run Jupyter Notebooks
+
 ```bash
-cd /Users/euo9382/Documents/Repositories/CatalystNeuro
-echo 'DANDI_API_TOKEN=your_actual_token_here' > .env
-head .env
-echo ".env" >> .gitignore
-```
-
----
-
-## Quick Checks
-```bash
-python -c "import pynwb, hdmf; print('pynwb:', pynwb.__version__, 'hdmf:', hdmf.__version__)"
-python -c "import importlib.metadata; print('neuroconv:', importlib.metadata.version('neuroconv'))"
-python -c "import surmeier_lab_to_nwb as sln; print('pkg OK')"
-```
-
----
-
-## Export environment
-```bash
-conda env export --from-history > environment.yml
-conda env export > environment.lock.yml
-pip freeze > requirements.txt
-```
-
----
-
-## Run Jupyter Notebook
-```bash
-cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
+cd "$HOME/Documents/Repositories/analysis_Belal2026"
 conda activate image_analysis
 jupyter notebook
 ```
 
----
+The relevant notebooks are:
 
-## Download DANDI dataset
-```bash
-export $(grep DANDI_API_TOKEN /Users/euo9382/Documents/Repositories/CatalystNeuro/.env | sed 's/DANDI_API_TOKEN/DANDI_API_KEY/')
-dandi download DANDI:001538/draft -o '/Users/euo9382/Documents/Repositories/CatalystNeuro/Zhai Paper'
+```text
+Paper analysis/Figure 7/Figure 7 analysis.ipynb
+Paper analysis/Figure 7/Figure 7 reanalysis.ipynb
+RNAscope notebooks/RNAscope2NWBconversion.ipynb
+RNAscope notebooks/RNAscope_analysis.ipynb
+RNAscope notebooks/RNAscope reanalysis.ipynb
+RNAscope notebooks/RNAscope_readNWBexample.ipynb
 ```
 
----
+## Download DANDI Data
 
-## Ensure Git ignore
+Figure 7 uses NWB data from DANDI dataset `001832`.
+
 ```bash
-cd /Users/euo9382/Documents/Repositories/CatalystNeuro
-echo "Zhai paper/" >> .gitignore
-git status --ignored
+cd "$HOME/Documents/Repositories/analysis_Belal2026"
+mkdir -p NWBdata
+
+dandi download "DANDI:001832/draft" \
+  -o NWBdata \
+  --existing refresh \
+  --format pyout \
+  --path-type exact
 ```
 
+If the dandiset has a published version, replace `draft` with the published version identifier.
 
-## Create html
+The fluorescence biosensor notebooks expect the downloaded data under:
+
+```text
+NWBdata/001832
+```
+
+## Python Workflow Files
+
+Core helper files:
+
+```text
+Python functions/master_functions.py
+Python functions/master_RNAscope.py
+```
+
+Figure 7 fluorescence biosensor workflow:
+
+```text
+Fluorescence Biosensor Imaging instructions.md
+Paper analysis/Figure 7/Figure 7 analysis.ipynb
+Paper analysis/Figure 7/Figure 7 reanalysis.ipynb
+```
+
+Figure 11 RNAscope workflow:
+
+```text
+RNAscope instructions.md
+RNAscope notebooks/RNAscope2NWBconversion.ipynb
+RNAscope notebooks/RNAscope_analysis.ipynb
+RNAscope notebooks/RNAscope reanalysis.ipynb
+RNAscope notebooks/RNAscope_readNWBexample.ipynb
+```
+
+RNAscope data are stored locally under:
+
+```text
+RNAscope data/RAW
+RNAscope data/NWB
+```
+
+## Export Environment
+
+After the environment is working:
+
 ```bash
-cd /Users/euo9382/Documents/Repositories/CatalystNeuro/notebooks
-jupyter nbconvert figure_5F_acetylcholine_biosensor_VC.ipynb --to html --output-dir=docs
+conda env export --from-history > environment.yml
+conda env export > environment.lock.yml
+pip freeze > requirements.txt
 ```

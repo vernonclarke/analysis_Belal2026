@@ -1,4 +1,4 @@
-# <center>Fluorescence Biosensor Imaging</center>
+<h1 align="center">Fluorescence Biosensor Imaging</h1>
 
 These instructions describe the fluorescence biosensor imaging workflow used for Figure 7 in this repository.
 
@@ -96,14 +96,8 @@ dff = compute_dff(
 )
 ```
 
-Repeated runs are averaged within:
-
-```text
-group
-animal_id
-slice_id
-roi_id
-```
+Repeated recordings of the same ROI are averaged before peak measurement.
+Repeats are identified by matching `group`, `animal_id`, `slice_id`, and `roi_id`.
 
 The peak dF/F0 is then calculated for each averaged ROI:
 

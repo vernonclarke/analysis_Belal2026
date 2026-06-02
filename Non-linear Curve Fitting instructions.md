@@ -1,4 +1,4 @@
-# <center>Non-Linear Curve Fitting for Postsynaptic Current Analysis</center>
+<h1 align="center">Non-Linear Curve Fitting for Postsynaptic Current Analysis</h1>
 
 ## Table of Contents
 - [Initial Set Up](#initial-set-up)
