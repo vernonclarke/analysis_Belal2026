@@ -1242,10 +1242,10 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
    
    **available fitting methods (`FITN` `method` argument):**
 
-   - **`'BF.LM'` (default) — Brute Force Levenberg-Marquardt:**
-     - *Robust initialisation:* Tries multiple random starting points and selects the best.
-     - *Bounded optimisation:* Enforces parameter bounds throughout.
-     - *Recommended:* Best general-purpose choice for noisy or poorly initialised data.
+   - **`'BF.LM'` (default) — bounded-fit Levenberg-Marquardt:**
+     - *Bounded fitting:* Applies parameter bounds before fitting with `minpack.lm::nls.lm()`.
+     - *Randomised starting values:* For product functions, starting values are generated from heuristic estimates with random scaling.
+     - *Retry strategy:* Repeats failed or non-convergent fits and keeps the best successful result.
 
    - **`'LM'` — Levenberg-Marquardt:**
      - *Efficient convergence:* Interpolates between gradient descent and Gauss-Newton for fast convergence near the solution.
