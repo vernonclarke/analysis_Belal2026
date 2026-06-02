@@ -15,7 +15,7 @@ The code presented here was used to analyse the datasets in the following manusc
 
 Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models
 
-Belal, M.1, Perez-Rosello, T.1, Guven E. B.4, Kotakurk S.5, Xie, Z.1, O’Donnel Jr.2, Li, J.3, Dauer, W.2, Tkatch, T.1, Assous, M.5, Tepper, J.M.4, Clarke, V.R.J.1, Surmeier, D.J.1
+Belal, M.1, Perez-Rosello, T.1, Guven E. B.4, Kocaturk S.5, Xie, Z.1, Li, J.3, Dauer, W.2, Tkatch, T.1, Assous, M.5, Tepper, J.M.4, Clarke, V.R.J.1, Surmeier, D.J.1
 
 Affiliations
 
@@ -44,13 +44,13 @@ cd "$HOME/Documents/Repositories/analysis_Belal2026"
 
 mkdir -p NWBdata
 
-dandi download "DANDI:001832/draft" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBData --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
 
-dandi download "DANDI:001832/0.XXXXX" -o NWBData --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBData --existing REFRESH --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
 
 ```
 
@@ -61,14 +61,13 @@ dandi download "DANDI:001832/draft" -o NWBData --existing REFRESH --format PYOUT
 Repository components:
 
 - `nNLS functions.R` (core fitting functions)
-- `analyseResponse.R` (modular Shiny workflow)
 - `examples/` (example input files)
 - `images/` (plot assets)
 
 Requirements:
 
 - R (tested on R 4.4.x to 4.5.x)
-- Packages: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `writexl`
+- Packages: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`
 - C++ toolchain for `Rcpp`:
 - macOS: Xcode Command Line Tools
 - Windows: Rtools
@@ -87,7 +86,7 @@ load_required_packages <- function(packages) {
   invisible(lapply(packages, library, character.only = TRUE))
 }
 
-required_packages <- c("robustbase", "minpack.lm", "Rcpp", "signal", "writexl")
+required_packages <- c("robustbase", "minpack.lm", "Rcpp", "signal", "openxlsx", "dbscan")
 load_required_packages(required_packages)
 ```
 
