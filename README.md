@@ -1,6 +1,14 @@
-# Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
+# Analysis code 
 
-## Manuscript
+# Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
+Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
+
+ACH GRAB
+
+RNAscope
+
+
+
 
 The code presented here was used to analyse the datasets in the following manuscript:
 
@@ -16,6 +24,7 @@ Affiliations
 4 Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA
 5 School of Biosciences, Cardiff University, Cardiff, UK
 
+# Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
 Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
 
 ## Table of Contents
