@@ -68,9 +68,9 @@ load_required_packages(required_packages)
 ### 2. Source repository functions
 
 ```r
-UserName <- "YourUserName"  # replace with your macOS username
-root_dir <- file.path("/Users", UserName, "Documents", "Repositories", "Rfits")
-source(file.path(root_dir, "nNLS functions.R"))
+UserName <- Sys.getenv('USER')
+root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
 
 ### 3. Single-trace fitting example
