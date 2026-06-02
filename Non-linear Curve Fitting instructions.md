@@ -420,19 +420,17 @@ The simulated data is saved in the folder `examples` in the main repository. The
  a. **Open `Terminal` and launch `R`**
  
  ```
- # open R from Terminal
  R --no-save
  ```
 
  b. **Clear environment, load packages and set paths**
 
- Once `R` has lauched then enter the following code into the `Terminal`:
+ Once `R` has lauched then enter the following code into the `Terminal` to load and install necessary packages and then create the path to the repository:
  
  ```
  rm(list = ls(all = TRUE))
  graphics.off()
   
- # load and install necessary packages
  load_required_packages <- function(packages) {
    new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
    if (length(new.packages)) install.packages(new.packages)
@@ -443,7 +441,6 @@ The simulated data is saved in the folder `examples` in the main repository. The
     'shiny', 'shinybusy', 'signal', 'readxl', 'openxlsx')
  load_required_packages(required.packages)
   
- # create path to the repository
  UserName <- Sys.getenv('USER')
  root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
  source(file.path(root_dir, 'R functions', 'setup.R'))
