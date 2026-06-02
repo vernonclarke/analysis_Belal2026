@@ -1,10 +1,8 @@
-# <center>Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
+# <center>Non-Linear Curve Fitting for Postsynaptic Current Analysis</center>
 
 ## Table of Contents
 - [Initial Set Up](#initial-set-up)
 - [Setting up](#setting-up)
-- [Known set-up issues](#known-set-up-issues)
-- [Personal Information Configuration](#personal-information-configuration)
 - [Quick Start Guide](#quick-start-guide)
 - [Step-by-step guide to analyse a dataset](#step-by-step-guide-to-analyse-a-dataset)
   - [Setting the environment](#setting-the-environment)
@@ -19,6 +17,7 @@
   - [Examining analysed data](#examining-analysed-data)
   - [Useful functions](#useful-functions)
   - [Output file structure](#output-file-structure)
+- [Known set-up issues](#known-set-up-issues)
 - [Definitions and Formulae](#definitions-and-formulae)
 
 ## Initial Set Up
@@ -52,198 +51,37 @@ Always re-install XQuartz when upgrading your macOS to a new major version.
 
 ### Setting up
 
-Only the R console was used for analysis. 
+Only the R console was used for analysis.
 
-If you prefer to work with [`RStudio`](https://posit.co/products/open-source/rstudio/), why? 
-
-That said, the provided code should work in `RStudio` although this has not explicitly been tested. 
+The examples were written for the R console/R GUI. They should also work in [`RStudio`](https://posit.co/products/open-source/rstudio/), although the interactive plotting behavior may differ. 
 
 Download the code in this directory using the green <span style="background-color:#00FF00; color:white; padding:4px 8px; border-radius:6px; font-family:monospace; display: inline-flex; align-items: center;"> &lt;&gt; Code <span style="margin-left: 4px;">&#9660;</span> </span>
 dropdown menu followed by `Download Zip`
 
-Unpack and create directory e.g. `/Users/UserName/Documents/Repositories/analysis_Belal2026` replacing `UserName` with your actual `UserName` (!). 
+Unpack and create directory e.g. `/Users/UserName/Documents/Repositories/analysis_Belal2026` replacing `UserName` with your actual `UserName` (!).
+
+The analysis scripts assume this repository location. They derive `UserName` from `Sys.getenv('USER')`, so no hidden configuration file is required.
 
 In order for the provided R code to work, it is necessary to load various packages within the R environment.
 
 Any code preceded by # is `commented out` and is provided in `*.R` files for instructional/informational purposes.
 
-### Known set-up issues
-
-#### `XQuartz` Permissions & Environment Setup
-
-If `XQuartz` (`X11`) fails due to permission resets (this routinely occurs on my `MacBook`, most likely as a result of my host institution altering permissions), any graphics in `R` will fail.
-
-Reset `XQuartz` permission by following these steps:
-
-a. Open `Terminal`
-
-b. Create the /tmp/.X11-unix directory with sticky-world permissions
-
- ```bash
-  sudo mkdir -p /tmp/.X11-unix
-  sudo chmod 1777 /tmp/.X11-unix
- ```
-
-c. Ensure no conflicting `X11` processes are running
-
- ```bash
-  ps aux | grep X11
-  sudo killall XQuartz
- ```
-
-d. Restart `XQuartz`
-
- ```bash
-  open -a XQuartz
- ```
-
-e. Set the DISPLAY environment variable so X clients know where to connect
-
- ```bash
-  export DISPLAY=:0
- ```
-
-f. Allow connections from localhost (needed for calls from `R`)
-
- ```bash
-  xhost +localhost
- ```
-
-g. Verify Security Settings for `Xquartz` GUI (optional):
-
-Open XQuartz → Preferences → Security → check 'Allow connections from network clients'
-
-h. Check the macOS Console for `XQuartz` errors (optional):
-
-Open Console.app → filter for `XQuartz` → inspect any error messages
-
-i. Test your configuration by launching a simple `X11` app
-
- ```bash
-  xterm   # if an xterm window appears, your XQuartz setup is correct
- ```
-
-
-#### Attempt at a permanent fix for `XQuartz` Environment Variable Setup
-
-If `DISPLAY` is not automatically set on macOS, `tcltk` GUIs launched from `R` will fail with errors such as *"couldn't connect to display :0"*.  
-This can be resolved by ensuring the environment variable is defined whenever a new shell session starts.
-
-a. Open `Terminal`  
-b. Edit your shell startup file (`~/.zshrc` for Zsh, `~/.bashrc` for Bash)  
-c. Add the following lines to automatically set the display and allow local connections  
-d. Save and reload your shell configuration  
-e. Verify that the variable is set  
-f. Test your configuration by launching a simple `X11` app  
-
-```bash
-nano ~/.zshrc
-```
-Ensure XQuartz is running and DISPLAY is set by adding these lines to the shell startup:
-
-```
-# Set DISPLAY for X11 apps
-export DISPLAY=:0
-
-# Run xhost only if display is available
-if [ -S /tmp/.X11-unix/X0 ]; then
-    xhost +localhost >/dev/null 2>&1
-fi
-```
-
-Check working: 
-```bash
-source ~/.zshrc
-
-echo $DISPLAY
-xterm   # if an xterm window appears, your XQuartz setup is correct
-```
------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------
-## Personal Information Configuration
-
-Before running any scripts, it is easiest to create a configuration file to store your local paths.
-
-### Step 1: Create the config file
-
-Open Terminal and run:
-
-```bash
-touch ~/.abf2nwb_config.yaml
-open ~/.abf2nwb_config.yaml
-```
-
-### Step 2: Add your settings
-
-username: 'YourUserName'
-
-path_repository: '/Documents/Repositories/analysis_Belal2026'
-
-ABF2NWB_repository: '/Documents/Repositories/ABF2NWB'
-
-path_analysis: '/path/to/your/analysis/folder'
-
-### Step 3: Save and close the file
-The ~ refers to your home directory (e.g., /Users/username/).
-
-Example
-For a user named 'OttoMaddox' with analysis files on OneDrive:
-
-username: 'OttoMaddox'
-
-path_repository: '/Documents/Repositories/analysis_Belal2026'
-
-ABF2NWB_repository: '/Documents/Repositories/ABF2NWB'
-
-path_analysis: '/Library/CloudStorage/OneDrive-UnitedFruitcakeOutlet/Rfits/Analysis'
-
-In R, check that the config loads correctly:
-
-```R
-config <- yaml::read_yaml("~/.abf2nwb_config.yaml")
-print(config$username)
-```
-
-The config file is created in the user's home directory as a hidden file.
-
-- **Mac**: Press `Cmd + Shift + .` in Finder to show hidden files
-- **Windows**: In File Explorer, click View > Show > Hidden items
-
------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------------------------
-
 ## Quick Start Guide  
  
-1. **Open R GUI and run this code once**
+1. **Open R GUI and source the shared setup file**
 
  ```R
  # Remove all objects from the environment
  rm(list = ls(all = TRUE))
 
- # Load and install necessary packages
- load_required_packages <- function(packages) {
-    new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-    if (length(new.packages)) install.packages(new.packages)
-    invisible(lapply(packages, library, character.only = TRUE))
- }
-
- required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
- load_required_packages(required.packages)
- ```
- Once this code is run, it should perform all necessary installations and load the necessary packages for the analysis
-
-2. **Load all necessary custom-written functions**
-
-   **These functions are included in an `R` file named `nNLS functions.R`**
-
-
- ```R
  UserName <- Sys.getenv('USER')
  root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
  source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
 
-3. **Fitting example**
+ Once this code is run, it should perform all necessary installations, load the required packages, and load the custom-written functions.
+
+2. **Fitting example**
 
  The following code generates a noisy signal that comprises a single train of responses.
 
@@ -1288,6 +1126,98 @@ The simulated data is saved in the folder `examples` in the main repository. The
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
     
+## Known set-up issues
+
+#### `XQuartz` Permissions & Environment Setup
+
+If `XQuartz` (`X11`) fails due to permission resets (this routinely occurs on my `MacBook`, most likely as a result of my host institution altering permissions), any graphics in `R` will fail.
+
+Reset `XQuartz` permission by following these steps:
+
+a. Open `Terminal`
+
+b. Create the /tmp/.X11-unix directory with sticky-world permissions
+
+ ```bash
+  sudo mkdir -p /tmp/.X11-unix
+  sudo chmod 1777 /tmp/.X11-unix
+ ```
+
+c. Ensure no conflicting `X11` processes are running
+
+ ```bash
+  ps aux | grep X11
+  sudo killall XQuartz
+ ```
+
+d. Restart `XQuartz`
+
+ ```bash
+  open -a XQuartz
+ ```
+
+e. Set the DISPLAY environment variable so X clients know where to connect
+
+ ```bash
+  export DISPLAY=:0
+ ```
+
+f. Allow connections from localhost (needed for calls from `R`)
+
+ ```bash
+  xhost +localhost
+ ```
+
+g. Verify Security Settings for `Xquartz` GUI (optional):
+
+Open XQuartz → Preferences → Security → check 'Allow connections from network clients'
+
+h. Check the macOS Console for `XQuartz` errors (optional):
+
+Open Console.app → filter for `XQuartz` → inspect any error messages
+
+i. Test your configuration by launching a simple `X11` app
+
+ ```bash
+  xterm   # if an xterm window appears, your XQuartz setup is correct
+ ```
+
+
+#### Attempt at a permanent fix for `XQuartz` Environment Variable Setup
+
+If `DISPLAY` is not automatically set on macOS, `tcltk` GUIs launched from `R` will fail with errors such as *"couldn't connect to display :0"*.  
+This can be resolved by ensuring the environment variable is defined whenever a new shell session starts.
+
+a. Open `Terminal`  
+b. Edit your shell startup file (`~/.zshrc` for Zsh, `~/.bashrc` for Bash)  
+c. Add the following lines to automatically set the display and allow local connections  
+d. Save and reload your shell configuration  
+e. Verify that the variable is set  
+f. Test your configuration by launching a simple `X11` app  
+
+```bash
+nano ~/.zshrc
+```
+Ensure XQuartz is running and DISPLAY is set by adding these lines to the shell startup:
+
+```
+# Set DISPLAY for X11 apps
+export DISPLAY=:0
+
+# Run xhost only if display is available
+if [ -S /tmp/.X11-unix/X0 ]; then
+    xhost +localhost >/dev/null 2>&1
+fi
+```
+
+Check working: 
+```bash
+source ~/.zshrc
+
+echo $DISPLAY
+xterm   # if an xterm window appears, your XQuartz setup is correct
+```
+
 ## Definitions and Formulae
 
 ## <center>These routines are designed to provide fits for product and alpha functions</center>
