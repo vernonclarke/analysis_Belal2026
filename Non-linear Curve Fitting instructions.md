@@ -883,7 +883,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
    To access any object related to the fitting of any response:
    
    ```R
-   ii <- 2 # trace 3 
+   ii <- 2 # trace 2 
    out_list[[ii]]$output
    out_list[[ii]]$fits
    out_list[[ii]]$fits.se
@@ -1117,15 +1117,15 @@ The simulated data is saved in the folder `examples` in the main repository. The
    The actual best fit result given for the 3rd fitted reponse is:
 
    ```R
-   out_list[[3]]$output
+   out_list[[ii]]$output
    ```
    
    The result is identical (as expected):
 
    ```
-               A1     τrise    τdecay     tpeak    r10_90    d90_10    delay     area1
-   fast -51.89240  3.626768  28.47419  8.564368  4.582163  63.43073 1.900023  1996.093
-   slow -98.42352 10.978628 198.65948 33.649780 16.913054 437.23132 4.673744 23161.722
+              A1  τrise  τdecay  tpeak r10_90  d90_10 delay half_width    area1
+    fast -51.892  3.627  28.474  8.564  4.582  63.431 1.900     30.420  1996.08
+    slow -98.424 10.979 198.659 33.650 16.913 437.231 4.674    176.486 23161.73
    ```
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
