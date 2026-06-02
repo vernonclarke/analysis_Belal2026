@@ -1,8 +1,5 @@
 <h1 align="center">Analysis code</h1>
 
-# Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
-Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
-
 [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
 
 [RNAscope instructions](RNAscope%20instructions.md)
@@ -54,7 +51,12 @@ dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT
 
 ```
 
+Different versions of the DANDI command line tool use different casing for option values.
+Use the uppercase or lowercase command according to what `dandi download --help` shows on that machine.
 
+Use `--existing ERROR` or `--existing error` for a first clean download.
+Use `--existing REFRESH` or `--existing refresh` when the files already exist and need to be checked or updated.
+If the dandiset has a published version, replace `0.XXXXX` with the published version identifier.
 
 ## Initial Setup
 
