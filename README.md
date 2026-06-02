@@ -181,6 +181,6 @@ This code performs RNAscope analysis in Python/R, including NWB conversion/loadi
 
 This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
 
-### [Non-linear Curve Fitting instructions.md](Non-linear%20Curve%20Fitting%20instructions.md) 
+### [Curve Fitting Equations.md](Curve-Fitting-Equations.md) 
 
-Equations, model details, fitting strategy, and AIC/BIC conventions.
+Equations for fitting models.
