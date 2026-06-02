@@ -483,7 +483,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   A plot will appear with horizontal and vertical lines showing the time at which the response falls to the `Fit cutoff` level (e.g. ~508.4 ms).
 
-  Enter `510` in the **`User maximum time for fit`** input box in the `UI`. This defines the end point of the time window over which the fitting will be performed for the displayed trace.
+  The **`User Maximum Time for Fit`** input box in the `UI` can be altered. In this example, leave the value on the exact cutoff i.e. `508.4` ms. This value defines the end point of the time window over which the fitting will be performed for the displayed trace.
 
   The `UI` output now looks like this:  
     
@@ -497,11 +497,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The updated output looks like this:
    
-  <img src="./examples/analysePSC_2.png" alt="analysePSC_2" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_3.png" alt="analysePSC_2" width="100%" height="100%"/>
 
   Having obtained a satisfactory fit, click the **`Add to Results`** button to save the fitted results.
 
-  <img src="./examples/analysePSC_3.png" alt="analysePSC_3" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_4.png" alt="analysePSC_3" width="100%" height="100%"/>
 
   This procedure is repeated for all columns:
   1. **`Select Column to Analyse`**
@@ -511,7 +511,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The procedure is repeated for all columns with the `User Maximum Time for Fit:` generated values:
   
-  <img src="./examples/analysePSC_4.png" alt="analysePSC_4" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_5.png" alt="analysePSC_4" width="100%" height="100%"/>
   
   i. **`Download RData`**
   
