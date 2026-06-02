@@ -6,7 +6,6 @@ RNAscope data/
 **/.ipynb_checkpoints/
 
 # Ignore specific file types globally
-*.mov
 *.txt
 *.zip
 *.RData
