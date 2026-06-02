@@ -1,0 +1,3 @@
+"model","data","parameter","estimate","se","df","t_value","p_value"
+"lmer: var ~ Group + (1 | Animal/field)","df_NDNF","(Intercept)",19.5799268216017,2.07804559199715,2.9453419202502,9.42227971176703,0.00272981359109406
+"lmer: var ~ Group + (1 | Animal/field)","df_NDNF","Group1",1.77594031124732,0.771885443130072,37.0413361907602,2.30078223012692,0.0271330670352376

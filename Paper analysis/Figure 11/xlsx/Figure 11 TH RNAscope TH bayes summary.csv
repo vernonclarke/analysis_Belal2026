@@ -1,0 +1,2 @@
+"model","data","parameter","estimate","ci_2.5","ci_97.5","p_6OHDA_less_than_0","p_control_less_than_6OHDA","p_classic_2tail","p_6OHDA_cell_less_than_control_cell"
+"brm: var ~ Group + (1 | Animal/field), family = student()","df_TH","b_Group1",1.03654468906801,0.278122096730666,1.80236927456869,0.00425,0.99575,0.0085,0.6765

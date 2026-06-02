@@ -1,0 +1,2 @@
+"model","data","parameter","estimate","p_value","ci_2.5","ci_97.5","n_boot"
+"rlmer bootstrap: var ~ Group + (1 | Animal/field)","df_TH","Group1",1.04178895342137,0,0.685309286424089,2.28114264408848,1999

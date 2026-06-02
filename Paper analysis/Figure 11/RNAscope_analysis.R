@@ -17,7 +17,7 @@ svg_path <- paths$svg_path
 
 # choose cell type: 'NDNF' or 'TH'
 cell_type <- 'NDNF'
-# cell_type <- 'TH'
+cell_type <- 'TH'
 
 if (cell_type == 'NDNF') {
   cell_marker <- 'NDNF+'
@@ -39,7 +39,7 @@ if (cell_type == 'NDNF') {
   stop("cell_type must be 'NDNF' or 'TH'")
 }
 
-nboot <- 9999
+nboot <- 1999
 plotsave <- TRUE
 
 # Load data
@@ -78,14 +78,13 @@ summary(model)
 
 # extract lmer fixed effects summary in csv-friendly format
 lmer_sum <- summary(model)
-fe <- as.data.frame(coef(lmer_sum))
+fe <- as.data.frame(coef(summary(model)))
 fe$parameter <- rownames(fe)
 fe$model <- 'lmer: var ~ Group + (1 | Animal/field)'
 fe$data <- df_name
 rownames(fe) <- NULL
 names(fe) <- c('estimate', 'se', 'df', 't_value', 'p_value', 'parameter', 'model', 'data')
 fe <- fe[, c('model', 'data', 'parameter', 'estimate', 'se', 'df', 't_value', 'p_value')]
-fe
 
 # Bootstrap
 name <- paste0('RNAscope_', cell_type)
@@ -257,10 +256,6 @@ if (file.exists(RData_path)) {
   save.image(file = RData_path)
 }
 
-boot_summary
-bayes_summary
-
-# save all to single 'xlsx'
 # save all to single 'xlsx'
 if (plotsave) {
   data_list <- setNames(
@@ -294,7 +289,7 @@ BoxPlot(formula=var ~ Group + (1 | field), data=df[,c('field', 'Group', 'var')],
   wid=wid, cap=cap, xlab='', ylab = ylab, xrange=xrange, yrange=yrange,  xlabel_angle=45, tick_length=tick_length,
   y_tick_interval=y_tick_interval, lwd=lwd, type=type, amount=amount, p.cex=p.cex, height=height, width=width)
 
-if (plotsave) save_graph(svg_path=svg_path, filename=paste0('RNAscope_boxplot_', cell_type, '.svg'), width=width, height=height, bg='transparent')
+if (plotsave) save_graph(svg_path=svg_path, filename=paste0(identifier, '_RNAscope_boxplot_', cell_type, '.svg'), width=width, height=height, bg='transparent')
 
 # Bayes
 
@@ -440,4 +435,34 @@ legend('topright',
        legend=paste0('P(6-OHDA < Control) = ', round(p5, 5)),
        bty='n', box.lwd=0, cex=0.85)
 
-if (plotsave) save_graph(svg_path=svg_path, filename=paste0('Bayesian_Analysis_', cell_type, '.svg'), width=width, height=height, bg='transparent')
+if (plotsave) save_graph(svg_path=svg_path, filename=paste0(identifier, '_Bayesian_Analysis_', cell_type, '.svg'), width=width, height=height, bg='transparent')
+
+
+
+# NDNF
+
+# boot_summary
+#                                               model    data parameter estimate     p_value    ci_2.5 ci_97.5 n_boot
+# 1 rlmer bootstrap: var ~ Group + (1 | Animal/field) df_NDNF    Group1 1.454205 0.004002001 0.4468117  2.7196   1999
+
+# bayes_summary
+#                                                       model    data parameter estimate     ci_2.5  ci_97.5 p_6OHDA_less_than_0 p_control_less_than_6OHDA p_classic_2tail p_6OHDA_cell_less_than_control_cell
+# 1 brm: var ~ Group + (1 | Animal/field), family = student() df_NDNF  b_Group1 1.604936 0.04065959 3.142714            0.022375                  0.977625         0.04475                             0.62025
+
+# TH
+
+# boot_summary
+#                                               model  data parameter estimate p_value    ci_2.5  ci_97.5 n_boot
+# 1 rlmer bootstrap: var ~ Group + (1 | Animal/field) df_TH    Group1 1.041789       0 0.6853093 2.281143   1999
+
+# bayes_summary
+#                                                       model  data parameter estimate    ci_2.5  ci_97.5 p_6OHDA_less_than_0 p_control_less_than_6OHDA p_classic_2tail p_6OHDA_cell_less_than_control_cell
+# 1 brm: var ~ Group + (1 | Animal/field), family = student() df_TH  b_Group1 1.036545 0.2781221 1.802369             0.00425                   0.99575          0.0085                              0.6765
+
+# fe
+#                                    model  data   parameter estimate        se       df   t_value      p_value
+# 1 lmer: var ~ Group + (1 | Animal/field) df_TH (Intercept) 7.070161 0.3551743 36.49453 19.906172 3.453134e-21
+# 2 lmer: var ~ Group + (1 | Animal/field) df_TH      Group1 1.017490 0.3551743 36.49453  2.864761 6.881571e-03
+
+
+
