@@ -12,11 +12,16 @@ required.packages <- c('robustbase', 'minpack.lm', 'openxlsx',
                        'Rcpp', 'signal', 'dbscan')
 load_required_packages(required.packages)
 
+if (!exists('root_dir')) {
+  UserName <- Sys.getenv('USER')
+  root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+}
+
 repo_root <- Sys.getenv('ANALYSIS_ROOT',
-                        unset='/Users/euo9382/Documents/Repositories/analysis_Belal2026')
+                        unset=root_dir)
 repo_root <- normalizePath(repo_root, mustWork=TRUE)
 
-source(paste0(repo_root, '/R functions/nNLS functions.R'))
+source(file.path(repo_root, 'R functions', 'nNLS functions.R'))
 
 make_paths <- function(identifier) {
   analysis_path <- paste0(repo_root, '/Paper analysis/', identifier)

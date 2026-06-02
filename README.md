@@ -14,7 +14,7 @@ Rfits provides non-linear fitting tools for postsynaptic current/potential analy
 
 ```bash
 
-cd "/Users/euo9382/Documents/Repositories/analysis_Belal2026"
+cd "$HOME/Documents/Repositories/analysis_Belal2026"
 
 mkdir -p NWBdata
 

@@ -6,7 +6,10 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+UserName <- Sys.getenv('USER')
+root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+
+source(file.path(root_dir, 'R functions', 'setup.R'))
 
 identifier <- 'Figure 8'
 paths <- make_paths(identifier)
@@ -227,7 +230,10 @@ save.image(file = file.path(analysis_path, paste0(name, '.RData')))
 rm(list = ls(all = TRUE))
 graphics.off()
 
-source('/Users/euo9382/Documents/Repositories/analysis_Belal2026/R functions/setup.R')
+UserName <- Sys.getenv('USER')
+root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+
+source(file.path(root_dir, 'R functions', 'setup.R'))
 
 # Paths
 repo_root <- normalizePath(
