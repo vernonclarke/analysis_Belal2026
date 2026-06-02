@@ -922,7 +922,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    The actual fits are performed using this version of the equation.
 
-   The columns correspond to [$A_1$ $τ_{1}$ $τ_{2}$ delay], in this case, repeated twice for the fast and slow component fits
+   The columns correspond to $[A_1,\ \tau_1,\ \tau_2,\ \mathrm{delay}]$, in this case, repeated twice for the fast and slow component fits
 
    ```
    out_list[[ii]]$fits
