@@ -545,6 +545,8 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    Click the **`Clear Results`** button to clear all resultsbefore selecting a new dataset to load via the **`Browse`** button.
    
+   ### Video walkthrough
+   
    A video walkthrough is also available:
 
    <div align="center">
