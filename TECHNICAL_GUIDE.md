@@ -579,7 +579,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
     lwd=1.2, height=5, width=5, save=FALSE)
  ```
 
- ![trace3](./examples/trace3.svg)
+ <img src="./examples/trace3.svg" alt="trace3" width="360"/>
 
 
 
