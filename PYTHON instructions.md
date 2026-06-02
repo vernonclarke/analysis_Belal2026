@@ -61,30 +61,6 @@ RNAscope notebooks/RNAscope reanalysis.ipynb
 RNAscope notebooks/RNAscope_readNWBexample.ipynb
 ```
 
-## Download DANDI Data
-
-Figure 7 uses NWB data from DANDI dataset `001832`.
-
-```bash
-cd "$HOME/Documents/Repositories/analysis_Belal2026"
-mkdir -p NWBdata
-
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
-
-dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
-
-dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
-
-dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
-```
-
-Different versions of the DANDI command line tool use different casing for option values.
-Use the uppercase or lowercase command according to what `dandi download --help` shows on that machine.
-
-Use `--existing ERROR` or `--existing error` for a first clean download.
-Use `--existing REFRESH` or `--existing refresh` when the files already exist and need to be checked or updated.
-If the dandiset has a published version, replace `0.XXXXX` with the published version identifier.
-
 The fluorescence biosensor notebooks expect the downloaded data under:
 
 ```text
