@@ -1109,9 +1109,9 @@ The simulated data is saved in the folder `examples` in the main repository. The
    This gives:
 
    ```
-              A1 τrise  τdecay  tpeak r10_90  d90_10 delay     area1
-   fast  -45.767 2.330  34.295  6.722  3.438  75.585  2.12  1909.475
-   slow -100.059 8.737 201.290 28.653 14.091 442.614  5.00 23221.901
+                A1     τrise    τdecay     tpeak    r10_90    d90_10    delay    area1
+    fast -51.89202  3.626826  28.47411  8.564451  4.582213  63.43059 1.900023  1996.08
+    slow -98.42360 10.978629 198.65939 33.649778 16.913053 437.23112 4.673691 23161.73
    ```
 
    The actual best fit result given for the 3rd fitted reponse is:
