@@ -14,25 +14,28 @@ Affiliations
 <sup>4</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
 <sup>5</sup> School of Biosciences, Cardiff University, Cardiff, UK
 
-[Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
-
-This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
-
-[RNAscope instructions](RNAscope%20instructions.md)
-
-This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
-
-[Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
-
-This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
-
 ## Table of Contents
 
 - [Initial Setup](#initial-setup)
 - [Quick Start Guide](#quick-start-guide)
 - [Output Structure](#output-structure)
 - [macOS XQuartz Troubleshooting](#macos-xquartz-troubleshooting)
+- [Fluorescence Biosensor Imaging instructions](#fluorescence-biosensor-imaging-instructions)
+- [RNAscope instructions](#rnascope-instructions)
+- [Non-linear Curve Fitting instructions](#non-linear-curve-fitting-instructions)
 - [Technical Documentation](#technical-documentation)
+
+## [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
+
+This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
+
+## [RNAscope instructions](RNAscope%20instructions.md)
+
+This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
+
+## [Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
+
+This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
 
 
 
