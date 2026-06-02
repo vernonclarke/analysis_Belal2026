@@ -685,7 +685,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    The corresponding `analysePSC()` user-interface example is shown above in the Shiny workflow section, using `examples/data.xlsx`. A video walkthrough is also available:
 
-   <a href="https://raw.githubusercontent.com/vernonclarke/analysis_Belal2026/main/examples/analysePSC.mov"><img src="./examples/analysePSC_2.png" alt="analysePSC video walkthrough" width="50%"></a>
+   <a href="https://github.com/vernonclarke/analysis_Belal2026/raw/refs/heads/main/examples/analysePSC.mov"><img src="./examples/analysePSC_2.png" alt="analysePSC video walkthrough" width="50%"></a>
 
    ### Useful functions
 
