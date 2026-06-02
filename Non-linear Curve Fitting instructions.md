@@ -1237,8 +1237,9 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
 1. **find approximate starting values:**
     - Using 20-80% rise time and 80-20% decay time heuristics to estimate $\tau_{rise}$ and $\tau_{decay}$
 
-2. **get optimised starting parameter values:**
-    - Using `optim` (`L-BFGS-B`) least squares to refine initial estimates before nonlinear fitting
+2. **generate starting parameter values and run the selected fitting method:**
+    - For product functions, starting values are generated from response-shape heuristics with random scaling.
+    - For non-product functions, `optim` (`L-BFGS-B`) can refine starting values before nonlinear fitting.
    
    **available fitting methods (`FITN` `method` argument):**
 
@@ -1248,27 +1249,29 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
      - *Retry strategy:* Repeats failed or non-convergent fits and keeps the best successful result.
 
    - **`'LM'` — Levenberg-Marquardt:**
+     - *Levenberg-Marquardt fitting:* Uses `minpack.lm::nls.lm()` for nonlinear least-squares fitting.
      - *Efficient convergence:* Interpolates between gradient descent and Gauss-Newton for fast convergence near the solution.
-     - *Suitable for smooth problems:* Works well when a good starting point is available.
 
    - **`'GN'` — Gauss-Newton:**
-     - *Fast near solution:* Quadratic convergence when the residuals are small.
-     - *Simple structure:* No damping parameter; efficient for well-conditioned problems.
+     - *Base R nonlinear least squares:* Uses `nls(..., algorithm='default')`.
+     - *Fast near solution:* Efficient for well-conditioned problems with good starting values.
 
    - **`'port'` — PORT algorithm (box-constrained NLS):**
-     - *Hard bounds:* Strictly enforces parameter bounds via the PORT routines in `nlminb`.
+     - *Hard bounds:* Uses `nls(..., algorithm='port')` to enforce box constraints.
      - *Suitable for constrained problems:* Useful when parameter ranges must be respected.
 
-   - **`'robust'` — Robust regression:**
+   - **`'robust'` — Robust nonlinear fitting:**
      - *Outlier resistance:* Down-weights influential outliers during fitting.
      - *Reliable estimates:* Provides stable parameter estimates when data contain contamination.
 
-3. **get final fits by Maximum Likelihood Estimation (MLE) using optimised starting parameters:**
-    - From step 2 as starting values
+   - **`'MLE'` — Maximum Likelihood Estimation:**
+     - *Likelihood-based fitting:* Uses `optim()` to maximise the likelihood objective.
+     - *Shared starting-value logic:* Uses the same starting-value helpers when starting values are not supplied.
+     - *Optional random walk:* Can use the `Random Walk Metropolis` option (`RWm`) to summarise posterior samples.
     
-4. **output:**
+3. **output:**
     - Initial approximate starting values from step 2
-    - Fit in form [ $A_1$, $\tau_1$, $\tau_2$, $A_2$, $\tau_3$, $\tau_4$, $\sigma$ ]; act as starting values for MLE fit; accurate as nonlinear least squares curve fits
+    - Fit in form [ $A_1$, $\tau_1$, $\tau_2$, $A_2$, $\tau_3$, $\tau_4$ ]; for `MLE`, $\sigma$ is also estimated
     - Fits [ $A_{peak_1}$, $\tau_{rise_1}$, $\tau_{decay_1}$, $A_{peak_2}$, $\tau_{rise_2}$, $\tau_{decay_2}$ ]
     - Model information criterion if chosen
 
