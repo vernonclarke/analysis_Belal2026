@@ -484,7 +484,7 @@ Paper analysis/Figure 11/xlsx
 Paper analysis/Figure 11/svg
 ```
 
-## Public Function Reference
+## Function Reference
 
 | Function | Purpose |
 |---|---|
