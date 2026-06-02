@@ -150,4 +150,4 @@ If needed permanently, add `export DISPLAY=:0` to your shell startup file.
 
 ## Technical Documentation
 
-Use `TECHNICAL_GUIDE.md` for equations, model details, fitting strategy, and AIC/BIC conventions.
+Use [TECHNICAL_GUIDE.md](TECHNICAL_GUIDE.md) for equations, model details, fitting strategy, and AIC/BIC conventions.

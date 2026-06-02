@@ -319,7 +319,7 @@ y <- ysignal + rnorm(length(x),sd=std.dev)
 
  The final graphical output should be:
 
- ![trace1](./images/trace1.svg)
+ ![trace1](./examples/trace1.svg)
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -629,7 +629,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The `UI` should open:
 
-  <img src="./images/analysePSC_1.png" alt="analysePSC_1" width="100%" height="100%"/> 
+  <img src="./examples/analysePSC_1.png" alt="analysePSC_1" width="100%" height="100%"/> 
  
   d. **Upload `csv` or `xlsx`**  
 
@@ -659,7 +659,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The `UI` output now looks like this:  
     
-  <img src="./images/analysePSC_2.png" alt="analysePSC_2" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_2.png" alt="analysePSC_2" width="100%" height="100%"/>
 
   h. **Run Main Analysis**  
 
@@ -669,11 +669,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The updated output looks like this:
    
-  <img src="./images/analysePSC_2.png" alt="analysePSC_2" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_2.png" alt="analysePSC_2" width="100%" height="100%"/>
 
   Having obtained a satisfactory fit, click the **`Add to Results`** button to save the fitted results.
 
-  <img src="./images/analysePSC_3.png" alt="analysePSC_3" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_3.png" alt="analysePSC_3" width="100%" height="100%"/>
 
   This procedure is repeated for all columns:
   1. **`Select Column to Analyse`**
@@ -683,7 +683,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
   The procedure is repeated for all columns with the `User Maximum Time for Fit:` generated values:
   
-  <img src="./images/analysePSC_4.png" alt="analysePSC_4" width="100%" height="100%"/>
+  <img src="./examples/analysePSC_4.png" alt="analysePSC_4" width="100%" height="100%"/>
   
   i. **`Download RData`**
   
@@ -973,7 +973,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
       The generated output for Theil-Sen regression fit with 95% confidence intervals looks like this:
 
-      ![scatter](./images/scatter.svg)
+      ![scatter](./examples/scatter.svg)
 
 
       **Notes on non-parametric fitting procedures:**
@@ -1007,7 +1007,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
       <div style="display: flex; justify-content: space-between;">
           <img src="./images/egs_control_5.svg" alt="Image 1" style="width: 45%;"/>
-          <img src="./images/semilog_egs_5.svg" alt="Image 2" style="width: 45%;"/>
+          <img src="./examples/semilog_egs_5.svg" alt="Image 2" style="width: 45%;"/>
       </div>
 
       The left plot shows the 2 fits together with the original response. The vertical and horizontal bars represent 25pA and 100ms, respectively.
@@ -1821,7 +1821,7 @@ If a non-numeric grouping column is present (e.g. `cell_type`), points are colou
 
 The generated output looks like this:
 
-![mv_outliers](./images/outlier_plot.svg)
+![mv_outliers](./examples/outlier_plot.svg)
 
 
 **Notes on multivariate outlier detection:**
