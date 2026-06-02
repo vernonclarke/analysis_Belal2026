@@ -1,13 +1,5 @@
 <h1 align="center">Analysis code</h1>
 
-[Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
-
-[RNAscope instructions](RNAscope%20instructions.md)
-
-[Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
-
-## Manuscript
-
 The code presented here was used to analyse the datasets in the following manuscript:
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
@@ -22,8 +14,17 @@ Affiliations
 <sup>4</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
 <sup>5</sup> School of Biosciences, Cardiff University, Cardiff, UK
 
-# Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
-Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
+[Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
+
+This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
+
+[RNAscope instructions](RNAscope%20instructions.md)
+
+This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
+
+[Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
+
+This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
 
 ## Table of Contents
 
