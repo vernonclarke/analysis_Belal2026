@@ -1235,25 +1235,40 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
 ## <center>Strategy<center>
 
 1. **find approximate starting values:**
-    - Using `tau_estimators` (20-80% rise and 80-20% decay)
+    - Using 20-80% rise time and 80-20% decay time heuristics to estimate $\tau_{rise}$ and $\tau_{decay}$
 
 2. **get optimised starting parameter values:**
-    - Using `optim` least squares method 
+    - Using `optim` (`L-BFGS-B`) least squares to refine initial estimates before nonlinear fitting
    
-   **advantages of `least squares` / `differential_evolution`:**   
-        
-   - **Least Squares:**
-     - *Suitable for Linear Regression:* Has a closed-form solution for linear relationships.
-     - *Interpretability:* Provides interpretable coefficients in regression.
-     - *Efficiency for Well-Behaved Problems:* Efficient where the solution space is smooth and well-defined.
-     - *Mathematical Foundation:* Widely used due to its strong mathematical basis.
+   **available fitting methods (`FITN` `method` argument):**
+
+   - **`'BF.LM'` (default) — Brute Force Levenberg-Marquardt:**
+     - *Robust initialisation:* Tries multiple random starting points and selects the best.
+     - *Bounded optimisation:* Enforces parameter bounds throughout.
+     - *Recommended:* Best general-purpose choice for noisy or poorly initialised data.
+
+   - **`'LM'` — Levenberg-Marquardt:**
+     - *Efficient convergence:* Interpolates between gradient descent and Gauss-Newton for fast convergence near the solution.
+     - *Suitable for smooth problems:* Works well when a good starting point is available.
+
+   - **`'GN'` — Gauss-Newton:**
+     - *Fast near solution:* Quadratic convergence when the residuals are small.
+     - *Simple structure:* No damping parameter; efficient for well-conditioned problems.
+
+   - **`'port'` — PORT algorithm (box-constrained NLS):**
+     - *Hard bounds:* Strictly enforces parameter bounds via the PORT routines in `nlminb`.
+     - *Suitable for constrained problems:* Useful when parameter ranges must be respected.
+
+   - **`'robust'` — Robust regression:**
+     - *Outlier resistance:* Down-weights influential outliers during fitting.
+     - *Reliable estimates:* Provides stable parameter estimates when data contain contamination.
 
 3. **get final fits by Maximum Likelihood Estimation (MLE) using optimised starting parameters:**
     - From step 2 as starting values
     
 4. **output:**
     - Initial approximate starting values from step 2
-    - Fit in form [ $A_1$, $\tau_1$, $\tau_2$, $A_2$, $\tau_3$, $\tau_4$, $\sigma$ ]; act as starting values for MLE fit; accurate as 'least squares' or 'differential evolution' curve fits
+    - Fit in form [ $A_1$, $\tau_1$, $\tau_2$, $A_2$, $\tau_3$, $\tau_4$, $\sigma$ ]; act as starting values for MLE fit; accurate as nonlinear least squares curve fits
     - Fits [ $A_{peak_1}$, $\tau_{rise_1}$, $\tau_{decay_1}$, $A_{peak_2}$, $\tau_{rise_2}$, $\tau_{decay_2}$ ]
     - Model information criterion if chosen
 
