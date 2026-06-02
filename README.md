@@ -13,17 +13,17 @@ Rfits provides non-linear fitting tools for postsynaptic current/potential analy
 
 The code presented here was used to analyse the datasets in the following manuscript:
 
-**Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
+Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models
 
-Belal, M.<sup>1</sup>, Perez-Rosello, T.<sup>1</sup>, Guven E. B.<sup>4</sup>, Kotakurk S.<sup>5</sup>, Xie, Z.<sup>1</sup>, O’Donnell Jr.<sup>2</sup>, Li, J.<sup>3</sup>, Dauer, W.<sup>2</sup>, Tkatch, T.<sup>1</sup>, Assous, M.<sup>5</sup>, Tepper, J.M.<sup>4</sup>, Clarke, V.R.J.<sup>1</sup>, Surmeier, D.J.<sup>1</sup>
+Belal, M.1, Perez-Rosello, T.1, Guven E. B.4, Kotakurk S.5, Xie, Z.1, O’Donnel Jr.2, Li, J.3, Dauer, W.2, Tkatch, T.1, Assous, M.5, Tepper, J.M.4, Clarke, V.R.J.1, Surmeier, D.J.1
 
-### Affiliations
+Affiliations
 
-1. Department of Neuroscience, Feinberg School of Medicine, Northwestern University, Chicago, IL USA
-2. Peter O’Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA
-3. Department of Internal Medicine, University of Michigan Medical School, Ann Arbor, MI, USA
-4. Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA
-5. School of Biosciences, Cardiff University, Cardiff, UK
+1 Department of Neuroscience, Feinberg School of Medicine, Northwestern University, Chicago, IL USA
+2 Peter O’Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA
+3 Department of Internal Medicine, University of Michigan Medical School. Ann Arbor, MI, USA
+4 Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA
+5 School of Biosciences, Cardiff University, Cardiff, UK
 
 # Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
 Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
