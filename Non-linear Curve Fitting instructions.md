@@ -1387,19 +1387,49 @@ $$
 RD_i > \sqrt{\chi^2_{p,\,q}}
 $$
 
-Example usage:
+Example usage to detect outliers using MCD on Afast vs Aslow amplitudes:
 
 ```R
+# Remove all objects from the environment
+rm(list = ls(all = TRUE))
+
+# Load and install necessary packages
+load_required_packages <- function(packages) {
+ new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
+ if (length(new.packages)) install.packages(new.packages)
+ invisible(lapply(packages, library, character.only = TRUE))
+}
+
+required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+load_required_packages(required.packages)
+
+UserName <- Sys.getenv('USER')
+root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+source(file.path(root_dir, 'R functions', 'setup.R'))
+
+# load previously saved environment (containing out_list from batch fitting)
+wd <- file.path(root_dir, 'examples')
+setwd(wd)
+load(file.path(wd, 'example.RData'))
+
+# build a wide-format data frame of fast and slow amplitudes directly from out_list
+wide_df <- data.frame(
+  id     = seq_along(out_list),
+  A_fast = sapply(out_list, function(x) -x$output['fast', 'A1']),
+  A_slow = sapply(out_list, function(x) -x$output['slow', 'A1'])
+)
+
 # detect outliers using MCD on Afast vs Aslow amplitudes
-out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.9999)
-out
+out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.999)
+
+`attributes<-`(out, list(names = names(out)))
 ```
 
 This generates a named logical vector flagging outliers by row:
 
 ```
-    1     2     3     4     5     6     7     8     9    10   ...   65    66    67 
-FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  ... FALSE  TRUE FALSE
+    1     2     3     4     5     6     7     8     9    10 
+FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE 
 ```
 
 Outlying rows can be extracted directly:
@@ -1412,16 +1442,16 @@ The function also provides built-in diagnostic plots:
 
 ```R
 # scatter of the two variables with outliers in red
-mv_outliers(wide_df[,-1], method='MCD', quant=0.9999, plot=TRUE, type='xy',
+mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='xy',
    xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)))
 
 # distance-distance plot (RD vs MD) with chi-squared cutoff lines
-mv_outliers(wide_df[,-1], method='MCD', quant=0.9999, plot=TRUE, type='dd')
+mv_outliers(wide_df[,-1], method='MCD', quant=0.99, plot=TRUE, type='dd')
 
 # both side by side
-mv_outliers(wide_df[,-1], method='MCD', quant=0.9999, plot=TRUE, type='both',
+mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='both',
    xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)), 
-   palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=TRUE)
+   palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=FALSE)
 ```
 
 If a non-numeric grouping column is present (e.g. `cell_type`), points are colour-coded by group using any of the available palettes: `'roma'`, `'viridis'`, `'jet'`, `'cividis'`, `'PuOr'`, `'BrBG'`, `'Vik'`, `'Batlow'`, `'Berlin'`.
