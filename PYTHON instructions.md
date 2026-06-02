@@ -1,4 +1,4 @@
-# Analysis instructions for ACHGRAB and RNAscope data
+# <center>Analysis instructions for ACHGRAB and RNAscope data</center>
 
 ## Index
 - [Setup Instructions](#setup-instructions)

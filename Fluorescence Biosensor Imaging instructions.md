@@ -1,4 +1,4 @@
-# Fluorescence Biosensor Imaging
+# <center>Fluorescence Biosensor Imaging</center>
 
 These instructions describe the fluorescence biosensor imaging workflow used for Figure 7 in this repository.
 
