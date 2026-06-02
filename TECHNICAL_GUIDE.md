@@ -547,7 +547,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
  ```
  The generated output looks like this:
 
- ![trace1](./images/trace2.svg)
+ ![trace2](./examples/trace2.svg)
 
 
  By setting fit.limits to 510, the output is generated automatically without the need for any user input:
@@ -578,6 +578,8 @@ The simulated data is saved in the folder `examples` in the main repository. The
  fit_plot(traces=out1$traces, func=product2N, xlab='time (ms)', ylab='PSC (pA)', 
     lwd=1.2, height=5, width=5, save=FALSE)
  ```
+
+ ![trace3](./examples/trace3.svg)
 
 
 
@@ -1006,7 +1008,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
       In the example above, two `svg` files are created named `egs_control_5.svg` and `semilog_egs_5.svg`, respectively:
 
       <div style="display: flex; justify-content: space-between;">
-          <img src="./images/egs_control_5.svg" alt="Image 1" style="width: 45%;"/>
+          <img src="./examples/egs_control_5.svg" alt="Image 1" style="width: 45%;"/>
           <img src="./examples/semilog_egs_5.svg" alt="Image 2" style="width: 45%;"/>
       </div>
 
