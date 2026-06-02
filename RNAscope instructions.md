@@ -1,313 +1,506 @@
-# RNAscope Analysis Pipeline
+# RNAscope Imaging Analysis
 
-This guide covers the full workflow in `master_RNAscope.py`: converting raw Olympus data to NWB,
-loading fields, drawing ROIs, counting dots, saving results, and re-analysing saved analyses.
+These instructions describe the RNAscope workflow used for Figure 11 in this repository.
 
----
+The workflow has two related paths:
 
-## Overview
+- **Experimenter/manual counts**: the experimenter drew ROIs and counted CHRNB2 puncta by eye. These counts are stored in the RNAscope NWB files and are the default data used by the Figure 11 R analysis.
+- **Automated/reanalysis counts**: saved ROI JSON files can be re-counted with the Python RNAscope analysis functions and compared with the experimenter counts.
 
+## Relevant Files
+
+- `Python functions/master_RNAscope.py`
+  - RNAscope conversion, NWB loading, ROI drawing, dot counting, JSON saving, and count reconstruction helpers.
+
+- `RNAscope notebooks/RNAscope2NWBconversion.ipynb`
+  - Converts raw Olympus RNAscope folders to NWB.
+  - Stores metadata and experimenter/manual CHRNB2 counts.
+
+- `RNAscope notebooks/RNAscope_analysis.ipynb`
+  - Loads one field from an NWB file.
+  - Draws ROIs for NDNF+ and TH+ cells.
+  - Counts CHRNB2 puncta in the count channel.
+  - Optionally saves one `.roi_analysis.json` file.
+
+- `RNAscope notebooks/RNAscope reanalysis.ipynb`
+  - Batch reloads saved ROI JSON files.
+  - Re-counts the ROIs with new analysis parameters.
+  - Compares automated/reanalysis counts with the experimenter counts stored in NWB.
+
+- `RNAscope notebooks/RNAscope_readNWBexample.ipynb`
+  - Reads metadata and stored experimenter counts from the NWB files.
+  - Plots NDNF+ and TH+ experimenter counts.
+
+- `Paper analysis/Figure 11/RNAscope_analysis.R`
+  - Runs the Figure 11 RNAscope statistics and plots.
+
+## Data Locations
+
+Raw Olympus RNAscope data are stored here:
+
+```text
+RNAscope data/RAW
 ```
-Raw Olympus folder
-        │
-        ▼
-convert_rnascope_session_to_nwb()        one-time conversion
-        │
-        ▼
-    .nwb file
-        │
-        ▼
-RNAscopeAnalysisStartFromSource()        load + draw ROIs
-        │
-        ▼
-RNAscopeAnalysisFinish()                 count dots in ROIs
-        │
-        ▼
-save_rnascope_field_analysis()           save ROIs + counts to JSON
-        │
-        ▼
-reconstruct_state_from_saved_analysis()  reload and re-count later
+
+Converted NWB files are stored here:
+
+```text
+RNAscope data/NWB
 ```
 
----
+Current sessions:
 
-## Step 1 - Convert a session folder to NWB
+```text
+L1.ST8
+L2.ST8
+L3.ST6
+L4.ST8
+```
+
+Each converted session has:
+
+```text
+RNAscope data/NWB/<session>/<session>.nwb
+```
+
+Saved ROI analyses are stored under:
+
+```text
+RNAscope data/NWB/<session>/analysis
+```
+
+Batch reanalysis JSON files are stored under:
+
+```text
+RNAscope data/NWB/<session>/reanalysis
+```
+
+Figure 11 R outputs are stored here:
+
+```text
+Paper analysis/Figure 11/xlsx
+Paper analysis/Figure 11/svg
+```
+
+## Convert Raw RNAscope Data To NWB
+
+Use:
+
+```text
+RNAscope notebooks/RNAscope2NWBconversion.ipynb
+```
+
+The conversion uses `convert_rnascope_session_to_nwb` from `master_RNAscope.py`.
+
+Minimal session conversion:
 
 ```python
+from pathlib import Path
+import sys
+
+repo = Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+sys.path.insert(0, str(repo / "Python functions"))
+
 from master_RNAscope import convert_rnascope_session_to_nwb
 
-nwb_path, fields = convert_rnascope_session_to_nwb(
-    session_dir="path/to/session_folder",
-    nwb_path="path/to/output.nwb",        # optional; defaults to session_folder/session_folder.nwb
-    timezone="America/Chicago",           # timezone for capture timestamps
-    metadata=None,                        # optional dict - see apply_session_metadata_to_nwb
-    session_description=None,             # freetext
-    experiment_description=None,          # freetext
-    subject_id=None,                      # e.g. "mouse_001"
-    subject_sex="U",                      # "M", "F", or "U"
-    subject_species="Mus musculus",
-    include_exported_channel_tiffs=True,  # store per-channel display TIFFs in NWB
-    overwrite=True,                       # overwrite existing NWB file
-)
+raw_root = repo / "RNAscope data" / "RAW"
+nwb_root = repo / "RNAscope data" / "NWB"
+
+for session in ["L1.ST8", "L2.ST8", "L3.ST6", "L4.ST8"]:
+    session_out = nwb_root / session
+    session_out.mkdir(parents=True, exist_ok=True)
+
+    nwb_path, fields = convert_rnascope_session_to_nwb(
+        session_dir=raw_root / session,
+        nwb_path=session_out / f"{session}.nwb",
+        timezone="America/Chicago",
+        metadata={
+            "NWBFile": {
+                "session_description": f"{session} RNAscope imaging session",
+                "experimenter": ["Zhong, Xie"],
+                "lab": "Surmeier Lab",
+                "institution": "Northwestern University",
+                "keywords": ["RNAscope", "CHRNB2", "NDNF", "TH"],
+            },
+            "Subject": {
+                "subject_id": session,
+                "species": "Mus musculus",
+                "sex": "U",
+            },
+            "Custom": {
+                "source_repo": "analysis_Belal2026",
+                "source_raw_folder": str(raw_root / session),
+            },
+        },
+        overwrite=True,
+    )
+
+    print(f"Wrote {nwb_path} with {len(fields)} fields")
 ```
 
-**Returns:** `(nwb_path, fields)` - path to the written NWB file and list of field dicts found.
+Per field, the NWB stores:
 
-What gets stored per field in the NWB:
-- Raw 16-bit source TIFFs (`s_C00x`)
-- `.pty` acquisition metadata per channel
+- raw 16-bit source TIFFs
+- `.pty` acquisition metadata
 - `.lut` display lookup tables
-- Exported per-channel display TIFFs (if `include_exported_channel_tiffs=True`)
+- exported per-channel display TIFFs, when available
+- field metadata such as field name, side, field index, pixel size, and channel labels
 
----
+## Stored Experimenter Counts
 
-## Step 2 - Add / update session metadata
+The experimenter/manual CHRNB2 counts are stored in each NWB file at:
 
 ```python
-from master_RNAscope import apply_session_metadata_to_nwb
+nwbfile.processing["rnascope_analysis_metadata"]["experimenter_chrnb2_counts"]
+```
 
-apply_session_metadata_to_nwb(
-    nwb_path="path/to/output.nwb",
-    metadata={
-        "NWBFile": {
-            "session_description": "L1 ST8 RNAscope",
-            "experimenter": ["Smith, Jane"],
-            "keywords": ["RNAscope", "ChRNB2"],
-        },
-        "Subject": {
-            "subject_id": "mouse_001",
-            "species": "Mus musculus",
-            "sex": "M",
-            "age": "P60D",
-        },
-        "Custom": {
-            "cohort": "L1",
-            "treatment": "control",
-        },
-    },
+The stored count table has this shape:
+
+```text
+condition
+cell_type
+slice_id
+field
+hemisphere
+field_index
+replicate
+count
+session
+session_group
+```
+
+Read all stored experimenter counts:
+
+```python
+from pathlib import Path
+import pandas as pd
+from pynwb import NWBHDF5IO
+
+repo = Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+nwb_root = repo / "RNAscope data" / "NWB"
+sessions = ["L1.ST8", "L2.ST8", "L3.ST6", "L4.ST8"]
+
+dfs = []
+
+for session in sessions:
+    nwb_path = nwb_root / session / f"{session}.nwb"
+
+    with NWBHDF5IO(str(nwb_path), "r", load_namespaces=True) as io:
+        nwbfile = io.read()
+        df = (
+            nwbfile.processing["rnascope_analysis_metadata"]["experimenter_chrnb2_counts"]
+            .to_dataframe()
+            .reset_index(drop=True)
+        )
+
+    dfs.append(df)
+
+all_user_counts = (
+    pd.concat(dfs, ignore_index=True)
+    .sort_values(
+        ["session", "condition", "cell_type", "hemisphere", "field_index", "replicate"],
+        kind="stable",
+    )
+    .reset_index(drop=True)
 )
 ```
 
----
+This is the count table used by default in:
 
-## Step 3 - Start an analysis (draw ROIs)
-
-### From an NWB file or folder (most common)
-
-```python
-%matplotlib widget
-
-from master_RNAscope import RNAscopeAnalysisStartFromSource
-
-state = RNAscopeAnalysisStartFromSource(
-    source="path/to/output.nwb",            # or a session folder path
-    field="fieldname",                      # e.g. "L1_ST8_s001"
-    source_type=None,                       # "nwb" or "folder"; auto-detected if None
-    display_mode="exported_channel_tiffs",  # or "rendered_from_raw"
-    roi_specs=None,                         # see below
-    roi_groups=("GB", "RB"),                # names for each ROI group
-    roi_channels=("s_C002", "s_C003"),      # channel shown when drawing each group's ROIs
-    count_channel="s_C004",                 # channel used for dot counting
-    blind=False,                            # if True, hides the count channel while drawing
-)
+```text
+Paper analysis/Figure 11/RNAscope_analysis.R
 ```
 
-**`roi_specs`** - alternative to `roi_groups` / `roi_channels`. Pass a list of dicts:
-```python
-roi_specs=[
-    {"group": "GB", "channel": "s_C002"},
-    {"group": "RB", "channel": "s_C003"},
-]
+with:
+
+```r
+reanalysis = FALSE
+RNAscope_data <- load_data(wd=xlsx_path, name='RNAscope_experimenter')
 ```
 
-**`display_mode`**
-- `"exported_channel_tiffs"` - uses the per-channel display TIFFs exported by Olympus (recommended)
-- `"rendered_from_raw"` - reconstructs the display image from raw data + LUT metadata
+## Analyse One Field Manually
 
-After the figures appear, draw polygons in each figure window, then press **q / Escape / Enter** to confirm each ROI set.
+Use:
 
-### From pre-loaded field data
-
-```python
-from master_RNAscope import get_rnascope_field, RNAscopeAnalysisStartFromFieldData
-
-field_data = get_rnascope_field(source="path/to/output.nwb", field="L1_ST8_s001")
-
-state = RNAscopeAnalysisStartFromFieldData(
-    field_data=field_data,
-    roi_groups=("GB", "RB"),
-    roi_channels=("s_C002", "s_C003"),
-    count_channel="s_C004",
-    blind=False,
-)
+```text
+RNAscope notebooks/RNAscope_analysis.ipynb
 ```
 
----
-
-## Step 4 - Finish analysis and count dots
+Example setup:
 
 ```python
-results, state = RNAscopeAnalysisFinish(
-    state,
-    sigma_small=1.0,            # Gaussian sigma for fine blur (DoG only)
-    sigma_large=2.8,            # Gaussian sigma for coarse blur (DoG only)
-    detection_method="DoG",     # "DoG" or "fiji"
-    DoG_mode="tolerance",       # "tolerance" or "legacy" - only used when detection_method="DoG"
-    threshold_percentile=99,    # percentile cutoff - only used when DoG_mode="legacy"
-    peak_footprint=4,           # spatial footprint - only used when DoG_mode="legacy"
-    maxima_tolerance=200,       # peak separation tolerance (see below)
-    show_verify=True,           # show verification figure after counting
-    show_detected=False,        # overlay detected dot positions on verification figure
-    verify_circle_radius=2,     # radius of overlay circles (pixels)
-    verify_circle_color="white",
-)
-```
+from pathlib import Path
+import sys
 
-**Returns:** `(results, state)` where `results` is a `pd.DataFrame`:
+repo = Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+sys.path.insert(0, str(repo / "Python functions"))
 
-| Column | Description |
-|---|---|
-| `field` | Field name |
-| `group` | ROI group name (e.g. "GB") |
-| `image used` | Channel label used for ROI display |
-| `roi` | ROI index (1-based) |
-| `pixel count` | Number of pixels inside the ROI |
-| `count` | Number of detected dots inside the ROI |
-
-### Detection methods
-
-**`detection_method="DoG"`** - subtracts a coarsely-blurred image from a finely-blurred image
-to highlight spots, then finds peaks in the result.
-- `DoG_mode="tolerance"` (default) - flood-fill from each peak claiming all connected pixels
-  within `maxima_tolerance` intensity units (DoG scale). Higher tolerance → fewer counts.
-- `DoG_mode="legacy"` - keeps only peaks in the top `threshold_percentile` of positive DoG
-  values that are local maxima within a `peak_footprint` pixel window.
-
-**`detection_method="fiji"`** - operates directly on the raw 16-bit image with no preprocessing,
-matching Fiji/ImageJ's Find Maxima algorithm exactly. `maxima_tolerance` is in raw pixel
-intensity units (0–65535), the same value you would type into Fiji.
-Higher tolerance → fewer counts.
-
----
-
-## Step 5 - Save results
-
-```python
-from master_RNAscope import save_rnascope_field_analysis
-
-out_path = save_rnascope_field_analysis(
-    state,
-    results,
-    analysis_params={                   # optional - records the detection settings used
-        "detection_method": "DoG",
-        "DoG_mode": "tolerance",
-        "maxima_tolerance": 200,
-    },
-    out_dir=None,                       # defaults to <session_folder>/analysis/
-)
-# Saves to: <out_dir>/<field>.roi_analysis.json
-```
-
-The JSON stores: ROI vertices, dot counts, pixel counts, channel assignments, display mode,
-and `analysis_params`.
-
----
-
-## Step 6 - Reload and re-analyse
-
-### Full reconstruct (images + ROIs)
-
-```python
-from master_RNAscope import reconstruct_state_from_saved_analysis, RNAscopeAnalysisFinish
-
-state, analysis_payload = reconstruct_state_from_saved_analysis(
-    source="path/to/output.nwb",
-    analysis_path="analysis/field.roi_analysis.json",
-    source_type=None,        # auto-detected
-    display_mode=None,       # defaults to whatever was used originally
-)
-
-# Re-run counting with different parameters - ROIs are already loaded from the JSON
-results, state = RNAscopeAnalysisFinish(
-    state,
-    detection_method="fiji",
-    maxima_tolerance=1000,
-    show_verify=True,
-    show_detected=True,
-)
-```
-
-### Load JSON only
-
-```python
-from master_RNAscope import load_rnascope_field_analysis
-
-payload = load_rnascope_field_analysis("analysis/field.roi_analysis.json")
-# plain dict with keys: session, field, groups, roi_specs, analysis_params, ...
-```
-
-### Apply saved ROIs to an existing state
-
-```python
-from master_RNAscope import apply_saved_analysis_to_state
-
-state = apply_saved_analysis_to_state(state, payload)
-# restores roi_sets, count_channel, roi_specs from the payload into state
-```
-
----
-
-## Reference - all public functions
-
-| Function | Purpose |
-|---|---|
-| `convert_rnascope_session_to_nwb()` | Convert raw Olympus folder → NWB |
-| `apply_session_metadata_to_nwb()` | Add/edit NWBFile, Subject, or custom metadata in an existing NWB |
-| `get_rnascope_field()` | Load a single field from NWB or folder |
-| `load_field_from_nwb()` | Load directly from NWB |
-| `load_field_from_folder()` | Load directly from folder |
-| `build_analysis_state_from_field_data()` | Build analysis state dict without opening figures |
-| `RNAscopeAnalysisStartFromSource()` | Load field + open ROI drawing widgets |
-| `RNAscopeAnalysisStartFromFieldData()` | Open ROI drawing widgets from pre-loaded field data |
-| `RNAscopeAnalysisFinish()` | Count dots in drawn ROIs |
-| `measure_rois()` | Count dots programmatically (no figures) |
-| `save_rnascope_field_analysis()` | Save ROIs + counts to JSON |
-| `load_rnascope_field_analysis()` | Load a saved JSON |
-| `apply_saved_analysis_to_state()` | Restore ROIs from JSON into a state dict |
-| `reconstruct_state_from_saved_analysis()` | Full reload: images + ROIs from saved JSON |
-
----
-
-## Typical notebook workflow
-
-```python
-%matplotlib widget
 from master_RNAscope import (
-    convert_rnascope_session_to_nwb,
-    RNAscopeAnalysisStartFromSource,
+    get_rnascope_field,
+    RNAscopeAnalysisStartFromFieldData,
     RNAscopeAnalysisFinish,
     save_rnascope_field_analysis,
 )
 
-# 1. Convert (once per session)
-nwb_path, _ = convert_rnascope_session_to_nwb("data/L1_ST8/")
+session = "L1.ST8"
+field = "L1.ST8_C.L_60x.01"
 
-# 2. Analyse one field
-state = RNAscopeAnalysisStartFromSource(nwb_path, field="L1_ST8_s001")
-# ... draw ROIs in the figures, press Enter when done ...
+nwb_root = repo / "RNAscope data" / "NWB"
+nwb_path = nwb_root / session / f"{session}.nwb"
+```
 
-# 3. Count
-results, state = RNAscopeAnalysisFinish(state, show_detected=True)
-print(results)
+Current channel setup:
 
-# 4. Save
-save_rnascope_field_analysis(
-    state, results,
-    analysis_params={
-        "detection_method": "DoG",
-        "DoG_mode": "tolerance",
-        "maxima_tolerance": 200,
-    },
+```python
+display_mode = "rendered_from_raw"
+roi_specs = (
+    ("NDNF+", "s_C003"),
+    ("TH+", "s_C002"),
+)
+count_channel = "s_C004"
+blind = True
+```
+
+Load the field:
+
+```python
+field_data = get_rnascope_field(
+    nwb_path,
+    field=field,
+    display_mode=display_mode,
 )
 ```
 
+Draw ROIs:
+
+```python
+%matplotlib widget
+
+state = RNAscopeAnalysisStartFromFieldData(
+    field_data,
+    roi_specs=roi_specs,
+    count_channel=count_channel,
+    blind=blind,
+)
+```
+
+Draw polygons in the widget figures. Press `q`, `escape`, or `enter` inside each figure when finished.
+
+## Count CHRNB2 Puncta
+
+Current one-field analysis parameters:
+
+```python
+analysis_params = {
+    "detection_method": "DoG",
+    "dog_mode": "tolerance",
+    "sigma_small": 1.0,
+    "sigma_large": 2.8,
+    "threshold_percentile": 99.9,
+    "peak_footprint": 4,
+    "maxima_tolerance": 170,
+    "show_detected": True,
+    "show_verify": True,
+}
+```
+
+Run counting:
+
+```python
+results, state = RNAscopeAnalysisFinish(
+    state,
+    **analysis_params,
+    verify_image="count",
+)
+
+display(results)
+```
+
+`verify_image="count"` displays the count channel during verification. `verify_image="group"` displays the ROI-group channel.
+
+The result table includes:
+
+```text
+field
+group
+image used
+roi
+pixel count
+count
+```
+
+Save one field analysis:
+
+```python
+SAVE = True
+
+if SAVE:
+    json_path = save_rnascope_field_analysis(
+        state,
+        results,
+        analysis_params=analysis_params,
+    )
+    print(json_path)
+```
+
+This writes:
+
+```text
+RNAscope data/NWB/<session>/analysis/<field>.roi_analysis.json
+```
+
+The JSON stores ROI vertices, count settings, dot counts, pixel counts, channel assignments, display mode, and the saved analysis parameters.
+
+## Detection Methods
+
+`detection_method="DoG"` subtracts a coarsely blurred image from a finely blurred image to enhance puncta before peak detection.
+
+`dog_mode="tolerance"` uses a tolerance-style local-maxima procedure on the DoG image. Higher `maxima_tolerance` generally gives fewer detected puncta.
+
+`dog_mode="legacy"` uses `threshold_percentile` and `peak_footprint` to keep positive DoG local maxima.
+
+`detection_method="fiji"` uses a Fiji/ImageJ Find Maxima-style local-maxima procedure on the raw 16-bit count image. This is Fiji-like, but the exact count can still depend on image scaling, channel choice, ROI definition, and tolerance.
+
+For both methods, increasing `maxima_tolerance` reduces over-counting by merging or rejecting less prominent nearby maxima.
+
+## Batch Reanalysis
+
+Use:
+
+```text
+RNAscope notebooks/RNAscope reanalysis.ipynb
+```
+
+This notebook:
+
+1. Reads saved ROI JSON files from `RNAscope data/NWB/<session>/analysis`.
+2. Reconstructs the analysis state from each JSON and NWB file.
+3. Re-runs `RNAscopeAnalysisFinish` with new parameters.
+4. Saves reanalysis JSON files to `RNAscope data/NWB/<session>/reanalysis`.
+5. Reconstructs a count table from the reanalysis JSON files.
+6. Compares reanalysis counts with the experimenter counts stored in NWB.
+
+Current batch settings:
+
+```python
+run_reanalysis = True
+save_reanalysis = True
+source_analysis_folder = "analysis"
+reanalysis_folder = "reanalysis"
+display_mode = "rendered_from_raw"
+
+detection_method = "DoG"
+dog_mode = "tolerance"
+
+new_params = {
+    "detection_method": detection_method,
+    "dog_mode": dog_mode,
+    "sigma_small": 1.0,
+    "sigma_large": 2.8,
+    "threshold_percentile": 99,
+    "peak_footprint": 4,
+    "maxima_tolerance": 170,
+    "show_detected": False,
+    "show_verify": False,
+}
+```
+
+Reconstruct count rows from saved JSON files:
+
+```python
+from master_RNAscope import counts_from_roi_jsons
+
+reanalysis_counts = counts_from_roi_jsons(reanalysis_json_paths)
+```
+
+The reconstructed count table includes:
+
+```text
+condition
+cell_type
+slice_id
+field
+hemisphere
+field_index
+replicate
+count
+session
+session_group
+count_channel
+analysis_json
+```
+
+## Figure 11 R Analysis
+
+Run:
+
+```text
+Paper analysis/Figure 11/RNAscope_analysis.R
+```
+
+Choose:
+
+```r
+cell_type <- 'NDNF'
+```
+
+or:
+
+```r
+cell_type <- 'TH'
+```
+
+The R script loads experimenter counts by default:
+
+```r
+reanalysis = FALSE
+RNAscope_data <- load_data(wd=xlsx_path, name='RNAscope_experimenter')
+```
+
+To use automated reanalysis counts instead:
+
+```r
+reanalysis = TRUE
+RNAscope_data <- load_data(wd=xlsx_path, name='RNAscope_reanalysed')
+```
+
+The script maps:
+
+```text
+UL -> Control
+L  -> 6OHDA
+```
+
+The main mixed-effects model is:
+
+```r
+var ~ Group + (1 | Animal/field)
+```
+
+The script also runs robust bootstrap and Bayesian analyses, then exports CSV/XLSX summaries and SVG plots to:
+
+```text
+Paper analysis/Figure 11/xlsx
+Paper analysis/Figure 11/svg
+```
+
+## Public Function Reference
+
+| Function | Purpose |
+|---|---|
+| `convert_rnascope_session_to_nwb()` | Convert one raw Olympus RNAscope session folder to NWB |
+| `apply_session_metadata_to_nwb()` | Add or update NWBFile, Subject, and custom metadata |
+| `get_rnascope_field()` | Load one field from an NWB file or raw folder |
+| `load_field_from_nwb()` | Load one field directly from NWB |
+| `load_field_from_folder()` | Load one field directly from a raw folder |
+| `build_analysis_state_from_field_data()` | Build an analysis state dict without opening figures |
+| `RNAscopeAnalysisStartFromSource()` | Load one field and open ROI drawing widgets |
+| `RNAscopeAnalysisStartFromFieldData()` | Open ROI drawing widgets from pre-loaded field data |
+| `RNAscopeAnalysisFinish()` | Count puncta in the drawn ROIs |
+| `measure_rois()` | Count puncta programmatically without opening figures |
+| `save_rnascope_field_analysis()` | Save ROIs and counts to JSON |
+| `load_rnascope_field_analysis()` | Load one saved ROI/count JSON |
+| `load_session_analysis_jsons()` | Load all saved ROI/count JSON files from one session |
+| `apply_saved_analysis_to_state()` | Restore saved ROIs into an analysis state |
+| `reconstruct_state_from_saved_analysis()` | Reload images and saved ROIs from an analysis JSON |
+| `counts_from_roi_jsons()` | Reconstruct a tidy count table from saved ROI JSON files |

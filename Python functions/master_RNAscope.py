@@ -1601,13 +1601,12 @@ def apply_session_metadata_to_nwb(nwb_path, metadata):
         if custom_md:
             custom_json = json.dumps(custom_md, indent=2)
             if "session_metadata_custom" in nwbfile.scratch:
-                nwbfile.scratch["session_metadata_custom"].data = custom_json
-            else:
-                nwbfile.add_scratch(
-                    custom_json,
-                    name="session_metadata_custom",
-                    description="Custom session metadata imported from session_metadata.json",
-                )
+                del nwbfile.scratch["session_metadata_custom"]
+            nwbfile.add_scratch(
+                custom_json,
+                name="session_metadata_custom",
+                description="Custom session metadata imported from session metadata",
+            )
 
         nwbfile.set_modified()
         io.write(nwbfile)
@@ -1756,4 +1755,3 @@ def counts_from_roi_jsons(json_paths, session_group=None):
         )
         .reset_index(drop=True)
     )
-
