@@ -25,18 +25,6 @@ Affiliations
 - [Non-linear Curve Fitting instructions](#non-linear-curve-fitting-instructions)
 - [Technical Documentation](#technical-documentation)
 
-## [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
-
-This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
-
-## [RNAscope instructions](RNAscope%20instructions.md)
-
-This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
-
-## [Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
-
-This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
-
 
 
 ```bash
@@ -181,4 +169,18 @@ If needed permanently, add `export DISPLAY=:0` to your shell startup file.
 
 ## Technical Documentation
 
-Use [Non-linear Curve Fitting instructions.md](Non-linear%20Curve%20Fitting%20instructions.md) for equations, model details, fitting strategy, and AIC/BIC conventions.
+### [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
+
+This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
+
+### [RNAscope instructions](RNAscope%20instructions.md)
+
+This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
+
+### [Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
+
+This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
+
+### [Non-linear Curve Fitting instructions.md](Non-linear%20Curve%20Fitting%20instructions.md) 
+
+Equations, model details, fitting strategy, and AIC/BIC conventions.
