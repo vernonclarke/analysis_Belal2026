@@ -687,6 +687,8 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    <a href="https://github.com/vernonclarke/analysis_Belal2026/raw/refs/heads/main/examples/analysePSC.mov"><img src="./examples/analysePSC_2.png" alt="analysePSC video walkthrough" width="50%"></a>
 
+   The video demonstrates analysis of the first three traces: the first using the default settings, the second using `MLE` with `Random Walk Metropolis` enabled and `n` reduced to 10, and the third using the `robust` fitting method.
+
    ### Useful functions
 
    Some simple functions for baisc analysis are provided.  

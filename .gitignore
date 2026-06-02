@@ -4,6 +4,7 @@ NWBdata/
 RNAscope data/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
+examples/analysePSC_orig.mov
 
 # Ignore specific file types globally
 *.txt
