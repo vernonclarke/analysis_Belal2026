@@ -545,6 +545,14 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    Click the **`Clear Results`** button to clear all resultsbefore selecting a new dataset to load via the **`Browse`** button.
    
+   A video walkthrough is also available:
+
+   <div align="center">
+   <a href="https://github.com/vernonclarke/analysis_Belal2026/raw/refs/heads/main/examples/analysePSC.mov"><img src="./examples/analysePSC_2.png" alt="analysePSC video walkthrough" width="50%"></a>
+   </div>
+
+   The video demonstrates analysis of the first three traces: the first using the default settings, the second using `MLE` with `Random Walk Metropolis` enabled and `n` reduced to 10, and the third using the `robust` fitting method.
+   
    
    ### Analysing an entire data set using the `R` gui
 
@@ -682,12 +690,6 @@ The simulated data is saved in the folder `examples` in the main repository. The
    ```
 
    Note: these example values were generated from `examples/data.xlsx`. The same traces are also provided in `examples/data.csv`; however, CSV and XLSX import can differ at very small floating-point precision levels. Most fits are unaffected, but for traces with two very similar local minima, such as response 3 with `n = 30`, these tiny differences can select a nearby alternative fit. To reproduce the table exactly, use the same file format and import path throughout the console and `analysePSC()` examples.
-
-   The corresponding `analysePSC()` user-interface example is shown above in the Shiny workflow section, using `examples/data.xlsx`. A video walkthrough is also available:
-
-   <a href="https://github.com/vernonclarke/analysis_Belal2026/raw/refs/heads/main/examples/analysePSC.mov"><img src="./examples/analysePSC_2.png" alt="analysePSC video walkthrough" width="50%"></a>
-
-   The video demonstrates analysis of the first three traces: the first using the default settings, the second using `MLE` with `Random Walk Metropolis` enabled and `n` reduced to 10, and the third using the `robust` fitting method.
 
    ### Useful functions
 
