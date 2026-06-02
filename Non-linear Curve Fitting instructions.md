@@ -681,6 +681,12 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
    ```
 
+   Note: these example values were generated from `examples/data.xlsx`. The same traces are also provided in `examples/data.csv`; however, CSV and XLSX import can differ at very small floating-point precision levels. Most fits are unaffected, but for traces with two very similar local minima, such as response 3 with `n = 30`, these tiny differences can select a nearby alternative fit. To reproduce the table exactly, use the same file format and import path throughout the console and `analysePSC()` examples.
+
+   The corresponding `analysePSC()` user-interface example is shown above in the Shiny workflow section, using `examples/data.xlsx`. A video walkthrough is also available:
+
+   [![analysePSC video walkthrough](./examples/analysePSC_1.png)](./examples/analysePSC.mov)
+
    ### Useful functions
 
    Some simple functions for baisc analysis are provided.  
