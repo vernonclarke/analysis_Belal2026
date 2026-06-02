@@ -1,4 +1,4 @@
-# Analysis code 
+# <center>Analysis code</center>
 
 # Rfits: Non-Linear Curve Fitting for Postsynaptic Current Analysis
 Rfits provides non-linear fitting tools for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
