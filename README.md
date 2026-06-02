@@ -124,37 +124,6 @@ analyse_PSC(
 )
 ```
 
-### 4. Dataset quick load example
-
-```r
-csv_path <- file.path(root_dir, "examples", "data.csv")
-traces <- as.matrix(read.csv(csv_path, check.names = FALSE))
-
-dim(traces)
-head(traces[, 1, drop = FALSE])
-```
-
-## Output Structure
-
-Typical per-trace output fields include:
-
-- `output`
-- `fits`
-- `fits.se`
-- `gof`
-- `AIC`
-- `BIC`
-- `model.message`
-- `sign`
-- `traces`
-- `fit_results` (when available)
-
-Example:
-
-```r
-names(out_list[[1]])
-```
-
 ## macOS XQuartz Troubleshooting
 
 If GUI windows fail on macOS:
