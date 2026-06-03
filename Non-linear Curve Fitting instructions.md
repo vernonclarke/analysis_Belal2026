@@ -36,7 +36,7 @@ All analysis was performed using the R graphical user interface (GUI) and tested
   xcode-select --install
   ```
 
-  On a `Windows` PC,  `R` requires [`Rtools`](https://cran.r-project.org/bin/windows/Rtools/) instead. For R 4.5.x and R 4.6.x use [`Rtools 4.5`](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). After installing Rtools, ensure that it is available on `PATH` if `R` does not detect it automatically. In R, check with:
+  On a `Windows` PC,  `R` requires [`Rtools`](https://cran.r-project.org/bin/windows/Rtools/) instead. For R 4.4.x use Rtools 4.4, and for R 4.5.x or R 4.6.x use [`Rtools 4.5`](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). After installing Rtools, ensure that it is available on `PATH` if `R` does not detect it automatically. In R, check with:
 
   ```r
   Sys.which("make")
