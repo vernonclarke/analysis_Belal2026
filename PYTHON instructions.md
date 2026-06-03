@@ -15,7 +15,7 @@ These instructions describe the Python environment used by this repository for:
 
 ## Setup Instructions
 
-Install Anaconda or Miniconda before running these commands.
+Install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) or [Anaconda](https://www.anaconda.com/download) before running these commands. On macOS/Linux, use Terminal after installation. On Windows, use Miniconda Prompt or Anaconda Prompt from the Start Menu.
 
 Run from the repository root:
 
@@ -44,7 +44,7 @@ pip install pillow
 python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
 ```
 
-On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, install Anaconda or Miniconda first, run `conda init powershell`, then reopen PowerShell before using `conda`.
+On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, run `conda init powershell`, then reopen PowerShell before using `conda`.
 
 On Windows PowerShell:
 
