@@ -467,6 +467,7 @@ for (i in seq_along(fits_list)) {
   colnames(fits_list[[i]]) <- cols
 }
 
+fits_list
 # $ctrl
 #       Afast  τrise τdecay  tpeak r20_80 d80_20  delay half_width      area    Aslow   τrise  τdecay   tpeak r20_80  d80_20  delay half_width     area
 # 1  -220.164 16.024 38.401 24.034  9.287 60.705  1.730     62.565 15808.673 -116.954 150.694 216.575 179.670 70.256 400.291  0.000    491.657 58064.83

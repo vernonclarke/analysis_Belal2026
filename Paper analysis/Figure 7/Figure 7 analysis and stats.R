@@ -275,7 +275,7 @@ if (file.exists(RData_path)) {
 
 }
 
-plotsave <- TRUE
+plotsave <- FALSE
 
 # graph settings
 wid <- 0.3

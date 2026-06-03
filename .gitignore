@@ -6,6 +6,10 @@ RNAscope data/
 **/.ipynb_checkpoints/
 examples/analysePSC_orig.mov
 
+__pycache__/
+*.pyc
+
+
 # Ignore specific file types globally
 *.txt
 *.zip

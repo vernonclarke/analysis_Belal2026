@@ -7,7 +7,7 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-plotsave <- TRUE
+plotsave <- FALSE
 
 UserName <- Sys.getenv('USER')
 root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')

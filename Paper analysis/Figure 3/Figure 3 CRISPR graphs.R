@@ -1,4 +1,4 @@
-# =========================================# ==============================================
+# ==============================================
 # CREATE GRAPHS AND PERFORM STATISTICAL TESTS
 # Processed data in stored in '.RDATA' form
 # '.RDATA' created by '~ analysis.R'
@@ -7,7 +7,7 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-plotsave <- TRUE
+plotsave <- FALSE
 
 UserName <- Sys.getenv('USER')
 root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
@@ -498,4 +498,4 @@ if (plotsave){
   list2excel(data_list, paste0(identifier, '.xlsx'), wd=xlsx_path)
   list2csv(data_list, paste0(identifier, '.xlsx'), wd=xlsx_path)
 }
-graphics.off()
+
