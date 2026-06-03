@@ -42,6 +42,34 @@ pip install pillow
 python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
 ```
 
+On Windows PowerShell:
+
+```powershell
+cd "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
+
+conda create -n image_analysis python=3.12 -y
+conda activate image_analysis
+
+pip install matplotlib seaborn python-dotenv remfile
+pip install notebook jupyterlab
+pip install plotly
+pip install -U kaleido
+pip install ipykernel
+pip install ipympl
+pip install pytz
+pip install tzdata
+pip install dandi
+pip install pynwb hdmf
+pip install neuroconv xmltodict
+pip install ndx-optogenetics
+pip install openpyxl
+pip install scipy
+pip install pillow
+
+$env:ANALYSIS_ROOT = "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
+python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
+```
+
 Use the `Python (image_analysis)` kernel in the notebooks.
 
 ## Run Jupyter Notebooks
@@ -68,6 +96,24 @@ The fluorescence biosensor notebooks expect the downloaded data under:
 ```text
 NWBdata/001832
 ```
+
+## Download DANDI Data
+
+From the repository root:
+
+```bash
+mkdir -p NWBdata
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+```
+
+On Windows PowerShell:
+
+```powershell
+New-Item -ItemType Directory -Force -Path NWBdata
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+```
+
+If `dandi download --help` shows lowercase option values on that machine, use lowercase values instead, such as `--existing error --format pyout --path-type exact`.
 
 ## Python Workflow Files
 

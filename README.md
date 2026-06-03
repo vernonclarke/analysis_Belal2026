@@ -43,6 +43,16 @@ dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT
 
 ```
 
+On Windows PowerShell:
+
+```powershell
+cd "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
+
+New-Item -ItemType Directory -Force -Path NWBdata
+
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+```
+
 Different versions of the DANDI command line tool use different casing for option values.
 Use the uppercase or lowercase command according to what `dandi download --help` shows on that machine.
 For example, if dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.
