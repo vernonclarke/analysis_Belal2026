@@ -990,7 +990,11 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$output
-
+   ```
+   
+   This returns the output as before:
+   
+   ```            
              A1  τrise  τdecay  tpeak r10_90  d90_10 delay half_width     area1
    fast -51.892  3.627  28.474  8.564  4.582  63.431 1.900     30.420  1996.093
    slow -98.424 10.979 198.659 33.650 16.913 437.231 4.674    176.486 23161.722
@@ -1008,6 +1012,11 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$fits
+   ```
+
+   This returns a modified output:
+
+   ```   
    [1] -51.892398   4.156136  28.474188   1.900023 -98.423523  11.620837 198.659484   4.673744 
    ```   
 
@@ -1017,6 +1026,9 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$fits.se
+   ```
+
+   ```
    [1] 9.6612406 2.0297427 4.4693011 0.1205750 4.0362026 3.1603258 1.5978233 0.2221259
    ```  
 
@@ -1030,6 +1042,9 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$gof
+   ```
+
+   ```
    [1] 5.08363
    ```
 
@@ -1039,6 +1054,8 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$AIC
+   ```
+   ```
         AIC 
    27899.86
    ```      
@@ -1049,6 +1066,8 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$BIC
+   ```
+   ```
        BIC 
    27951.3 
    ```
@@ -1085,6 +1104,10 @@ The generated output looks like this:
 
    ```
    out_list[[ii]]$model.message
+   ```
+   This returns:
+  
+   ```
    [1] "Relative error in the sum of squares is at most `ftol'." 
    ```     
 
