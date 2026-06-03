@@ -115,6 +115,11 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
 On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+
+### 3. Optional: R scripts that read downloaded DANDI/NWB files
+
+The `reticulate` and `NWBenv` setup is only needed for R scripts that read downloaded DANDI/NWB files, such as `Paper analysis/*/*data processing from downloaded dandiset.R`. It is not needed just to source the core R functions.
+
 For R scripts that use `reticulate` to read downloaded DANDI/NWB files, R may also need the Conda path written to `~/.Renviron`. If `file.edit("~/.Renviron")` does not open, create it from R with:
 
 ```r
@@ -143,7 +148,7 @@ reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 ```
 
-### 3. Single-trace fitting example
+### 4. Single-trace fitting example
 
 ```r
 dx <- 0.1
