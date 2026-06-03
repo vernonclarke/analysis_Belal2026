@@ -102,18 +102,22 @@ NWBdata/001832
 From the repository root:
 
 ```bash
+conda activate image_analysis
+python -m pip install dandi
 mkdir -p NWBdata
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 On Windows PowerShell:
 
 ```powershell
+conda activate image_analysis
+python -m pip install dandi
 New-Item -ItemType Directory -Force -Path NWBdata
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
-If `dandi download --help` shows lowercase option values on that machine, use lowercase values instead, such as `--existing error --format pyout --path-type exact`.
+If `python -m dandi download --help` shows lowercase option values on that machine, use lowercase values instead, such as `--existing error --format pyout --path-type exact`.
 
 ## Python Workflow Files
 
