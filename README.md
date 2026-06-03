@@ -81,7 +81,7 @@ Repository components:
 
 Requirements:
 
-- R (tested on R 4.4.x to 4.5.x)
+- [R](https://cran.r-project.org/) (tested on R 4.4.x to 4.5.x)
 - Packages: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`
 - C++ toolchain for `Rcpp`:
 - macOS: Xcode Command Line Tools
