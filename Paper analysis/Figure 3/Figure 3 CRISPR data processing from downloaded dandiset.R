@@ -14,7 +14,10 @@ env_name <- 'NWBenv'
 if (!env_name %in% reticulate::conda_list()$name) {
   reticulate::conda_create(env_name, python_version = '3.11')
 }
-reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
+installed_packages <- reticulate::py_list_packages(envname = env_name, type = 'conda')$package
+if (length(setdiff(c('pip', 'pynwb', 'numpy'), installed_packages))) {
+  reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
+}
 reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 

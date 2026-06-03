@@ -132,15 +132,17 @@ Sys.getenv("RETICULATE_CONDA")
 file.exists(Sys.getenv("RETICULATE_CONDA"))
 ```
 
-The `NWBenv` Conda environment used by these R scripts must also have `pip`, `numpy`, and `pynwb` installed. If `NWBenv` already exists but reports missing `pip` or `numpy`, recreate it from R with:
+The `NWBenv` Conda environment used by these R scripts must also have `pip`, `numpy`, and `pynwb` installed. The scripts create `NWBenv` if missing and install only missing packages:
 
 ```r
 env_name <- 'NWBenv'
-if (env_name %in% reticulate::conda_list()$name) {
-  reticulate::conda_remove(env_name)
+if (!env_name %in% reticulate::conda_list()$name) {
+  reticulate::conda_create(env_name, python_version = '3.11')
 }
-reticulate::conda_create(env_name, python_version = '3.11')
-reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
+installed_packages <- reticulate::py_list_packages(envname = env_name, type = 'conda')$package
+if (length(setdiff(c('pip', 'pynwb', 'numpy'), installed_packages))) {
+  reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
+}
 reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 ```
