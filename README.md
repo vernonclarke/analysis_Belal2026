@@ -58,12 +58,14 @@ conda activate image_analysis
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
+dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
+
 dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 Different versions of the DANDI command line tool use different casing for option values.
-If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT`.
-Use the uppercase or lowercase command according to what `dandi download --help` shows on that machine.
+If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact`.
+Use the lowercase or uppercase command according to what `dandi download --help` shows on that machine.
 For example, if dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.
 
 Use `--existing ERROR` or `--existing error` for a first clean download.
