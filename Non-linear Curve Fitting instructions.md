@@ -19,6 +19,7 @@
   - [Output file structure](#output-file-structure)
 - [Known set-up issues](#known-set-up-issues)
 - [Curve Fitting Equations](#curve-fitting-equations)
+- [Function Fitting Strategy](#function-fitting-strategy)
 
 ## Initial Set Up
 
@@ -858,6 +859,137 @@ The simulated data is saved in the folder `examples` in the main repository. The
 
       The right-hand plot shows the same plot but on as a semilog plot that starts at the stimulation. The vertical and horizontal bars now represent an e-fold change in y and 100ms.
 
+   - **`Detecting Outliers`**
+
+      Multivariate outlier detection based on classical and robust Mahalanobis distances (Rousseeuw & van Zomeren, 1990; Rousseeuw & Van Driessen, 1999).
+
+      The classical **Mahalanobis distance** for an observation $\mathbf{x}_i$ in $p$-dimensional space is:
+
+      $$
+      MD_i = \sqrt{(\mathbf{x}_i - \boldsymbol{\mu})^\top \boldsymbol{\Sigma}^{-1} (\mathbf{x}_i - \boldsymbol{\mu})}
+      $$
+
+      where $\boldsymbol{\mu}$ is the sample mean and $\boldsymbol{\Sigma}$ is the sample covariance matrix. Under multivariate normality:
+
+      $$
+      MD_i^2 \sim \chi^2_p
+      $$
+
+      giving the cutoff:
+
+      $$
+      c = \sqrt{\chi^2_{p,\,q}}
+      $$
+
+      where $q$ is the chosen quantile (default $q = 0.975$).
+
+      However, $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are themselves sensitive to outliers — a phenomenon known as **masking**, whereby outliers inflate the covariance estimate so much that they appear non-outlying. To address this, the **robust distance** $RD_i$ replaces these with high-breakdown estimates:
+
+      $$
+      RD_i = \sqrt{(\mathbf{x}_i - \mathbf{T})^\top \mathbf{C}^{-1} (\mathbf{x}_i - \mathbf{T})}
+      $$
+
+      where $\mathbf{T}$ and $\mathbf{C}$ are robust location and scatter estimates obtained from one of:
+
+      - **Minimum Covariance Determinant (MCD)** — finds the subset of $h \approx n/2$ observations whose covariance matrix has the smallest determinant. Both $\mathbf{T}$ and $\mathbf{C}$ are computed from this subset.
+      - **Minimum Volume Ellipsoid (MVE)** — finds the smallest-volume ellipsoid containing $h$ observations.
+
+      Both achieve a breakdown point of approximately 50%, meaning up to half the data may be contaminated without corrupting the estimates.
+
+      An observation is flagged as an outlier when:
+
+      $$
+      RD_i > \sqrt{\chi^2_{p,\,q}}
+      $$
+
+      Example usage to detect outliers using MCD on Afast vs Aslow amplitudes:
+
+      ```R
+      # Remove all objects from the environment
+      rm(list = ls(all = TRUE))
+
+      # Load and install necessary packages
+      load_required_packages <- function(packages) {
+       new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
+       if (length(new.packages)) install.packages(new.packages)
+       invisible(lapply(packages, library, character.only = TRUE))
+      }
+
+      required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+      load_required_packages(required.packages)
+
+      UserName <- Sys.getenv('USER')
+      root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+      source(file.path(root_dir, 'R functions', 'setup.R'))
+
+      # load previously saved environment (containing out_list from batch fitting)
+      wd <- file.path(root_dir, 'examples')
+      setwd(wd)
+      load(file.path(wd, 'example.RData'))
+
+      # build a wide-format data frame of fast and slow amplitudes directly from out_list
+      wide_df <- data.frame(
+        id     = seq_along(out_list),
+        A_fast = sapply(out_list, function(x) -x$output['fast', 'A1']),
+        A_slow = sapply(out_list, function(x) -x$output['slow', 'A1'])
+      )
+
+      # detect outliers using MCD on Afast vs Aslow amplitudes
+      out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.975)
+
+      `attributes<-`(out, list(names = names(out)))
+      ```
+
+      This generates a named logical vector flagging outliers by row:
+
+      ```
+          1     2     3     4     5     6     7     8     9    10 
+      FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE 
+      ```
+
+      Outlying rows can be extracted directly:
+
+      ```R
+      wide_df[out, ]
+      ```
+
+      The function also provides built-in diagnostic plots:
+
+      ```R
+      # scatter of the two variables with outliers in red
+      mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='xy',
+         xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)))
+
+      # distance-distance plot (RD vs MD) with chi-squared cutoff lines
+      mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='dd')
+
+      # both side by side
+      mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='both',
+         xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)), 
+         palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=FALSE)
+      ```
+
+      If a non-numeric grouping column is present (e.g. `cell_type`), points are colour-coded by group using any of the available palettes: `'roma'`, `'viridis'`, `'jet'`, `'cividis'`, `'PuOr'`, `'BrBG'`, `'Vik'`, `'Batlow'`, `'Berlin'`.
+
+      The generated output looks like this:
+
+      ![mv_outliers](./examples/outlier_plot.svg)
+
+
+      **Notes on multivariate outlier detection:**
+
+      - The classical Mahalanobis distance is **not** a reliable outlier detection statistic in the presence of multiple outliers because of masking. Use only as a comparison against the robust distance.
+
+      - The **MCD estimator** (`method='MCD'`) is computationally efficient (FAST-MCD algorithm; Rousseeuw & Van Driessen, 1999) and is the recommended default.
+
+      - The **MVE estimator** (`method='MVE'`) is the original high-breakdown estimator used in Rousseeuw & van Zomeren (1990).
+
+      - The `alpha` argument controls the subset size used by MCD/MVE. The default of $\alpha = 0.5$ gives maximum robustness (50% breakdown).
+
+      - The `quant` argument sets the chi-squared cutoff quantile. The default of $0.975$ follows Rousseeuw & van Zomeren (1990). For small samples, a more conservative value such as $0.9999$ may be appropriate to reduce false positives.
+
+      - The **distance-distance plot** is a powerful diagnostic: points lying above the horizontal cutoff but to the left of the vertical cutoff are *masked* outliers — those that classical Mahalanobis distance fails to detect.
+
 
 ### Output file structure
    
@@ -1229,10 +1361,7 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
 
 
 
-## <center>Functions<center>
-
-
-## <center>Strategy<center>
+## <center>Function Fitting Strategy<center>
 
 1. **find approximate starting values:**
     - Using 20-80% rise time and 80-20% decay time heuristics to estimate $\tau_{rise}$ and $\tau_{decay}$
@@ -1342,141 +1471,6 @@ $$
 ### **Summary:**
 BIC and AIC have advantages in model comparison, penalization of complexity, and estimation of information loss, making them more suitable for model selection than using the 'sum of squares'.
 The lowest AIC (or BIC) represents the model that best fits the data. When comparing fits obtained for the same model, the methods are equivalent. 
-
-
-### **`Detecting Outliers`**
-
-Multivariate outlier detection based on classical and robust Mahalanobis distances (Rousseeuw & van Zomeren, 1990; Rousseeuw & Van Driessen, 1999).
-
-The classical **Mahalanobis distance** for an observation $\mathbf{x}_i$ in $p$-dimensional space is:
-
-$$
-MD_i = \sqrt{(\mathbf{x}_i - \boldsymbol{\mu})^\top \boldsymbol{\Sigma}^{-1} (\mathbf{x}_i - \boldsymbol{\mu})}
-$$
-
-where $\boldsymbol{\mu}$ is the sample mean and $\boldsymbol{\Sigma}$ is the sample covariance matrix. Under multivariate normality:
-
-$$
-MD_i^2 \sim \chi^2_p
-$$
-
-giving the cutoff:
-
-$$
-c = \sqrt{\chi^2_{p,\,q}}
-$$
-
-where $q$ is the chosen quantile (default $q = 0.975$).
-
-However, $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are themselves sensitive to outliers — a phenomenon known as **masking**, whereby outliers inflate the covariance estimate so much that they appear non-outlying. To address this, the **robust distance** $RD_i$ replaces these with high-breakdown estimates:
-
-$$
-RD_i = \sqrt{(\mathbf{x}_i - \mathbf{T})^\top \mathbf{C}^{-1} (\mathbf{x}_i - \mathbf{T})}
-$$
-
-where $\mathbf{T}$ and $\mathbf{C}$ are robust location and scatter estimates obtained from one of:
-
-- **Minimum Covariance Determinant (MCD)** — finds the subset of $h \approx n/2$ observations whose covariance matrix has the smallest determinant. Both $\mathbf{T}$ and $\mathbf{C}$ are computed from this subset.
-- **Minimum Volume Ellipsoid (MVE)** — finds the smallest-volume ellipsoid containing $h$ observations.
-
-Both achieve a breakdown point of approximately 50%, meaning up to half the data may be contaminated without corrupting the estimates.
-
-An observation is flagged as an outlier when:
-
-$$
-RD_i > \sqrt{\chi^2_{p,\,q}}
-$$
-
-Example usage to detect outliers using MCD on Afast vs Aslow amplitudes:
-
-```R
-# Remove all objects from the environment
-rm(list = ls(all = TRUE))
-
-# Load and install necessary packages
-load_required_packages <- function(packages) {
- new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
- if (length(new.packages)) install.packages(new.packages)
- invisible(lapply(packages, library, character.only = TRUE))
-}
-
-required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
-load_required_packages(required.packages)
-
-UserName <- Sys.getenv('USER')
-root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
-source(file.path(root_dir, 'R functions', 'setup.R'))
-
-# load previously saved environment (containing out_list from batch fitting)
-wd <- file.path(root_dir, 'examples')
-setwd(wd)
-load(file.path(wd, 'example.RData'))
-
-# build a wide-format data frame of fast and slow amplitudes directly from out_list
-wide_df <- data.frame(
-  id     = seq_along(out_list),
-  A_fast = sapply(out_list, function(x) -x$output['fast', 'A1']),
-  A_slow = sapply(out_list, function(x) -x$output['slow', 'A1'])
-)
-
-# detect outliers using MCD on Afast vs Aslow amplitudes
-out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.999)
-
-`attributes<-`(out, list(names = names(out)))
-```
-
-This generates a named logical vector flagging outliers by row:
-
-```
-    1     2     3     4     5     6     7     8     9    10 
-FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE 
-```
-
-Outlying rows can be extracted directly:
-
-```R
-wide_df[out, ]
-```
-
-The function also provides built-in diagnostic plots:
-
-```R
-# scatter of the two variables with outliers in red
-mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='xy',
-   xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)))
-
-# distance-distance plot (RD vs MD) with chi-squared cutoff lines
-mv_outliers(wide_df[,-1], method='MCD', quant=0.99, plot=TRUE, type='dd')
-
-# both side by side
-mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='both',
-   xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)), 
-   palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=FALSE)
-```
-
-If a non-numeric grouping column is present (e.g. `cell_type`), points are colour-coded by group using any of the available palettes: `'roma'`, `'viridis'`, `'jet'`, `'cividis'`, `'PuOr'`, `'BrBG'`, `'Vik'`, `'Batlow'`, `'Berlin'`.
-
-The generated output looks like this:
-
-![mv_outliers](./examples/outlier_plot.svg)
-
-
-**Notes on multivariate outlier detection:**
-
-- The classical Mahalanobis distance is **not** a reliable outlier detection statistic in the presence of multiple outliers because of masking. Use only as a comparison against the robust distance.
-
-- The **MCD estimator** (`method='MCD'`) is computationally efficient (FAST-MCD algorithm; Rousseeuw & Van Driessen, 1999) and is the recommended default.
-
-- The **MVE estimator** (`method='MVE'`) is the original high-breakdown estimator used in Rousseeuw & van Zomeren (1990).
-
-- The `alpha` argument controls the subset size used by MCD/MVE. The default of $\alpha = 0.5$ gives maximum robustness (50% breakdown).
-
-- The `quant` argument sets the chi-squared cutoff quantile. The default of $0.975$ follows Rousseeuw & van Zomeren (1990). For small samples, a more conservative value such as $0.9999$ may be appropriate to reduce false positives.
-
-- The **distance-distance plot** is a powerful diagnostic: points lying above the horizontal cutoff but to the left of the vertical cutoff are *masked* outliers — those that classical Mahalanobis distance fails to detect.
-
-
-
 
 # <center>Code guide</center>
 
