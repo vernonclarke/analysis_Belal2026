@@ -63,6 +63,12 @@ Each converted session has:
 RNAscope data/NWB/<session>/<session>.nwb
 ```
 
+Downloaded DANDI-style NWB files are stored separately under:
+
+```text
+NWBdata/001832/sub-L1-ST8/sub-L1-ST8_ses-20240905T115902.nwb
+```
+
 Saved ROI analyses are stored under:
 
 ```text
@@ -96,9 +102,13 @@ Minimal session conversion:
 
 ```python
 from pathlib import Path
+import os
 import sys
 
-repo = Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+repo = Path(os.environ.get(
+    "ANALYSIS_ROOT",
+    Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+))
 sys.path.insert(0, str(repo / "Python functions"))
 
 from master_RNAscope import convert_rnascope_session_to_nwb
@@ -173,10 +183,14 @@ Read all stored experimenter counts:
 
 ```python
 from pathlib import Path
+import os
 import pandas as pd
 from pynwb import NWBHDF5IO
 
-repo = Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+repo = Path(os.environ.get(
+    "ANALYSIS_ROOT",
+    Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
+))
 nwb_root = repo / "RNAscope data" / "NWB"
 sessions = ["L1.ST8", "L2.ST8", "L3.ST6", "L4.ST8"]
 
@@ -293,7 +307,6 @@ Current one-field analysis parameters:
 ```python
 analysis_params = {
     "detection_method": "DoG",
-    "dog_mode": "tolerance",
     "sigma_small": 1.0,
     "sigma_large": 2.8,
     "threshold_percentile": 99.9,
@@ -470,6 +483,8 @@ The script maps:
 UL -> Control
 L  -> 6OHDA
 ```
+
+Python count tables store `condition` as `Intact` or `Lesioned`; the Figure 11 R script relabels these groups from `hemisphere` for plotting and statistics.
 
 The main mixed-effects model is:
 

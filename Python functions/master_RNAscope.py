@@ -37,6 +37,9 @@ from pynwb.image import GrayscaleImage, Images, RGBImage
 from pynwb.misc import DynamicTable
 
 
+FIELD_RE = re.compile(r"^(?P<slice_id>.+?)[._](?P<hemisphere>UL|L)_60x\.?(?P<field_index>\d+)$")
+
+
 def read_utf16_text(path: Path) -> str:
     return Path(path).read_bytes().decode("utf-16", errors="ignore")
 
@@ -1703,6 +1706,9 @@ def parse_field_metadata(field_name):
 
 def counts_from_roi_jsons(json_paths, session_group=None):
     rows = []
+
+    if json_paths is None:
+        json_paths = []
 
     for json_path in sorted(map(Path, json_paths)):
         payload = json.loads(json_path.read_text())

@@ -57,7 +57,6 @@ Repository components:
 
 - `nNLS functions.R` (core fitting functions)
 - `examples/` (example input files)
-- `images/` (plot assets)
 
 Requirements:
 
@@ -88,10 +87,12 @@ load_required_packages(required_packages)
 ### 2. Source repository functions
 
 ```r
-UserName <- Sys.getenv('USER')
-root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                       unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
+
+Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
 
 ### 3. Single-trace fitting example
 

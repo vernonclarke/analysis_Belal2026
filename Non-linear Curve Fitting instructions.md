@@ -54,9 +54,9 @@ Always re-install XQuartz when upgrading your macOS to a new major version.
 
 Only the R console was used for analysis. The examples were written for the R console/R GUI. They should also work in [`RStudio`](https://posit.co/products/open-source/rstudio/), although the interactive plotting behavior may differ. 
 
-Download the code in this directory using the green <span style="background-color:#00FF00; color:white; padding:4px 8px; border-radius:6px; font-family:monospace; display: inline-flex; align-items: center;"> &lt;&gt; Code <span style="margin-left: 4px;">&#9660;</span> </span> dropdown menu followed by `Download Zip`. Unpack and create directory e.g. `/Users/UserName/Documents/Repositories/analysis_Belal2026` replacing `UserName` with your actual `UserName`(!). 
+Download the code in this directory using the green <span style="background-color:#00FF00; color:white; padding:4px 8px; border-radius:6px; font-family:monospace; display: inline-flex; align-items: center;"> &lt;&gt; Code <span style="margin-left: 4px;">&#9660;</span> </span> dropdown menu followed by `Download Zip`. Unpack and create directory e.g. `~/Documents/Repositories/analysis_Belal2026`. 
 
-The analysis scripts assume this repository location. and  derives `UserName` from `Sys.getenv('USER')`, so no hidden configuration file is required. In order for the provided R code to work, it is necessary to load various packages within the R environment. Any code preceded by # is `commented out` and is provided in `*.R` files for instructional/informational purposes.
+The analysis scripts use `ANALYSIS_ROOT` if set, otherwise they use `~/Documents/Repositories/analysis_Belal2026`. In order for the provided R code to work, it is necessary to load various packages within the R environment. Any code preceded by # is `commented out` and is provided in `*.R` files for instructional/informational purposes.
 
 ## Quick Start Guide  
  
@@ -66,8 +66,8 @@ The analysis scripts assume this repository location. and  derives `UserName` fr
  # Remove all objects from the environment
  rm(list = ls(all = TRUE))
 
- UserName <- Sys.getenv('USER')
- root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+ root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                        unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
  source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
 
@@ -179,11 +179,11 @@ These responses with only differ by added gaussian noise.
   invisible(lapply(packages, library, character.only = TRUE))
  }
 
- required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+ required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
  load_required_packages(required.packages)
 
- UserName <- Sys.getenv('USER')
- root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+ root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                        unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
  source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
  
@@ -234,7 +234,7 @@ These responses with only differ by added gaussian noise.
 
  # save the data to an XLSX file
  xlsx_file_path <- file.path(root_dir, 'examples', 'data.xlsx')
- write_xlsx(as.data.frame(data), xlsx_file_path)
+ openxlsx::write.xlsx(as.data.frame(data), xlsx_file_path, overwrite = TRUE)
  ```
 
 ### View data
@@ -283,11 +283,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
   invisible(lapply(packages, library, character.only = TRUE))
  }
 
- required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+ required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
  load_required_packages(required.packages)
 
- UserName <- Sys.getenv('USER')
- root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+ root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                        unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
  source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
 
@@ -304,11 +304,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
  data2 <- load_data2(wd=wd, name='data')
  ```
 
- Note that function load_data2 imports all sheets in the excel file. `data2` is a list of these sheets which are labelled 'Sheet 1', 'Sheet 2' etc.
+ Note that function load_data2 imports all sheets in the excel file. `data2` is a list of these sheets which are labelled 'Sheet1', 'Sheet2' etc.
  
  In this example, the imported data XLSX only contains one sheet. 
  
- This can be accessed as `data2$'Sheet 1` etc.
+ This can be accessed as `data2$'Sheet1` etc.
 
  ### View imported data
 
@@ -442,8 +442,8 @@ The simulated data is saved in the folder `examples` in the main repository. The
     'shiny', 'shinybusy', 'signal', 'readxl', 'openxlsx')
  load_required_packages(required.packages)
   
- UserName <- Sys.getenv('USER')
- root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+ root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                        unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
  source(file.path(root_dir, 'R functions', 'setup.R'))
 
  ```
@@ -570,12 +570,11 @@ The simulated data is saved in the folder `examples` in the main repository. The
     invisible(lapply(packages, library, character.only = TRUE))
    }
 
-   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
    load_required_packages(required.packages)
 
-   # enter your UserName here
-   UserName <- Sys.getenv('USER')
-   root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+   root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                          unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
    source(file.path(root_dir, 'R functions', 'setup.R'))
 
    # create path to the working directory containing the simulated data from before
@@ -618,10 +617,9 @@ The simulated data is saved in the folder `examples` in the main repository. The
    # Remove all objects from the environment
    rm(list = ls(all = TRUE))
 
-   UserName <- Sys.getenv('USER')
-   
    # create path to directory containing example.RData
-   root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+   root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                          unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
    wd <- file.path(root_dir, 'examples')
    setwd(wd)
 
@@ -639,7 +637,7 @@ The simulated data is saved in the folder `examples` in the main repository. The
     invisible(lapply(packages, library, character.only = TRUE))
    }
 
-   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
+   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
    load_required_packages(required.packages)   
    ```
 
@@ -915,11 +913,11 @@ load_required_packages <- function(packages) {
  invisible(lapply(packages, library, character.only = TRUE))
 }
 
-required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'writexl')
-load_required_packages(required.packages)
+   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
+   load_required_packages(required.packages)
 
-UserName <- Sys.getenv('USER')
-root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+root_dir <- Sys.getenv('ANALYSIS_ROOT',
+                       unset=file.path(path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
 
 # load previously saved environment (containing out_list from batch fitting)
@@ -969,7 +967,7 @@ mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='both',
    palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=FALSE)
 ```
 
-If a non-numeric grouping column is present (e.g. `cell_type`), points are colour-coded by group using any of the available palettes: `'roma'`, `'viridis'`, `'jet'`, `'cividis'`, `'PuOr'`, `'BrBG'`, `'Vik'`, `'Batlow'`, `'Berlin'`.
+If a non-numeric grouping column is present (e.g. `cell_type`), points are colour-coded by group using any of the available palettes: `'Roma'`, `'viridis'`, `'jet'`, `'cividis'`, `'PuOr'`, `'BrBG'`, `'Vik'`, `'Batlow'`, `'Berlin'`.
 
 The generated output looks like this:
 

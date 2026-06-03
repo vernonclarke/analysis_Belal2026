@@ -13,12 +13,11 @@ required.packages <- c('robustbase', 'minpack.lm', 'openxlsx',
 load_required_packages(required.packages)
 
 if (!exists('root_dir')) {
-  UserName <- Sys.getenv('USER')
-  root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+  root_dir <- file.path(path.expand('~'),
+                        'Documents', 'Repositories', 'analysis_Belal2026')
 }
 
-repo_root <- Sys.getenv('ANALYSIS_ROOT',
-                        unset=root_dir)
+repo_root <- Sys.getenv('ANALYSIS_ROOT', unset=root_dir)
 repo_root <- normalizePath(repo_root, mustWork=TRUE)
 
 source(file.path(repo_root, 'R functions', 'nNLS functions.R'))

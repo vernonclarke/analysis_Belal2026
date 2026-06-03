@@ -2,7 +2,7 @@
 
 ## Definitions and Formulae
 
-## <center>These routines are designed to provide fits for product and alpha functions</center>
+## <center>These routines are designed to provide fits for product functions</center>
 
 
 ### product function:
@@ -243,7 +243,7 @@ for instance if $p_1$ = 0.2 and $p_2$ = 0.8 then $t_2$ - $t_1$ gives the 20 - 80
 
 likewise if $p_1$ = 0.9 and $p_2$ = 0.1 then $t_2$ - $t_1$ gives the 90 - 10 % decay time
 
-## <center>Solutions for the alpha function</center>
+## <center>Solutions for the alpha function (reference only; not implemented)</center>
 
 ### alpha function takes the form:
 
