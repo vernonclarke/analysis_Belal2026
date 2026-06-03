@@ -289,15 +289,13 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
  # to load previously saved CSV file
  data1 <- load_data(wd=wd, name='data')
 
- # to load previously saved XLSX file:
- data2 <- load_data2(wd=wd, name='data')
+ # to load the first sheet of the previously saved XLSX file:
+ data2 <- load_data2(wd=wd, name='data')[[1]]
  ```
 
- Note that function load_data2 imports all sheets in the excel file. `data2` is a list of these sheets which are labelled 'Sheet1', 'Sheet2' etc.
+ Note that function load_data2 imports all sheets in the excel file as a list labelled 'Sheet1', 'Sheet2' etc.
  
- In this example, the imported data XLSX only contains one sheet. 
- 
- This can be accessed as `data2$'Sheet1` etc.
+ In this example, the imported data XLSX only contains one sheet, so `[[1]]` selects that sheet.
 
  ### View imported data
 
@@ -308,7 +306,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
  data1[1:10, ]
 
  # view first 10 rows of data imported from XLSX file
- data2$'Sheet1'[1:10,]
+ data2[1:10, ]
  ```
  
  Both return the first 10 rows of each response of a data set (each response is represented by a column of data):
