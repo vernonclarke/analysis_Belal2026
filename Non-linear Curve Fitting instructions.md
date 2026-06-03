@@ -651,7 +651,6 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
   8  -46.531 2.367 29.064  6.463  3.353 64.174 2.155     27.829 1689.150 -102.034  8.866 196.162 28.756 14.194 431.387 5.016    168.688 23175.27
   9  -49.840 3.268 28.896  8.032  4.265 64.171 1.925     29.907 1901.664  -99.503  9.989 198.060 31.423 15.667 435.728 4.977    173.283 23095.93
   10 -50.424 2.470 31.378  6.815  3.526 69.257 2.133     29.827 1966.041  -99.590  9.410 202.569 30.288 14.989 445.515 5.160    174.930 23427.32
-
    ```
 
    Note: these example values were generated from `examples/data.xlsx`. The same traces are also provided in `examples/data.csv`; however, CSV and XLSX import can differ at very small floating-point precision levels. Most fits are unaffected, but for traces with two very similar local minima, such as response 3 with `n = 30`, these tiny differences can select a nearby alternative fit. To reproduce the table exactly, use the same file format and import path throughout the console and `analysePSC()` examples.
@@ -775,7 +774,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
       ScatterPlot(A, sign=-1, xlim=c(40,70), ylim=c(90,110), x_tick_interval=10, y_tick_interval=5,  
          xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)),
          lwd=1.25, p.cex=1, reg=TRUE, plot.CI=TRUE, reg.method='Theil-Sen', width=5, height=5, 
-         filename = 'scatter.svg', save=TRUE) 
+         filename = 'scatter.svg', save=FALSE) 
       ```
 
       The generated output for Theil-Sen regression fit with 95% confidence intervals looks like this:
