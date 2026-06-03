@@ -9,7 +9,8 @@ load_required_packages <- function(packages) {
 }
 
 required.packages <- c('robustbase', 'minpack.lm', 'openxlsx',
-                       'Rcpp', 'signal', 'dbscan')
+                       'Rcpp', 'signal', 'dbscan',
+                       'shiny', 'shinybusy', 'readxl')
 load_required_packages(required.packages)
 
 if (!exists('root_dir')) {

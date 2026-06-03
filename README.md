@@ -82,7 +82,7 @@ Repository components:
 Requirements:
 
 - [R](https://cran.r-project.org/) (tested on R 4.4.x to 4.5.x)
-- Packages: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`
+- Packages loaded by `setup.R`: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`, `shiny`, `shinybusy`, `readxl`
 - C++ toolchain for `Rcpp`, required because `setup.R` compiles C++ code at load time:
 - macOS: install Xcode Command Line Tools with `xcode-select --install`
 - Windows: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and make sure it is available on `PATH`; for R 4.4.x use Rtools 4.4, and for R 4.5.x or R 4.6.x use [Rtools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)
@@ -91,32 +91,20 @@ Requirements:
 
 ## Quick Start Guide
 
-### 1. Open R and run once
+### 1. Open R and source repository functions
 
 ```r
 rm(list = ls(all = TRUE))
 
-load_required_packages <- function(packages) {
-  new_packages <- packages[!(packages %in% installed.packages()[, "Package"])]
-  if (length(new_packages)) install.packages(new_packages)
-  invisible(lapply(packages, library, character.only = TRUE))
-}
-
-required_packages <- c("robustbase", "minpack.lm", "Rcpp", "signal", "openxlsx", "dbscan")
-load_required_packages(required_packages)
-```
-
-### 2. Source repository functions
-
-```r
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
 On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+Sourcing `setup.R` installs and loads the R packages needed for both the core fitting functions and the Shiny UI functions.
 
-### 3. Optional: R scripts that read downloaded DANDI/NWB files
+### 2. Optional: R scripts that read downloaded DANDI/NWB files
 
 The `reticulate` and `NWBenv` setup is only needed for R scripts that read downloaded DANDI/NWB files, such as `Paper analysis/*/*data processing from downloaded dandiset.R`. It is not needed just to source the core R functions.
 
@@ -148,7 +136,7 @@ reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 ```
 
-### 4. Single-trace fitting example
+### 3. Single-trace fitting example
 
 ```r
 dx <- 0.1

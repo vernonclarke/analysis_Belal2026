@@ -179,16 +179,6 @@ These responses with only differ by added gaussian noise.
  # Remove all objects from the environment
  rm(list = ls(all = TRUE))
 
- # Load and install necessary packages
- load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
- }
-
- required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
- load_required_packages(required.packages)
-
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
@@ -281,16 +271,6 @@ The simulated data is saved in the folder `examples` in the main repository. The
  ```R
  # Remove all objects from the environment
  rm(list = ls(all = TRUE))
-
- # Load and install necessary packages
- load_required_packages <- function(packages) {
-  new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-  if (length(new.packages)) install.packages(new.packages)
-  invisible(lapply(packages, library, character.only = TRUE))
- }
-
- required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
- load_required_packages(required.packages)
 
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
@@ -437,18 +417,9 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
  rm(list = ls(all = TRUE))
  graphics.off()
   
- load_required_packages <- function(packages) {
-   new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-   if (length(new.packages)) install.packages(new.packages)
-   invisible(lapply(packages, library, character.only = TRUE))
- }
-  
- required.packages <- c('dbscan', 'minpack.lm', 'Rcpp', 'robustbase',
-    'shiny', 'shinybusy', 'signal', 'readxl', 'openxlsx')
- load_required_packages(required.packages)
-  
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
+load_required_packages(c('shiny', 'shinybusy', 'readxl'))
 
  ```
 
@@ -567,16 +538,6 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
    # Remove all objects from the environment
    rm(list = ls(all = TRUE))
 
-   # Load and install necessary packages
-   load_required_packages <- function(packages) {
-    new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-    if (length(new.packages)) install.packages(new.packages)
-    invisible(lapply(packages, library, character.only = TRUE))
-   }
-
-   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
-   load_required_packages(required.packages)
-
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
 
@@ -622,25 +583,13 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
    # create path to directory containing example.RData
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
+source(file.path(root_dir, 'R functions', 'setup.R'))
    wd <- file.path(root_dir, 'examples')
    setwd(wd)
 
    path <- file.path(wd, 'example.RData')
 
    load(path)
-
-   # This should load the entire environment which will include the custom functions contained in 'nNLS functions.R'
-   # However, any required packages must still be loaded
-   # To load and install necessary packages, run the following code as before:
-   
-   load_required_packages <- function(packages) {
-    new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
-    if (length(new.packages)) install.packages(new.packages)
-    invisible(lapply(packages, library, character.only = TRUE))
-   }
-
-   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
-   load_required_packages(required.packages)   
    ```
 
    ### Examining analysed data
@@ -907,16 +856,6 @@ Example usage to detect outliers using MCD on Afast vs Aslow amplitudes:
 ```R
 # Remove all objects from the environment
 rm(list = ls(all = TRUE))
-
-# Load and install necessary packages
-load_required_packages <- function(packages) {
- new.packages <- packages[!(packages %in% installed.packages()[, 'Package'])]
- if (length(new.packages)) install.packages(new.packages)
- invisible(lapply(packages, library, character.only = TRUE))
-}
-
-   required.packages <- c('robustbase', 'minpack.lm', 'Rcpp', 'signal', 'openxlsx', 'dbscan')
-   load_required_packages(required.packages)
 
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
