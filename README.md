@@ -27,6 +27,8 @@ Affiliations
 
 
 
+First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
+
 ```bash
 
 cd "$HOME/Documents/Repositories/analysis_Belal2026"
@@ -45,6 +47,8 @@ python -m dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --fo
 
 ```
 
+On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, install Anaconda or Miniconda first, run `conda init powershell`, then reopen PowerShell before using `conda`.
+
 On Windows PowerShell:
 
 ```powershell
@@ -56,8 +60,6 @@ New-Item -ItemType Directory -Force -Path NWBdata
 
 python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
-
-First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
 
 Different versions of the DANDI command line tool use different casing for option values.
 Use the uppercase or lowercase command according to what `python -m dandi download --help` shows on that machine.
