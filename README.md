@@ -37,13 +37,13 @@ conda activate image_analysis
 
 mkdir -p NWBdata
 
-python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-python -m dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
 
-python -m dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-python -m dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
 
 ```
 
@@ -58,12 +58,13 @@ conda activate image_analysis
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
-python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 Different versions of the DANDI command line tool use different casing for option values.
-Use the uppercase or lowercase command according to what `python -m dandi download --help` shows on that machine.
-For example, if python -m dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.
+If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT`.
+Use the uppercase or lowercase command according to what `dandi download --help` shows on that machine.
+For example, if dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.
 
 Use `--existing ERROR` or `--existing error` for a first clean download.
 Use `--existing REFRESH` or `--existing refresh` when the files already exist and need to be checked or updated.
