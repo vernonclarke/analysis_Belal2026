@@ -14,8 +14,8 @@ load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
 env_name <- 'NWBenv'
 if (!env_name %in% reticulate::conda_list()$name) {
   reticulate::conda_create(env_name, python_version = '3.11')
-  reticulate::conda_install(env_name, packages = c('pynwb', 'numpy'), pip = TRUE)
 }
+reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
 reticulate::use_condaenv(env_name, required = TRUE)
 reticulate::py_config()
 

@@ -116,6 +116,34 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
 On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+For R scripts that use `reticulate` to read downloaded DANDI/NWB files, R may also need the Conda path written to `~/.Renviron`. If `file.edit("~/.Renviron")` does not open, create it from R with:
+
+```r
+writeLines(
+  'RETICULATE_CONDA="C:/Users/<USERNAME>/miniconda3/condabin/conda.bat"',
+  con = path.expand("~/.Renviron")
+)
+```
+
+Replace `<USERNAME>` with the real Windows username, restart R, then check:
+
+```r
+Sys.getenv("RETICULATE_CONDA")
+file.exists(Sys.getenv("RETICULATE_CONDA"))
+```
+
+The `NWBenv` Conda environment used by these R scripts must also have `pip`, `numpy`, and `pynwb` installed. If `NWBenv` already exists but reports missing `pip` or `numpy`, recreate it from R with:
+
+```r
+env_name <- 'NWBenv'
+if (env_name %in% reticulate::conda_list()$name) {
+  reticulate::conda_remove(env_name)
+}
+reticulate::conda_create(env_name, python_version = '3.11')
+reticulate::conda_install(env_name, packages = c('pip', 'pynwb', 'numpy'), channel = 'conda-forge')
+reticulate::use_condaenv(env_name, required = TRUE)
+reticulate::py_config()
+```
 
 ### 3. Single-trace fitting example
 
