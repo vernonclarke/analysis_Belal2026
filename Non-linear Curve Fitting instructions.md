@@ -28,7 +28,7 @@ All analysis was performed using the R graphical user interface (GUI) and tested
 - [`R` Statistical Software](https://www.R-project.org/)
 - [`XQuartz`](https://www.xquartz.org/) required for graphical output on MacOS
 - [`Sublime text`](https://www.sublimetext.com/) or, if you prefer, simply use the default R text editor
-- This code uses the package `Rcpp` to compile C++ code.
+- This code uses the package `Rcpp` to compile C++ code. The R packages are installed automatically by `setup.R`, but the operating-system compiler tools must be installed separately before sourcing `setup.R`.
 
   On `MacOS`, `R` requires the Xcode Command Line Tools to compile C++ code. To install the tools, open the Terminal and run:
   
@@ -36,7 +36,13 @@ All analysis was performed using the R graphical user interface (GUI) and tested
   xcode-select --install
   ```
 
-  On a `Windows` PC,  `R` requires `Rtools` instead. The latest version of [`Rtools`](https://cran.r-project.org/bin/windows/Rtools/). After installing Rtools, ensure that the installation path is added to your system's environment variables if `R` does not detect it automatically.
+  On a `Windows` PC,  `R` requires [`Rtools`](https://cran.r-project.org/bin/windows/Rtools/) instead. For R 4.5.x and R 4.6.x use [`Rtools 4.5`](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). After installing Rtools, ensure that it is available on `PATH` if `R` does not detect it automatically. In R, check with:
+
+  ```r
+  Sys.which("make")
+  ```
+
+  This should return a path, not an empty string.
 
   On Linux (Debian/Ubuntu), R requires development tools to compile packages from source:
   ```bash

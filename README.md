@@ -83,10 +83,11 @@ Requirements:
 
 - [R](https://cran.r-project.org/) (tested on R 4.4.x to 4.5.x)
 - Packages: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`
-- C++ toolchain for `Rcpp`:
-- macOS: Xcode Command Line Tools
-- Windows: Rtools
-- Linux (Debian/Ubuntu): build-essential
+- C++ toolchain for `Rcpp`, required because `setup.R` compiles C++ code at load time:
+- macOS: install Xcode Command Line Tools with `xcode-select --install`
+- Windows: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) and make sure it is available on `PATH`; for R 4.5.x and R 4.6.x use [Rtools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)
+- Linux (Debian/Ubuntu): install build tools with `sudo apt-get install build-essential`
+- To check the compiler from R, run `Sys.which("make")`; it should return a path, not an empty string.
 
 ## Quick Start Guide
 
