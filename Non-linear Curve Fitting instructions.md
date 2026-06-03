@@ -78,7 +78,9 @@ root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type 
 source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
 
- Once this code is run, it should perform all necessary installations, load the required packages, and load the custom-written functions.
+ Once this code is run, it should perform all necessary installations, load the required packages for the core fitting functions and Shiny UI functions, and load the custom-written functions.
+
+ Python/reticulate setup is only needed for scripts that read downloaded DANDI/NWB files; see the main `README.md` step 2.
 
 2. **Fitting example**
 
@@ -183,7 +185,9 @@ root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type 
 source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
  
- Once this code is run, it should perform all necessary installations and load the necessary packages for the analysis and will load all necessary custom-written functions
+ Once this code is run, it should perform all necessary installations and load the necessary packages for the core fitting functions and Shiny UI functions, and will load all necessary custom-written functions.
+
+ Python/reticulate setup is only needed for scripts that read downloaded DANDI/NWB files; see the main `README.md` step 2.
 
 
  ### Simulated example
@@ -419,7 +423,6 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
   
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 source(file.path(root_dir, 'R functions', 'setup.R'))
-load_required_packages(c('shiny', 'shinybusy', 'readxl'))
 
  ```
 
