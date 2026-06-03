@@ -9,8 +9,7 @@ graphics.off()
 
 plotsave <- FALSE
 
-UserName <- Sys.getenv('USER')
-root_dir <- file.path('/Users', UserName, 'Documents', 'Repositories', 'analysis_Belal2026')
+root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') Sys.getenv('USERPROFILE') else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 
 source(file.path(root_dir, 'R functions', 'setup.R'))
 load_required_packages(c('bayesplot', 'brms', 'lme4', 'parallel', 'robustlmm', 'sciplot'))
