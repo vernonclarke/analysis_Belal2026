@@ -405,15 +405,57 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
  The following instructions are provided for using the Shiny-based UI interface i.e. by running the function `analysePSC()`.
  
- a. **Open `Terminal` and launch `R`**
+ a. **Open `R`**
  
- ```
+ On macOS/Linux Terminal:
+
+ ```bash
  R --no-save
  ```
 
+ On Windows, you do not need to use a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code below into the R console.
+
+ If you want to launch R from Command Prompt, first find the installed `R.exe` path:
+
+ ```cmd
+ where /r "C:\Program Files\R" R.exe
+ ```
+
+ This should print a path similar to:
+
+ ```cmd
+ C:\Program Files\R\R-x.y.z\bin\x64\R.exe
+ ```
+
+ Test that path directly in Command Prompt:
+
+ ```cmd
+ "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
+ ```
+
+ In PowerShell, use `&` before the quoted path:
+
+ ```powershell
+ & "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
+ ```
+
+ Replace `R-x.y.z` with the R version folder found on your computer. To make `R.exe --no-save` work from a new Command Prompt, add that folder to your user PATH:
+
+ ```cmd
+ setx PATH "%PATH%;C:\Program Files\R\R-x.y.z\bin\x64"
+ ```
+
+ Close Command Prompt or PowerShell and reopen it, then run:
+
+ ```cmd
+ R.exe --no-save
+ ```
+
+ In PowerShell, use `R.exe`, not `R`, because `R` can conflict with PowerShell's command-history alias.
+
  b. **Clear environment, load packages and set paths**
 
- Once `R` has lauched then enter the following code into the `Terminal` to load and install necessary packages and then create the path to the repository:
+ Once `R` has launched, enter the following code into the R console to load the packages and create the path to the repository:
  
  ```
  rm(list = ls(all = TRUE))
