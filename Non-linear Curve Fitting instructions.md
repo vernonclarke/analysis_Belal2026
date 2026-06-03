@@ -992,7 +992,7 @@ The generated output looks like this:
    out_list[[ii]]$output
    ```
    
-   This returns the output as before:
+   Returns the output as before:
    
    ```            
              A1  τrise  τdecay  tpeak r10_90  d90_10 delay half_width     area1
