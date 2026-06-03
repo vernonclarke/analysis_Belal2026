@@ -30,7 +30,7 @@ All analysis was performed using the R graphical user interface (GUI) and tested
 - [`Sublime text`](https://www.sublimetext.com/) or, if you prefer, simply use the default R text editor
 - This code uses the package `Rcpp` to compile C++ code. The R packages are installed automatically by `setup.R`, but the operating-system compiler tools must be installed separately before sourcing `setup.R`.
 
-  On `MacOS`, `R` requires the Xcode Command Line Tools to compile C++ code. To install the tools, open the Terminal and run:
+  On `MacOS`, `R` requires the Xcode Command Line Tools to compile C++ code. To install the tools, open the `Terminal` and run:
   
   ```bash
   xcode-select --install
@@ -407,7 +407,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
  
  a. **Open `R`**
  
- On macOS/Linux Terminal:
+ On macOS/Linux `Terminal`:
 
  ```bash
  R --no-save
@@ -415,43 +415,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
  On Windows, you do not need to use a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code below into the R console.
 
- If you want to launch R from Command Prompt, first find the installed `R.exe` path:
-
- ```cmd
- where /r "C:\Program Files\R" R.exe
- ```
-
- This should print a path similar to:
-
- ```cmd
- C:\Program Files\R\R-x.y.z\bin\x64\R.exe
- ```
-
- Test that path directly in Command Prompt:
-
- ```cmd
- "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
- ```
-
- In PowerShell, use `&` before the quoted path:
-
- ```powershell
- & "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
- ```
-
- Replace `R-x.y.z` with the R version folder found on your computer. To make `R.exe --no-save` work from a new Command Prompt, add that folder to your user PATH:
-
- ```cmd
- setx PATH "%PATH%;C:\Program Files\R\R-x.y.z\bin\x64"
- ```
-
- Close Command Prompt or PowerShell and reopen it, then run:
-
- ```cmd
- R.exe --no-save
- ```
-
- In PowerShell, use `R.exe`, not `R`, because `R` can conflict with PowerShell's command-history alias.
+ If you want to launch R from `Command Prompt` or `PowerShell`, use `R.exe --no-save`; see the main `README.md` Quick Start for the Windows PATH setup and `PowerShell` distinction.
 
  b. **Clear environment, load packages and set paths**
 

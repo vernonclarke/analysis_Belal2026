@@ -15,7 +15,7 @@ These instructions describe the Python environment used by this repository for:
 
 ## Setup Instructions
 
-Install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) or [Anaconda](https://www.anaconda.com/download) before running these commands. On macOS/Linux, use Terminal after installation. On Windows, use Miniconda Prompt or Anaconda Prompt from the Start Menu.
+Install [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) or [Anaconda](https://www.anaconda.com/download) before running these commands. On macOS/Linux, use `Terminal` after installation. On Windows, use `Miniconda Prompt` or `Anaconda Prompt` from the Start Menu.
 
 Run from the repository root:
 
@@ -44,9 +44,9 @@ pip install pillow
 python -m ipykernel install --user --name image_analysis --display-name "Python (image_analysis)"
 ```
 
-On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, run `conda init powershell`, then reopen PowerShell before using `conda`.
+On Windows, use `Anaconda Prompt` or `Miniconda Prompt`. If using `PowerShell`, run `conda init powershell`, then reopen `PowerShell` before using `conda`.
 
-On Windows PowerShell:
+On Windows `PowerShell`:
 
 ```powershell
 cd "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
@@ -113,9 +113,9 @@ mkdir -p NWBdata
 dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
-On Windows PowerShell:
+On Windows `PowerShell`:
 
-If `conda` is not recognized, open Anaconda Prompt or Miniconda Prompt instead. To use PowerShell, install Anaconda or Miniconda first, run `conda init powershell`, then reopen PowerShell.
+If `conda` is not recognized, open `Anaconda Prompt` or `Miniconda Prompt` instead. To use `PowerShell`, install Anaconda or Miniconda first, run `conda init powershell`, then reopen `PowerShell`.
 
 ```powershell
 conda activate image_analysis

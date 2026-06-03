@@ -47,9 +47,9 @@ dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT
 
 ```
 
-On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, install Anaconda or Miniconda first, accept the Conda/Anaconda Terms of Service if prompted, run `conda init powershell`, then reopen PowerShell before using `conda`. If `conda` is still not recognized, use Anaconda Prompt/Miniconda Prompt or add the Miniconda `condabin` folder to PATH. If PowerShell reports that scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
+On Windows, use `Anaconda Prompt` or `Miniconda Prompt`. If using `PowerShell`, install Anaconda or Miniconda first, accept the Conda/Anaconda Terms of Service if prompted, run `conda init powershell`, then reopen `PowerShell` before using `conda`. If `conda` is still not recognized, use `Anaconda Prompt`/`Miniconda Prompt` or add the Miniconda `condabin` folder to PATH. If `PowerShell` reports that scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
-On Windows PowerShell:
+On Windows `PowerShell`:
 
 ```powershell
 cd "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
@@ -106,7 +106,7 @@ Sourcing `setup.R` installs and loads the R packages needed for both the core fi
 
 On Windows, you do not need to launch R from a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code above into the R console.
 
-If you want R to work from Command Prompt like it does on macOS Terminal, first find the installed `R.exe` path:
+If you want R to work from `Command Prompt` like it does on macOS `Terminal`, first find the installed `R.exe` path:
 
 ```cmd
 where /r "C:\Program Files\R" R.exe
@@ -124,31 +124,31 @@ Test that path directly:
 "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
 ```
 
-In PowerShell, use `&` before the quoted path:
+In `PowerShell`, use `&` before the quoted path:
 
 ```powershell
 & "C:\Program Files\R\R-x.y.z\bin\x64\R.exe" --no-save
 ```
 
-Replace `R-x.y.z` with the R version folder found on your computer. To make `R.exe --no-save` work from a new Command Prompt, add that folder to your user PATH:
+Replace `R-x.y.z` with the R version folder found on your computer. To make `R.exe --no-save` work from a new `Command Prompt`, add that folder to your user PATH:
 
 ```cmd
 setx PATH "%PATH%;C:\Program Files\R\R-x.y.z\bin\x64"
 ```
 
-Close Command Prompt and reopen it, then run:
+Close `Command Prompt` and reopen it, then run:
 
 ```cmd
 R.exe --no-save
 ```
 
-In PowerShell, also use:
+In `PowerShell`, also use:
 
 ```powershell
 R.exe --no-save
 ```
 
-Use `R.exe`, not `R`, because `R` can conflict with PowerShell's command-history alias.
+Use `R.exe`, not `R`, because `R` can conflict with `PowerShell`'s command-history alias.
 
 ### 2. Optional: R scripts that read downloaded DANDI/NWB files
 
