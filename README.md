@@ -32,7 +32,6 @@ Affiliations
 cd "$HOME/Documents/Repositories/analysis_Belal2026"
 
 conda activate image_analysis
-python -m pip install dandi
 
 mkdir -p NWBdata
 
@@ -52,12 +51,13 @@ On Windows PowerShell:
 cd "C:\Users\<USERNAME>\Documents\Repositories\analysis_Belal2026"
 
 conda activate image_analysis
-python -m pip install dandi
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
 python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
+
+First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
 
 Different versions of the DANDI command line tool use different casing for option values.
 Use the uppercase or lowercase command according to what `python -m dandi download --help` shows on that machine.

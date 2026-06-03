@@ -99,11 +99,12 @@ NWBdata/001832
 
 ## Download DANDI Data
 
+First complete [Setup Instructions](#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
+
 From the repository root:
 
 ```bash
 conda activate image_analysis
-python -m pip install dandi
 mkdir -p NWBdata
 python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
@@ -112,7 +113,6 @@ On Windows PowerShell:
 
 ```powershell
 conda activate image_analysis
-python -m pip install dandi
 New-Item -ItemType Directory -Force -Path NWBdata
 python -m dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
