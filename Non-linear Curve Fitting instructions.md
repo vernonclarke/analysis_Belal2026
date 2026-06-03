@@ -1420,7 +1420,7 @@ wide_df <- data.frame(
 )
 
 # detect outliers using MCD on Afast vs Aslow amplitudes
-out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.999)
+out <- mv_outliers(wide_df[,-1], method='MCD', alpha=0.5, quant=0.975)
 
 `attributes<-`(out, list(names = names(out)))
 ```
@@ -1442,14 +1442,14 @@ The function also provides built-in diagnostic plots:
 
 ```R
 # scatter of the two variables with outliers in red
-mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='xy',
+mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='xy',
    xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)))
 
 # distance-distance plot (RD vs MD) with chi-squared cutoff lines
-mv_outliers(wide_df[,-1], method='MCD', quant=0.99, plot=TRUE, type='dd')
+mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='dd')
 
 # both side by side
-mv_outliers(wide_df[,-1], method='MCD', quant=0.999, plot=TRUE, type='both',
+mv_outliers(wide_df[,-1], method='MCD', quant=0.975, plot=TRUE, type='both',
    xlab=expression(A[fast] * ' ' * (pA)), ylab=expression(A[slow] * ' ' * (pA)), 
    palette='Roma', width=5, height=5, filename='outlier_plot.svg', save=FALSE)
 ```
