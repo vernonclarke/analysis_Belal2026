@@ -416,7 +416,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
   On Windows `Command Prompt`:
 
  ```bash
- R.exe --no-save`
+ R.exe --no-save
  ```
 
  On Windows, you do not need to use a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code below into the R console.
