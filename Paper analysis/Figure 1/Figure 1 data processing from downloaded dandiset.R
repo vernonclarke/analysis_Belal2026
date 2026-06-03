@@ -5,7 +5,7 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') Sys.getenv('USERPROFILE') else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
+root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 
 source(file.path(root_dir, 'R functions', 'setup.R'))
 load_required_packages(c('jsonlite', 'reticulate', 'readABF', 'yaml'))
