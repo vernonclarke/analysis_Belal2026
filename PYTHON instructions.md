@@ -115,7 +115,7 @@ dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT -
 
 On Windows `PowerShell`:
 
-If `conda` is not recognized, open `Anaconda Prompt` or `Miniconda Prompt` instead. To use `PowerShell`, install Anaconda or Miniconda first, run `conda init powershell`, then reopen `PowerShell`.
+If `conda` is not recognized, open `Anaconda Prompt` or `Miniconda Prompt` instead. To use `PowerShell`, install `Anaconda` or `Miniconda` first, run `conda init powershell`, then reopen `PowerShell`.
 
 ```powershell
 conda activate image_analysis
