@@ -47,7 +47,7 @@ python -m dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --fo
 
 ```
 
-On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, install Anaconda or Miniconda first, run `conda init powershell`, then reopen PowerShell before using `conda`.
+On Windows, use Anaconda Prompt or Miniconda Prompt. If using PowerShell, install Anaconda or Miniconda first, accept the Conda/Anaconda Terms of Service if prompted, run `conda init powershell`, then reopen PowerShell before using `conda`. If `conda` is still not recognized, use Anaconda Prompt/Miniconda Prompt or add the Miniconda `condabin` folder to PATH. If PowerShell reports that scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
 On Windows PowerShell:
 
