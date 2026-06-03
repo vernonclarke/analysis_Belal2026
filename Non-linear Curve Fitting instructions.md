@@ -58,6 +58,8 @@ Download the code in this directory using the green <span style="background-colo
 
 The analysis scripts use `ANALYSIS_ROOT` if set, otherwise they use `~/Documents/Repositories/analysis_Belal2026`. In order for the provided R code to work, it is necessary to load various packages within the R environment. Any code preceded by # is `commented out` and is provided in `*.R` files for instructional/informational purposes.
 
+On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+
 ## Quick Start Guide  
  
 1. **Open R GUI and source the shared setup file**

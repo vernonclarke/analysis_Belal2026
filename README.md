@@ -93,6 +93,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
+On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
 
 ### 3. Single-trace fitting example
 

@@ -23,14 +23,17 @@ stopifnot(!contains(setup, "file.path('/Users'"))
 
 stopifnot(!contains(readme, "`images/`"))
 stopifnot(contains(readme, "ANALYSIS_ROOT"))
+stopifnot(contains(readme, "Rtools must be installed and available on `PATH`"))
 stopifnot(!contains(readme, "shinybusy"))
 
 stopifnot(contains(python_doc, "pip install pillow"))
+stopifnot(contains(python_doc, "pip install tzdata"))
 
 stopifnot(!contains(nonlinear, "writexl"))
 stopifnot(!contains(nonlinear, "write_xlsx"))
 stopifnot(contains(nonlinear, "openxlsx::write.xlsx"))
 stopifnot(contains(nonlinear, "readxl"))
+stopifnot(contains(nonlinear, "Rtools must be installed and available on `PATH`"))
 stopifnot(!contains(nonlinear, "Sys.getenv('USER')"))
 stopifnot(!contains(nonlinear, "file.path('/Users'"))
 stopifnot(!contains(nonlinear, "'roma'"))

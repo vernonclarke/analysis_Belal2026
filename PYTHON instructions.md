@@ -30,6 +30,7 @@ pip install -U kaleido
 pip install ipykernel
 pip install ipympl
 pip install pytz
+pip install tzdata
 pip install dandi
 pip install pynwb hdmf
 pip install neuroconv xmltodict
