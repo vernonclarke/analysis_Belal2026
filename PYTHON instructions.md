@@ -234,7 +234,15 @@ RNAscope data/NWB
 After the environment is working:
 
 ```bash
-conda env export --from-history > environment.yml
-conda env export > environment.lock.yml
+conda env export --no-builds > environment.yml
 pip freeze > requirements.txt
+```
+
+The `--no-builds` option keeps package versions but removes platform-specific build strings such as `bzip2=1.0.8=h80987f9_6`. Those build strings can prevent a macOS-exported environment from installing on Windows or Linux, even when the same package version is available for that platform.
+
+To recreate the Conda environment from the YAML file on another machine:
+
+```bash
+conda env create -f environment.yml
+conda activate image_analysis
 ```
