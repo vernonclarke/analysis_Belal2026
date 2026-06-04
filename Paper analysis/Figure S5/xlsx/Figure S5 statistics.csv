@@ -1,0 +1,5 @@
+"parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
+"amplitude","within cell_type (unpaired)","ctrl vs OHDA","21 vs 21","Wilcoxon rank sum exact test","two.sided","W",39,6.27230953845774e-07,6.27230953845774e-07
+"charge_transfer","within cell_type (unpaired)","ctrl vs OHDA","21 vs 21","Wilcoxon rank sum exact test","two.sided","W",404,4.3049997223186e-07,4.3049997223186e-07
+"tau","within condition fast (unpaired)","ctrl vs OHDA","21 vs 18","Wilcoxon rank sum exact test","two.sided","W",240,0.156460943555681,0.312921887111363
+"tau","within condition slow (unpaired)","ctrl vs OHDA","21 vs 19","Wilcoxon rank sum exact test","two.sided","W",188,0.768284267170711,0.768284267170711
