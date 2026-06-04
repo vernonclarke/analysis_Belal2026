@@ -46,6 +46,42 @@ python -m ipykernel install --user --name image_analysis --display-name "Python 
 
 On Windows, use `Anaconda Prompt` or `Miniconda Prompt`. If using `PowerShell`, run `conda init powershell`, then reopen `PowerShell` before using `conda`.
 
+If no `Miniconda Prompt` or `Anaconda Prompt` shortcut is available and `conda` is not recognized, call `conda.bat` directly from the Miniconda install folder.
+
+In `Command Prompt`, try the per-user install path:
+
+```cmd
+"%USERPROFILE%\miniconda3\condabin\conda.bat" --version
+"%USERPROFILE%\miniconda3\condabin\conda.bat" init cmd.exe
+```
+
+Or the all-users install path:
+
+```cmd
+"C:\ProgramData\miniconda3\condabin\conda.bat" --version
+"C:\ProgramData\miniconda3\condabin\conda.bat" init cmd.exe
+```
+
+In `PowerShell`, try the per-user install path:
+
+```powershell
+& "$env:USERPROFILE\miniconda3\condabin\conda.bat" --version
+& "$env:USERPROFILE\miniconda3\condabin\conda.bat" init powershell
+```
+
+Or the all-users install path:
+
+```powershell
+& "C:\ProgramData\miniconda3\condabin\conda.bat" --version
+& "C:\ProgramData\miniconda3\condabin\conda.bat" init powershell
+```
+
+After initialization, close and reopen `Command Prompt` or `PowerShell`, then check:
+
+```cmd
+conda --version
+```
+
 On Windows `PowerShell`:
 
 ```powershell
@@ -86,7 +122,21 @@ conda activate image_analysis
 jupyter notebook
 ```
 
-On Windows `Command Prompt`, `Anaconda Prompt`, or `Miniconda Prompt`:
+On Windows `Anaconda Prompt` or `Miniconda Prompt`:
+
+```cmd
+cd "%USERPROFILE%\Documents\Repositories\analysis_Belal2026"
+conda activate image_analysis
+jupyter notebook
+```
+
+In a normal Windows `Command Prompt`, `conda activate` only works after Conda has been initialized for `cmd.exe`. If needed, run this once, close `Command Prompt`, and reopen it:
+
+```cmd
+conda init cmd.exe
+```
+
+Then run:
 
 ```cmd
 cd "%USERPROFILE%\Documents\Repositories\analysis_Belal2026"
