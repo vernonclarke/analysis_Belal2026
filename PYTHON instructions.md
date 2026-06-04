@@ -246,3 +246,11 @@ To recreate the Conda environment from the YAML file on another machine:
 conda env create -f environment.yml
 conda activate image_analysis
 ```
+
+If the `pip:` section in `environment.yml` causes problems on another operating system, recreate the environment from `requirements.txt` instead:
+
+```bash
+conda create -n image_analysis python=3.12 -y
+conda activate image_analysis
+pip install -r requirements.txt
+```
