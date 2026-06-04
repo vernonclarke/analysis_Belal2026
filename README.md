@@ -150,7 +150,7 @@ R.exe --no-save
 
 Use `R.exe`, not `R`, because `R` can conflict with `PowerShell`'s command-history alias.
 
-### 2. Optional: R scripts that read downloaded DANDI/NWB files
+### 2. Windows note for optional R scripts that read downloaded DANDI/NWB files
 
 The `reticulate` and `NWBenv` setup is only needed for R scripts that read downloaded DANDI/NWB files, such as `Paper analysis/*/*data processing from downloaded dandiset.R`. It is not needed just to source the core R functions.
 
