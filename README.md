@@ -81,7 +81,7 @@ Repository components:
 
 Requirements:
 
-- [R](https://cran.r-project.org/) (tested on R 4.4.x to 4.5.x)
+- [R](https://cran.r-project.org/) (tested on R 4.4.x to 4.6.x)
 - Packages loaded by `setup.R`: `robustbase`, `minpack.lm`, `Rcpp`, `signal`, `openxlsx`, `dbscan`, `shiny`, `shinybusy`, `readxl`
 - C++ toolchain for `Rcpp`, required because `setup.R` compiles C++ code at load time:
 - macOS: install Xcode Command Line Tools with `xcode-select --install`

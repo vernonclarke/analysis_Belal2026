@@ -23,7 +23,7 @@
 
 ## Initial Set Up
 
-All analysis was performed using the R graphical user interface (GUI) and tested on R version 4.4.1 'Race for Your Life' through to 4.5.1 'Great Square Root'.
+All analysis was performed using the R graphical user interface (GUI) and tested on R 4.4.x to 4.6.x.
 
 - [`R` Statistical Software](https://www.R-project.org/)
 - [`XQuartz`](https://www.xquartz.org/) required for graphical output on MacOS
