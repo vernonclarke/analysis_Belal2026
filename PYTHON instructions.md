@@ -78,8 +78,26 @@ Use the `Python (image_analysis)` kernel in the notebooks.
 
 ## Run Jupyter Notebooks
 
+On macOS/Linux `Terminal`:
+
 ```bash
 cd "$HOME/Documents/Repositories/analysis_Belal2026"
+conda activate image_analysis
+jupyter notebook
+```
+
+On Windows `Command Prompt`, `Anaconda Prompt`, or `Miniconda Prompt`:
+
+```cmd
+cd "%USERPROFILE%\Documents\Repositories\analysis_Belal2026"
+conda activate image_analysis
+jupyter notebook
+```
+
+On Windows `PowerShell`:
+
+```powershell
+cd "$env:USERPROFILE\Documents\Repositories\analysis_Belal2026"
 conda activate image_analysis
 jupyter notebook
 ```
