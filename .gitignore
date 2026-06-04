@@ -12,6 +12,7 @@ __pycache__/
 
 # Ignore specific file types globally
 *.txt
+!requirements.txt
 *.zip
 *.RData
 *.ai
@@ -28,6 +29,5 @@ __pycache__/
 
 # Ignore everything in the root directory 'Rfits'
 /Rfits/
-
 
 
