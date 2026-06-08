@@ -1,18 +1,32 @@
 <h1 align="center">Analysis code</h1>
 
+## Manuscript
+
 The code presented here was used to analyse the datasets in the following manuscript:
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
 
-Belal, M.<sup>1</sup>, Perez-Rosello, T.<sup>1</sup>, Guven E. B.<sup>4</sup>, Kocaturk S.<sup>5</sup>, Xie, Z.<sup>1</sup>, Li, J.<sup>3</sup>, Dauer, W.<sup>2</sup>, Tkatch, T.<sup>1</sup>, Assous, M.<sup>5</sup>, Tepper, J.M.<sup>4</sup>, Clarke, V.R.J.<sup>1</sup>, Surmeier, D.J.<sup>1</sup>
+Belal, M.<sup>1,6</sup>, Perez-Rosello, T.<sup>1,6</sup>, Guven E. B.<sup>4</sup>, Kotakurk S.<sup>5</sup>, Xie, Z.<sup>1,6</sup>, Tkatch, T.<sup>1,6</sup>,, Li, J.<sup>3</sup>, Dauer, W.<sup>2</sup>,  Assous, M.<sup>5</sup>, Tepper, J.M.<sup>4</sup>, Clarke, V.R.J.<sup>1,6</sup>, Surmeier, D.J.<sup>1,6/sup>
 
-Affiliations
+**Affiliations**
 
 <sup>1</sup> Department of Neuroscience, Feinberg School of Medicine, Northwestern University, Chicago, IL USA  
 <sup>2</sup> Peter O’Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA  
 <sup>3</sup> Department of Internal Medicine, University of Michigan Medical School. Ann Arbor, MI, USA  
 <sup>4</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
-<sup>5</sup> School of Biosciences, Cardiff University, Cardiff, UK
+<sup>5</sup> School of Biosciences, Cardiff University, Cardiff, UK  
+<sup>6</sup> Aligning Science Across Parkinson's (ASAP) Collaborative Research Network, Chevy Chase, MD 20815
+
+## Funding
+
+This research was funded by grants to DJS from:
+
+Aligning Science Across Parkinson’s [ASAP020551] through the Michael J. Fox Foundation for Parkinson’s Research (MJFF); Aligning Science
+Across Parkinson’s Collaborative Research Network, Chevy Chase, MD, 20815, https://parkinsonsroadmap.org; 
+
+Freedom Together Foundation [MR-2021-2960], 875 Third Avenue, 29th Floor, New York, NY 10022, https://www.freedomtogether.org/ 
+
+National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box 5801. Bethesda, MD 20824; https://www.ninds.nih.gov.
 
 ## Table of Contents
 
