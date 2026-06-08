@@ -20,11 +20,11 @@ Belal, M.<sup>1,6</sup>, Perez-Rosello, T.<sup>1,6</sup>, Guven E. B.<sup>4</sup
 This research was funded by grants to DJS from:
 
 Aligning Science Across Parkinson’s [ASAP020551] through the Michael J. Fox Foundation for Parkinson’s Research (MJFF); Aligning Science
-Across Parkinson’s Collaborative Research Network, Chevy Chase, MD, 20815, https://parkinsonsroadmap.org; 
+Across Parkinson’s Collaborative Research Network, Chevy Chase, MD, 20815; https://parkinsonsroadmap.org.  
 
-Freedom Together Foundation [MR-2021-2960], 875 Third Avenue, 29th Floor, New York, NY 10022, https://www.freedomtogether.org/ 
+Freedom Together Foundation [MR-2021-2960], 875 Third Avenue, 29th Floor, New York, NY 10022; https://www.freedomtogether.org.    
 
-National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box 5801. Bethesda, MD 20824; https://www.ninds.nih.gov.
+National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box 5801. Bethesda, MD 20824; https://www.ninds.nih.gov.  
 
 ## Table of Contents
 
