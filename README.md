@@ -1,7 +1,5 @@
 <h1 align="center">Analysis code</h1>
 
-## Manuscript
-
 The code presented here was used to analyse the datasets in the following manuscript:
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
