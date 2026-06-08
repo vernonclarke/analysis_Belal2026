@@ -4,18 +4,18 @@ The code presented here was used to analyse the datasets in the following manusc
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
 
-Belal, M. <a href="https://orcid.org/0000-0001-8778-0617"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Perez-Rosello, T. <a href="https://orcid.org/0009-0007-8952-2276"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Guven E. B. <a href="https://orcid.org/0000-0002-9634-0485"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
+Belal, M. <a href="https://orcid.org/0000-0001-8778-0617"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
+Perez-Rosello, T. <a href="https://orcid.org/0009-0007-8952-2276"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
+Guven E. B. <a href="https://orcid.org/0000-0002-9634-0485"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
 Kocaturk S.<sup>5</sup>,
-Xie, Z. <a href="https://orcid.org/0000-0002-8348-4455"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Tkatch, T. <a href="https://orcid.org/0000-0001-6626-7435"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
+Xie, Z. <a href="https://orcid.org/0000-0002-8348-4455"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
+Tkatch, T. <a href="https://orcid.org/0000-0001-6626-7435"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
 Li, J.<sup>3</sup>,
-Dauer, W. <a href="https://orcid.org/0000-0003-1775-7504"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>2</sup>,
-Assous, M. <a href="https://orcid.org/0000-0001-6039-816X"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>5</sup>,
-Tepper, J. M. <a href="https://orcid.org/0000-0002-8643-4082"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
-Clarke, V. R. J. <a href="https://orcid.org/0000-0002-6154-6555"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Surmeier, D. J. <a href="https://orcid.org/0000-0002-6376-5225"><img src="example%20images/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>
+Dauer, W. <a href="https://orcid.org/0000-0003-1775-7504"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>2</sup>,
+Assous, M. <a href="https://orcid.org/0000-0001-6039-816X"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>5</sup>,
+Tepper, J. M. <a href="https://orcid.org/0000-0002-8643-4082"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
+Clarke, V. R. J. <a href="https://orcid.org/0000-0002-6154-6555"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
+Surmeier, D. J. <a href="https://orcid.org/0000-0002-6376-5225"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>
 
 **Affiliations**
 
