@@ -265,3 +265,15 @@ This code performs non-linear fitting for postsynaptic current/potential analysi
 ### [Curve Fitting Equations](Curve%20Fitting%20Equations.md)
 
 Equations for fitting models.
+
+
+## Contact
+
+The analysis code was written by Vernon Clarke.
+
+The provided code was executed on a `MacBook M2 pro 32GB` and a `Mac mini M4 Pro 64 GB`. I have tried to ensure that the code works on other operating systems but it's inevitable that some errors and bugs exist. 
+
+If any bug fixes are necessary (most likely related to providing help on other operating systems), it will be provided as an update on the parent [`GitHub` page](https://github.com/vernonclarke/analysis_Belal2026).
+
+For queries related to this repository, please [open an issue](https://github.com/vernonclarke/analysis_Belal2026/issues) or [email](mailto:WOPR2@proton.me) directly 
+
