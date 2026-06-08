@@ -6,7 +6,7 @@ The code presented here was used to analyse the datasets in the following manusc
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
 
-Belal, M.<sup>1,6</sup>, Perez-Rosello, T.<sup>1,6</sup>, Guven E. B.<sup>4</sup>, Kotakurk S.<sup>5</sup>, Xie, Z.<sup>1,6</sup>, Tkatch, T.<sup>1,6</sup>,, Li, J.<sup>3</sup>, Dauer, W.<sup>2</sup>,  Assous, M.<sup>5</sup>, Tepper, J.M.<sup>4</sup>, Clarke, V.R.J.<sup>1,6</sup>, Surmeier, D.J.<sup>1,6/sup>
+Belal, M.<sup>1,6</sup>, Perez-Rosello, T.<sup>1,6</sup>, Guven E. B.<sup>4</sup>, Kotakurk S.<sup>5</sup>, Xie, Z.<sup>1,6</sup>, Tkatch, T.<sup>1,6</sup>, Li, J.<sup>3</sup>, Dauer, W.<sup>2</sup>,  Assous, M.<sup>5</sup>, Tepper, J.M.<sup>4</sup>, Clarke, V.R.J.<sup>1,6</sup>, Surmeier, D.J.<sup>1,6<sup>
 
 **Affiliations**
 
