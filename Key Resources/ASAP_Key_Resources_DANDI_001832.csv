@@ -9,12 +9,12 @@ Software/code,Computational simulations using NEURON + PYTHON for manuscript ent
 Software/code,Fiji (ImageJ) Ver 2.1.0,National Institute of Health (NIH),RRID:SCR_003070,reuse,Software used for image analysis.
 Software/code,Imaris 10.0.0,Oxford Instruments,RRID:SCR_007370,reuse,Software used for microscopy image analysis.
 Software/code,Neurodata Without Borders (NWB),NWB,RRID:SCR_015242,reuse,Data standard listed in DANDI metadata.
-Software/code,NEURON 8.2.6,NEURON simulation environment; https://neuron.yale.edu/neuron/,RRID:SCR_005393,reuse,Software used for computational modeling with Python.
+Software/code,NEURON 8.2.6,NEURON simulation environment; https://www.neuronsimulator.org,RRID:SCR_005393,reuse,Software used for computational modeling with Python.
 Software/code,Nikon NIS-Elements AR 5.41.02,Nikon,RRID:SCR_014329,reuse,Software used to analyze high-resolution confocal images of sparsely labeled SPNs.
 Software/code,Prairie View 5.3,Bruker,RRID:SCR_017142,reuse,Software used for two-photon imaging acquisition/analysis.
-Software/code,Python 3.10-3.12,Python programming language; www.python.org,RRID:SCR_008394,reuse,Software used for analysis/modeling workflows.
+Software/code,Python 3.10 - 3.12,Python programming language; www.python.org,RRID:SCR_008394,reuse,Software used for analysis/modeling workflows.
 Software/code,PYTHON and R Analysis code for manuscript entitled Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson's disease models,GitHub,https://github.com/vernonclarke/analysis_Belal2026,new,Analysis code resource listed in DANDI metadata. Add Zenodo DOI/versioned release if available before manuscript submission.
-Software/code,R 4.4-4.6,R Project for Statistical Computing; https://www.r-project.org/,RRID:SCR_001905,reuse,Software used for analysis workflows.
+Software/code,R 4.4 - 4.6,R Project for Statistical Computing; https://www.r-project.org/,RRID:SCR_001905,reuse,Software used for analysis workflows.
 Protocol,Ex vivo imaging of genetically encoded sensors,protocols.io,https://dx.doi.org/10.17504/protocols.io.n92ldry68g5b/v1,reuse,Protocol URL listed in DANDI metadata.
 Protocol,Ex vivo mouse brain patch clamp recordings combined with optogenetic stimulation,protocols.io,https://dx.doi.org/10.17504/protocols.io.rm7vzx1w2gx1/v2,reuse,Protocol URL listed in DANDI metadata.
 Protocol,Mouse stereotaxic surgeries for intracranial viral injection V.1,protocols.io,https://dx.doi.org/10.17504/protocols.io.81wgby191vpk/v1,reuse,Protocol URL listed in DANDI metadata.
