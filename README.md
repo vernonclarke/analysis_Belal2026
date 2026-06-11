@@ -132,7 +132,9 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
+
 On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+
 Sourcing `setup.R` installs and loads the R packages needed for both the core fitting functions and the Shiny UI functions.
 
 On Windows, you do not need to launch R from a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code above into the R console.
