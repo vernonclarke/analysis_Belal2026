@@ -59,17 +59,23 @@ conda activate image_analysis
 
 mkdir -p NWBdata
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
 
-dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
 
 ```
 
-On Windows, use `Anaconda Prompt` or `Miniconda Prompt`. If using `PowerShell`, install `Anaconda` or `Miniconda` first, accept the Conda/Anaconda Terms of Service if prompted, run `conda init powershell`, then reopen `PowerShell` before using `conda`. If `conda` is still not recognized or no prompt shortcut is available, see [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions) for the direct `conda.bat` setup commands for `Command Prompt` and `PowerShell`. If `PowerShell` reports that scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
+On Windows, use `Anaconda Prompt` or `Miniconda Prompt`.  
+
+If using `PowerShell`, install `Anaconda` or `Miniconda` first, accept the Conda/Anaconda Terms of Service if prompted, run `conda init powershell`, then reopen `PowerShell` before using `conda`.  
+
+If `conda` is still not recognized or no prompt shortcut is available, see [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions) for the direct `conda.bat` setup commands for `Command Prompt` and `PowerShell`.  
+
+If `PowerShell` reports that scripts are disabled, run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
 
 On Windows `PowerShell`:
 
@@ -85,14 +91,17 @@ dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout -
 dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
-Different versions of the DANDI command line tool use different casing for option values.
-If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact`.
-Use the lowercase or uppercase command according to what `dandi download --help` shows on that machine.
-For example, if dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.
+Different versions of the DANDI command line tool use different casing for option values.  
+
+If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact`. 
+
+Use the lowercase or uppercase command according to what `dandi download --help` shows on that machine.  
+
+For example, if dandi download --help shows --existing [ERROR|SKIP|REFRESH], use uppercase values such as --existing ERROR; if it shows lowercase values, use lowercase instead.  
 
 Use `--existing ERROR` or `--existing error` for a first clean download.
+
 Use `--existing REFRESH` or `--existing refresh` when the files already exist and need to be checked or updated.
-If the dandiset has a published version, replace `0.XXXXX` with the published version identifier.
 
 ## Initial Setup
 
@@ -123,7 +132,9 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 ```
 
 Set `ANALYSIS_ROOT` before sourcing `setup.R` if the repository is checked out somewhere else.
+
 On Windows, set `ANALYSIS_ROOT` explicitly before sourcing `setup.R`; Rtools must be installed and available on `PATH` because `setup.R` compiles Rcpp code at load time.
+
 Sourcing `setup.R` installs and loads the R packages needed for both the core fitting functions and the Shiny UI functions.
 
 On Windows, you do not need to launch R from a terminal. You can open **R x64** from the Start menu or open **RStudio**, then paste the R code above into the R console.
