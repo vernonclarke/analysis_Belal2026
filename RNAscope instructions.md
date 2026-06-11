@@ -72,13 +72,13 @@ NWBdata/001832/sub-L1-ST8/sub-L1-ST8_ses-20240905T115902.nwb
 Saved ROI analyses are stored under:
 
 ```text
-RNAscope data/NWB/<session>/analysis
+NWBdata/001832/sub-<subject>/analysis
 ```
 
 Batch reanalysis JSON files are stored under:
 
 ```text
-RNAscope data/NWB/<session>/reanalysis
+NWBdata/001832/sub-<subject>/reanalysis
 ```
 
 Figure 11 R outputs are stored here:
@@ -191,13 +191,28 @@ repo = Path(os.environ.get(
     "ANALYSIS_ROOT",
     Path.home() / "Documents" / "Repositories" / "analysis_Belal2026"
 ))
-nwb_root = repo / "RNAscope data" / "NWB"
+nwb_root = repo / "NWBdata" / "001832"
 sessions = ["L1.ST8", "L2.ST8", "L3.ST6", "L4.ST8"]
+
+session_paths = {
+    "L1.ST8": {
+        "nwb_path": nwb_root / "sub-L1-ST8" / "sub-L1-ST8_ses-20240905T115902.nwb",
+    },
+    "L2.ST8": {
+        "nwb_path": nwb_root / "sub-L2-ST8" / "sub-L2-ST8_ses-20240909T100245.nwb",
+    },
+    "L3.ST6": {
+        "nwb_path": nwb_root / "sub-L3-ST6" / "sub-L3-ST6_ses-20240909T112846.nwb",
+    },
+    "L4.ST8": {
+        "nwb_path": nwb_root / "sub-L4-ST8" / "sub-L4-ST8_ses-20240916T101347.nwb",
+    },
+}
 
 dfs = []
 
 for session in sessions:
-    nwb_path = nwb_root / session / f"{session}.nwb"
+    nwb_path = session_paths[session]["nwb_path"]
 
     with NWBHDF5IO(str(nwb_path), "r", load_namespaces=True) as io:
         nwbfile = io.read()
@@ -259,8 +274,23 @@ from master_RNAscope import (
 session = "L1.ST8"
 field = "L1.ST8_C.L_60x.01"
 
-nwb_root = repo / "RNAscope data" / "NWB"
-nwb_path = nwb_root / session / f"{session}.nwb"
+nwb_root = repo / "NWBdata" / "001832"
+session_paths = {
+    "L1.ST8": {
+        "nwb_path": nwb_root / "sub-L1-ST8" / "sub-L1-ST8_ses-20240905T115902.nwb",
+    },
+    "L2.ST8": {
+        "nwb_path": nwb_root / "sub-L2-ST8" / "sub-L2-ST8_ses-20240909T100245.nwb",
+    },
+    "L3.ST6": {
+        "nwb_path": nwb_root / "sub-L3-ST6" / "sub-L3-ST6_ses-20240909T112846.nwb",
+    },
+    "L4.ST8": {
+        "nwb_path": nwb_root / "sub-L4-ST8" / "sub-L4-ST8_ses-20240916T101347.nwb",
+    },
+}
+
+nwb_path = session_paths[session]["nwb_path"]
 ```
 
 Current channel setup:
@@ -359,7 +389,7 @@ if SAVE:
 This writes:
 
 ```text
-RNAscope data/NWB/<session>/analysis/<field>.roi_analysis.json
+NWBdata/001832/sub-<subject>/analysis/<field>.roi_analysis.json
 ```
 
 The JSON stores ROI vertices, count settings, dot counts, pixel counts, channel assignments, display mode, and the saved analysis parameters.
@@ -386,10 +416,10 @@ RNAscope notebooks/RNAscope reanalysis.ipynb
 
 This notebook:
 
-1. Reads saved ROI JSON files from `RNAscope data/NWB/<session>/analysis`.
+1. Reads saved ROI JSON files from `NWBdata/001832/sub-<subject>/analysis`.
 2. Reconstructs the analysis state from each JSON and NWB file.
 3. Re-runs `RNAscopeAnalysisFinish` with new parameters.
-4. Saves reanalysis JSON files to `RNAscope data/NWB/<session>/reanalysis`.
+4. Saves reanalysis JSON files to `NWBdata/001832/sub-<subject>/reanalysis`.
 5. Reconstructs a count table from the reanalysis JSON files.
 6. Compares reanalysis counts with the experimenter counts stored in NWB.
 
