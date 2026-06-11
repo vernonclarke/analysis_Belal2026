@@ -59,13 +59,13 @@ conda activate image_analysis
 
 mkdir -p NWBdata
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
 
-dandi download "DANDI:001832/0.XXXXX" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
 
 ```
 
