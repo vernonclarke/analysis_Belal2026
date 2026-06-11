@@ -178,7 +178,7 @@ From the repository root:
 ```bash
 conda activate image_analysis
 mkdir -p NWBdata
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 On Windows `PowerShell`:
@@ -188,11 +188,11 @@ If `conda` is not recognized, open `Anaconda Prompt` or `Miniconda Prompt` inste
 ```powershell
 conda activate image_analysis
 New-Item -ItemType Directory -Force -Path NWBdata
-dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
-If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact`.
+If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact`.
 If `dandi download --help` shows lowercase option values on that machine, use lowercase values instead, such as `--existing error --format pyout --path-type exact`.
 
 ## Python Workflow Files

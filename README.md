@@ -86,9 +86,9 @@ conda activate image_analysis
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing error --format pyout --path-type exact
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
 
-dandi download "DANDI:001832/draft" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 Different versions of the DANDI command line tool use different casing for option values.  
