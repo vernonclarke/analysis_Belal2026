@@ -223,11 +223,6 @@ root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type 
 
 source(file.path(root_dir, 'R functions', 'setup.R'))
 
-# Paths
-repo_root <- normalizePath(
-  '~/Documents/Repositories/analysis_Belal2026',
-  mustWork = TRUE
-)
 
 identifier <- 'Figure 2'
 analysis_path <- file.path(repo_root, 'Paper analysis', identifier)

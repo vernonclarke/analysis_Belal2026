@@ -52,20 +52,24 @@ National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box
 First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
 
 ```bash
-
 cd "$HOME/Documents/Repositories/analysis_Belal2026"
 
 conda activate image_analysis
 
 mkdir -p NWBdata
 
+# Use one of the following, depending on your DANDI CLI version:
+
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 
+# or, if your DANDI CLI expects lowercase option values:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
 
-dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
-
+# or, if the files already exist and you want to refresh/check them:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
+
+# or, lowercase refresh:
+dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing refresh --format pyout --path-type exact
 
 ```
 
@@ -86,8 +90,10 @@ conda activate image_analysis
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
+# Use one of the following, depending on your DANDI CLI version:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
 
+# or, if your DANDI CLI expects uppercase option values:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 

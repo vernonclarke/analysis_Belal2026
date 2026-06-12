@@ -217,7 +217,9 @@ name <- 'NPY Cre X iSPN 6OHDA' # iSPN data
 
 load(paste0(analysis_path, '/', name, '.RData'))
 
-NPY_Cre_X_iSPN_6OHDA_fits        A1 τrise  τdecay  tpeak r20_80  d80_20 delay half_width     area1       A1  τrise  τdecay   tpeak r20_80  d80_20  delay half_width     area1
+NPY_Cre_X_iSPN_6OHDA_fits
+
+#         A1 τrise  τdecay  tpeak r20_80  d80_20 delay half_width     area1       A1  τrise  τdecay   tpeak r20_80  d80_20  delay half_width     area1
 # 1  -45.758 3.080  91.172 10.799  3.427 126.393 4.577     75.291  4696.459  -28.192 63.403 326.170 128.905 48.046 464.351  1.962    405.532 13652.173
 # 2 -183.839 1.711  10.275  3.681  1.358  14.502 5.179     11.879  2702.604  -96.653  1.130 118.579   5.309  1.429 164.385  3.787     87.898 11985.771
 # 3   -6.016 6.164   6.171  6.168  2.418  13.383 6.361     15.088   100.854  -38.008 13.531 139.373  34.949 12.371 193.902  4.385    138.876  6807.087

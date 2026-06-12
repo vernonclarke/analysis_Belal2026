@@ -188,12 +188,16 @@ If `conda` is not recognized, open `Anaconda Prompt` or `Miniconda Prompt` inste
 ```powershell
 conda activate image_analysis
 New-Item -ItemType Directory -Force -Path NWBdata
+
+# Use one of the following, depending on your DANDI CLI version:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
+
+# or, if your DANDI CLI expects uppercase option values:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 If Windows cannot find `dandi` after activating `image_analysis`, run `& "$env:CONDA_PREFIX\Scripts\dandi.exe" download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact`.
-If `dandi download --help` shows lowercase option values on that machine, use lowercase values instead, such as `--existing error --format pyout --path-type exact`.
+Use the lowercase or uppercase command according to what `dandi download --help` shows on that machine.
 
 ## Python Workflow Files
 
