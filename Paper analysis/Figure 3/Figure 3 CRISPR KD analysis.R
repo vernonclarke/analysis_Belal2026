@@ -140,7 +140,6 @@ names(CRISPR_delta_KD_summary) <- 1:length(CRISPR_delta_KD_summary)
 CRISPR_delta_KD_fits <- t(sapply(1:length(CRISPR_delta_KD_summary), function(ii){
   X <- CRISPR_delta_KD_summary[[ii]]$output
   X <- if (dim(X)[1] == 1) c(rep(NA, dim(X)[2]), as.vector(t(X))) else as.vector(t(X))
-  as.vector(t(X))
   })
 )
 # Create new column names by appending 1 and 2 to the original names

@@ -254,21 +254,21 @@ If needed permanently, add `export DISPLAY=:0` to your shell startup file.
 
 ## Technical Documentation
 
-### [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md)
+### Fluorescence Biosensor Imaging instructions
 
-This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
+See [Fluorescence Biosensor Imaging instructions](Fluorescence%20Biosensor%20Imaging%20instructions.md). This code performs fluorescence biosensor imaging analysis in Python/R, including NWB-based data loading, ROI trace analysis, response quantification, statistics, and figure generation.
 
-### [RNAscope instructions](RNAscope%20instructions.md)
+### RNAscope instructions
 
-This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
+See [RNAscope instructions](RNAscope%20instructions.md). This code performs RNAscope analysis in Python/R, including NWB conversion/loading, spot-count analysis, cell-level summaries, statistics, and figure generation.
 
-### [Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md)
+### Non-linear Curve Fitting instructions
 
-This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
+See [Non-linear Curve Fitting instructions](Non-linear%20Curve%20Fitting%20instructions.md). This code performs non-linear fitting for postsynaptic current/potential analysis in R, including single-trace and batch workflows, UI-based fitting, and export helpers.
 
-### [Curve Fitting Equations](Curve%20Fitting%20Equations.md)
+### Curve Fitting Equations
 
-Equations for fitting models.
+See [Curve Fitting Equations](Curve%20Fitting%20Equations.md). Equations for fitting models.
 
 
 ## Contact

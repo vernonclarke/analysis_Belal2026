@@ -188,7 +188,6 @@ test_areas <- sapply(1:length(test_data), function(ii){
 
 test_fits[, "A1"][is.na(test_fits[, "A1"])] <- 0
 test_fits[, "area1"][is.na(test_fits[, "area1"])] <- 0
-tests_fits
 
 test_fits
 # using n <- 100 and method <- 'BF.LM':

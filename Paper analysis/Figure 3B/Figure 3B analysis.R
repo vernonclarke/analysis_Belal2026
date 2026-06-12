@@ -103,11 +103,11 @@ out5a  <- analyse_PSC(response=NDNF_GABA_PSCs_data[,5], dt=dt, n=10, func=produc
   MLEsettings=MLEsettings, fit.limits=1120, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE, downsample=10)
 
 out6  <- analyse_PSC(response=NDNF_GABA_PSCs_data[,6], dt=dt, n=n, func=func, method=method, weight_method=weight_method, interval=interval,
-  MLEsettings=MLEsettings, fit.limits=615, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE, latency=25,  
+  MLEsettings=MLEsettings, fit.limits=615, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE, latency.limit=25,  
   downsample=downsample)
 
 out6a  <- analyse_PSC(response=NDNF_GABA_PSCs_data[,6], dt=dt, n=n, func=product1N, method=method, weight_method=weight_method, interval=interval,
-  MLEsettings=MLEsettings, fit.limits=615, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE, latency=25,  
+  MLEsettings=MLEsettings, fit.limits=615, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE, latency.limit=25,  
   downsample=downsample)
 
 out7  <- analyse_PSC(response=NDNF_GABA_PSCs_data[,7], dt=dt, n=1000, func=func, method=method, weight_method=weight_method, interval=interval,
@@ -143,7 +143,6 @@ names(NDNF_GABA_PSCs_summary) <- 1:length(NDNF_GABA_PSCs_summary)
 NDNF_GABA_PSCs_fits <- t(sapply(1:length(NDNF_GABA_PSCs_summary), function(ii){
   X <- NDNF_GABA_PSCs_summary[[ii]]$output
   X <- if (dim(X)[1] == 1) c(rep(NA, dim(X)[2]), as.vector(t(X))) else as.vector(t(X))
-  as.vector(t(X))
   })
 )
 # Create new column names by appending 1 and 2 to the original names

@@ -328,6 +328,8 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
  ```
  The output is identical to the originally created data (step 3). The only difference is the columns have been named V1, V2...
 
+ <a id="analyse-in-rgui-using-analyse_psc"></a>
+
  ### Analyse in RGui using `analyse_PSC`
 
  The user can analyse a given column of data using the function `analyse_PSC`. 
