@@ -27,9 +27,13 @@ The workflow has two related paths:
   - Re-counts the ROIs with new analysis parameters.
   - Compares automated/reanalysis counts with the experimenter counts stored in NWB.
 
+- `RNAscope notebooks/RNAscope Experimenter Counts.ipynb`
+  - Batch loads stored experimenter/manual CHRNB2 counts from the four RNAscope NWB files.
+  - Optionally exports the combined experimenter count table.
+  - Recreates NDNF+ and TH+ count boxplots in Python.
+
 - `RNAscope notebooks/RNAscope_readNWBexample.ipynb`
-  - Reads metadata and stored experimenter counts from the NWB files.
-  - Plots NDNF+ and TH+ experimenter counts.
+  - Provides a smaller example for inspecting one NWB file's metadata and stored experimenter counts.
 
 - `Paper analysis/Figure 11/RNAscope_analysis.R`
   - Runs the Figure 11 RNAscope statistics and plots.

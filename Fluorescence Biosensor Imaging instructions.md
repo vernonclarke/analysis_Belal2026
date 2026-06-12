@@ -211,18 +211,23 @@ Set `FIGURE7_BOOT_CORES` before running the script if parallel bootstrap executi
 
 ## Figure Outputs
 
-The R script writes SVG files to:
+The R script writes manuscript/statistics SVG files to:
 
 ```text
 Paper analysis/Figure 7/svg
 ```
 
-Current outputs include:
+R outputs include:
 
 ```text
 amplitude_SPN.svg
 pseudoreplication.svg
 Bayesian_Analysis.svg
+```
+
+The Python notebooks can also write reproduction/example SVG files to the same folder when `SAVE = True`, including:
+
+```text
 fmax_boxplot.svg
 single_example_trace_ii8_animal1_slice3_roi1.svg
 single_example_trace_ii30_animal1_slice1_roi1.svg

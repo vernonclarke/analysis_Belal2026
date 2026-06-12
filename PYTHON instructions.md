@@ -160,6 +160,7 @@ Paper analysis/Figure 7/Figure 7 reanalysis.ipynb
 RNAscope notebooks/RNAscope2NWBconversion.ipynb
 RNAscope notebooks/RNAscope_analysis.ipynb
 RNAscope notebooks/RNAscope reanalysis.ipynb
+RNAscope notebooks/RNAscope Experimenter Counts.ipynb
 RNAscope notebooks/RNAscope_readNWBexample.ipynb
 ```
 
@@ -223,6 +224,7 @@ RNAscope instructions.md
 RNAscope notebooks/RNAscope2NWBconversion.ipynb
 RNAscope notebooks/RNAscope_analysis.ipynb
 RNAscope notebooks/RNAscope reanalysis.ipynb
+RNAscope notebooks/RNAscope Experimenter Counts.ipynb
 RNAscope notebooks/RNAscope_readNWBexample.ipynb
 ```
 
