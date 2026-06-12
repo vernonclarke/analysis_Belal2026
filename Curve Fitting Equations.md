@@ -347,7 +347,3 @@ likewise if $p_1 = 0.9$ and $p_2 = 0.1$ then $t_2$ - $t_1$ gives the 90 - 10 % d
 
 
 
-
-
-
-$A_1$, $τ_{rise}$, $τ_{decay}$, $t_{peak}$, delay, $r_{10-90}$, $d_{90-10}$, $area_1$
