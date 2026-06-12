@@ -39,15 +39,17 @@ National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box
 ## Table of Contents
 
 - [Initial Setup](#initial-setup)
+- [Download DANDI Data](#download-dandi-data)
 - [Quick Start Guide](#quick-start-guide)
-- [Output Structure](#output-structure)
 - [macOS XQuartz Troubleshooting](#macos-xquartz-troubleshooting)
 - [Fluorescence Biosensor Imaging instructions](#fluorescence-biosensor-imaging-instructions)
 - [RNAscope instructions](#rnascope-instructions)
 - [Non-linear Curve Fitting instructions](#non-linear-curve-fitting-instructions)
+- [Curve Fitting Equations](#curve-fitting-equations)
 - [Technical Documentation](#technical-documentation)
 
 
+## Download DANDI Data
 
 First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
 
@@ -58,18 +60,7 @@ conda activate image_analysis
 
 mkdir -p NWBdata
 
-# Use one of the following, depending on your DANDI CLI version:
-
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
-
-# or, if your DANDI CLI expects lowercase option values:
-dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
-
-# or, if the files already exist and you want to refresh/check them:
-dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing REFRESH --format PYOUT --path-type EXACT
-
-# or, lowercase refresh:
-dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing refresh --format pyout --path-type exact
 
 ```
 
@@ -90,11 +81,7 @@ conda activate image_analysis
 
 New-Item -ItemType Directory -Force -Path NWBdata
 
-# Use one of the following, depending on your DANDI CLI version:
 dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing error --format pyout --path-type exact
-
-# or, if your DANDI CLI expects uppercase option values:
-dandi download "DANDI:001832/0.260611.2102" -o NWBdata --existing ERROR --format PYOUT --path-type EXACT
 ```
 
 Different versions of the DANDI command line tool use different casing for option values.  
@@ -288,9 +275,8 @@ Equations for fitting models.
 
 The analysis code was written by Vernon Clarke.
 
-The provided code was executed on a `MacBook M2 pro 32GB` and a `Mac mini M4 Pro 64 GB`. I have tried to ensure that the code works on other operating systems but it's inevitable that some errors and bugs exist. 
+The provided code was executed on a `MacBook M2 Pro 32GB` and a `Mac mini M4 Pro 64 GB`. I have tried to ensure that the code works on other operating systems but it's inevitable that some errors and bugs exist. 
 
 If any bug fixes are necessary (most likely related to providing help on other operating systems), it will be provided as an update on the parent [`GitHub`](https://github.com/vernonclarke/analysis_Belal2026).
 
-For queries related to this repository, please [open an issue](https://github.com/vernonclarke/analysis_Belal2026/issues) or [email](mailto:WOPR2@proton.me) directly 
-
+For queries related to this repository, please [open an issue](https://github.com/vernonclarke/analysis_Belal2026/issues) or [email](mailto:WOPR2@proton.me) directly.

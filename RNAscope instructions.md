@@ -507,6 +507,8 @@ reanalysis = TRUE
 RNAscope_data <- load_data(wd=xlsx_path, name='RNAscope_reanalysed')
 ```
 
+`RNAscope_reanalysed.csv` is not shipped in `Paper analysis/Figure 11/xlsx` by default. Generate it first by running `RNAscope notebooks/RNAscope reanalysis.ipynb` and exporting the reanalysis count table to `Paper analysis/Figure 11/xlsx/RNAscope_reanalysed.csv`; otherwise, `reanalysis = TRUE` will fail because the file is missing.
+
 The script maps:
 
 ```text

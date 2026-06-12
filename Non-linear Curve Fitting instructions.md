@@ -20,6 +20,8 @@
 - [Known set-up issues](#known-set-up-issues)
 - [Curve Fitting Equations](#curve-fitting-equations)
 - [Function Fitting Strategy](#function-fitting-strategy)
+- [Maximum Likelihood Estimation (MLE)](#maximum-likelihood-estimation-mle)
+- [Code guide](#code-guide)
 
 ## Initial Set Up
 
@@ -169,9 +171,9 @@ The following code will simulate a set of data that is generated as the sum of u
 
 One response is fast with target decay of 30 ms; the other is slower with target decay of 200 ms.  
 
-The simulation with create a dataset of 10 responses with modelled parameters. 
+The simulation will create a dataset of 10 responses with modelled parameters. 
 
-These responses with only differ by added gaussian noise.
+These responses will only differ by added gaussian noise.
 
  ### Setting the environment
 
@@ -657,7 +659,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
    ### Useful functions
 
-   Some simple functions for baisc analysis are provided.  
+   Some simple functions for basic analysis are provided.  
 
    - **`wilcox.test`**
 
@@ -685,11 +687,11 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
       ```R
       # Calculate the number of rows in the 'summary' table (n), then create a new data frame 'A'
-      # 's' represents a subjects of 1:n repeated twice (for the two categories in 'x')
+      # 's' represents subjects of 1:n repeated twice (for the two categories in 'x')
       # 'x' represents two groups: the first n rows are labeled 1 for the fast component 
       # amplitude, and the second n rows are labeled 2 for the slow component amplitude
       # 'y' combines the first column of 'summary' and the 9th column (without names) 
-      # into a single vector i.e the fast amd slow amplitudes
+      # into a single vector i.e the fast and slow amplitudes
       n <- dim(summary)[1]
       A <- data.frame(
          's' = rep(1:n,2),
@@ -732,7 +734,7 @@ source(file.path(root_dir, 'R functions', 'setup.R'))
 
       - **x**: 'level'; 1 for fast and 2 for slow
 
-      - **y**: variable; in this case a column of with fast and slow amplitudes
+      - **y**: variable; in this case a column with fast and slow amplitudes
 
 
       The function `BoxPlot` can be used on the data frame A to generate a box plot:
@@ -1334,7 +1336,7 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
 
 
 
-## <center>Function Fitting Strategy<center>
+## <center>Function Fitting Strategy</center>
 
 1. **find approximate starting values:**
     - Using 20-80% rise time and 80-20% decay time heuristics to estimate $\tau_{rise}$ and $\tau_{decay}$
@@ -1343,7 +1345,7 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
     - For product functions, starting values are generated from response-shape heuristics with random scaling.
     - For non-product functions, `optim` (`L-BFGS-B`) can refine starting values before nonlinear fitting.
    
-   **available fitting methods (`FITN` `method` argument):**
+   **available fitting methods for the `method` argument used by `analyse_PSC()` / `FITN`:**
 
    - **`'BF.LM'` (default) — bounded-fit Levenberg-Marquardt:**
      - *Bounded fitting:* Applies parameter bounds before fitting with `minpack.lm::nls.lm()`.
@@ -1377,7 +1379,7 @@ Model equations and fitted-parameter definitions are provided in [Curve Fitting 
     - Fits [ $A_{peak_1}$, $\tau_{rise_1}$, $\tau_{decay_1}$, $A_{peak_2}$, $\tau_{rise_2}$, $\tau_{decay_2}$ ]
     - Model information criterion if chosen
 
-## <center>Maximum Likelihood Estimation (MLE)<center>
+## <center>Maximum Likelihood Estimation (MLE)</center>
 
 Maximum Likelihood Estimation (MLE) is a statistical method used for estimating the parameters of a model. Given a statistical model with some unknown parameters, MLE aims to find the parameter values that maximize the likelihood function. The likelihood function measures how well the model explains the observed data. Stages involved in MLE:
 
@@ -1445,7 +1447,7 @@ $$
 BIC and AIC have advantages in model comparison, penalization of complexity, and estimation of information loss, making them more suitable for model selection than using the 'sum of squares'.
 The lowest AIC (or BIC) represents the model that best fits the data. When comparing fits obtained for the same model, the methods are equivalent. 
 
-# <center>Code guide</center>
+## <center>Code guide</center>
 
 If any bug fixes are necessary (most likely related to providing help on other operating systems), it will be provided as an update on the parent [`GitHub`](https://github.com/vernonclarke/Rfits).
 
