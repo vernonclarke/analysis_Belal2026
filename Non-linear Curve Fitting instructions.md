@@ -848,7 +848,7 @@ $$
 
 where $q$ is the chosen quantile (default $q = 0.975$).
 
-However, $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are themselves sensitive to outliers — a phenomenon known as **masking**, whereby outliers inflate the covariance estimate so much that they appear non-outlying. To address this, the **robust distance** $RD_i$ replaces these with high-breakdown estimates:
+However, $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are themselves sensitive to outliers, a phenomenon known as **masking**, whereby outliers inflate the covariance estimate so much that they appear non-outlying. To address this, the **robust distance** $RD_i$ replaces these with high-breakdown estimates:
 
 $$
 RD_i = \sqrt{(\mathbf{x}_i - \mathbf{T})^\top \mathbf{C}^{-1} (\mathbf{x}_i - \mathbf{T})}
@@ -856,8 +856,8 @@ $$
 
 where $\mathbf{T}$ and $\mathbf{C}$ are robust location and scatter estimates obtained from one of:
 
-- **Minimum Covariance Determinant (MCD)** — finds the subset of $h \approx n/2$ observations whose covariance matrix has the smallest determinant. Both $\mathbf{T}$ and $\mathbf{C}$ are computed from this subset.
-- **Minimum Volume Ellipsoid (MVE)** — finds the smallest-volume ellipsoid containing $h$ observations.
+- **Minimum Covariance Determinant (MCD)** finds the subset of $h \approx n/2$ observations whose covariance matrix has the smallest determinant. Both $\mathbf{T}$ and $\mathbf{C}$ are computed from this subset.
+- **Minimum Volume Ellipsoid (MVE)** finds the smallest-volume ellipsoid containing $h$ observations.
 
 Both achieve a breakdown point of approximately 50%, meaning up to half the data may be contaminated without corrupting the estimates.
 
