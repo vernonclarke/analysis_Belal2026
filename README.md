@@ -38,8 +38,8 @@ National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box
 
 ## Table of Contents
 
-- [Initial Setup](#initial-setup)
 - [Download DANDI Data](#download-dandi-data)
+- [Initial Setup](#initial-setup)
 - [Quick Start Guide](#quick-start-guide)
 - [macOS XQuartz Troubleshooting](#macos-xquartz-troubleshooting)
 - [Fluorescence Biosensor Imaging instructions](#fluorescence-biosensor-imaging-instructions)

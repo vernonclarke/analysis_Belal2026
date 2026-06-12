@@ -159,7 +159,7 @@ $$
 f = {e^{-\frac{\tau_{rise}}{\tau_{decay} - \tau_{rise}} ln\left(\frac{\tau_{decay}}{\tau_{rise}}\right)} - e^{-\frac{\tau_{decay} }{\tau_{decay} - \tau_{rise}} ln\left(\frac{\tau_{decay}}{\tau_{rise}}\right)}}
 $$
 
-since $e^{-xlog(y)} = e^{log(y^{-x})} = y^{-x}$
+since $e^{-xln(y)} = e^{ln(y^{-x})} = y^{-x}$
 
 $$
 \boldsymbol{ f = {\left( \left(\frac{\tau_{decay}}{\tau_{rise}}\right)^{-\frac{\tau_{rise}}{\tau_{decay}-\tau_{rise}}} \right) \left( 1 - \frac{\tau_{rise}}{\tau_{decay}}\right) } }
