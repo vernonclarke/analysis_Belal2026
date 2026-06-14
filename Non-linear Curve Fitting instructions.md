@@ -62,7 +62,7 @@ Always re-install XQuartz when upgrading your macOS to a new major version.
 
 Only the R console was used for analysis. The examples were written for the R console/R GUI. They should also work in [`RStudio`](https://posit.co/products/open-source/rstudio/), although the interactive plotting behavior may differ. 
 
-Download the code in this directory using the green <span style="background-color:#00FF00; color:white; padding:4px 8px; border-radius:6px; font-family:monospace; display: inline-flex; align-items: center;"> &lt;&gt; Code <span style="margin-left: 4px;">&#9660;</span> </span> dropdown menu followed by `Download Zip`. Unpack and create directory e.g. `~/Documents/Repositories/analysis_Belal2026`. 
+Download the code in this directory using the green <span style="background-color:#00FF00; color:white; padding:4px 8px; border-radius:6px; font-family:monospace; display: inline-flex; align-items: center;"> &lt;&gt; Code <span style="margin-left: 4px;">&#9660;</span> </span> dropdown menu followed by `Download Zip`. Unpack it somewhere convenient, for example `~/Documents/Repositories/analysis_Belal2026`, or substitute your own local repository path. 
 
 The analysis scripts use `ANALYSIS_ROOT` if set, otherwise they use `~/Documents/Repositories/analysis_Belal2026`. In order for the provided R code to work, it is necessary to load various packages within the R environment. Any code preceded by # is `commented out` and is provided in `*.R` files for instructional/informational purposes.
 

@@ -9,7 +9,7 @@ The code presented here was used to analyse the datasets in the following manusc
 Belal, M. <sup>1, 2</sup> <a href="https://orcid.org/0000-0001-8778-0617"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Perez-Rosello, T. <sup>1, 2</sup> <a href="https://orcid.org/0009-0007-8952-2276"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Guven E. B. <sup>3</sup> <a href="https://orcid.org/0000-0002-9634-0485"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
-Kocaturk S.<sup>4</sup> <a href="https://orcid.org/0000-0002-0248-4825"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Kocaturk, S. <sup>4</sup> <a href="https://orcid.org/0000-0002-0248-4825"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Xie, Z. <sup>1, 2</sup> <a href="https://orcid.org/0000-0002-8348-4455"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Ilijic, E. <sup>1, 2</sup> <a href="https://orcid.org/0000-0002-7112-4401"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Tkatch, T. <sup>1, 2</sup> <a href="https://orcid.org/0000-0001-6626-7435"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
@@ -26,7 +26,7 @@ Surmeier, D. J. <sup>1, 2</sup> <a href="https://orcid.org/0000-0002-6376-5225">
 <sup>2</sup> Aligning Science Across Parkinson's (ASAP) Collaborative Research Network, Chevy Chase, MD 20815  
 <sup>3</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
 <sup>4</sup> School of Biosciences, Cardiff University, Cardiff, UK  
-<sup>5</sup> Department of Internal Medicine, University of Michigan Medical School. Ann Arbor, MI, USA  
+<sup>5</sup> Department of Internal Medicine, University of Michigan Medical School, Ann Arbor, MI, USA  
 <sup>6</sup> Peter O'Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA.
 
 ## Funding
@@ -56,6 +56,8 @@ National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box
 ## Download DANDI Data
 
 First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
+
+The commands below assume the repository is in `Documents/Repositories/analysis_Belal2026`. If you cloned the repository somewhere else, replace the `cd` path with your local repository path.
 
 ```bash
 cd "$HOME/Documents/Repositories/analysis_Belal2026"
