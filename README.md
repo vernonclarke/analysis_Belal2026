@@ -6,27 +6,28 @@ The code presented here was used to analyse the datasets in the following manusc
 
 **Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
 
-Belal, M. <a href="https://orcid.org/0000-0001-8778-0617"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Perez-Rosello, T. <a href="https://orcid.org/0009-0007-8952-2276"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Guven E. B. <a href="https://orcid.org/0000-0002-9634-0485"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
-Kocaturk S.<sup>5</sup>,
-Xie, Z. <a href="https://orcid.org/0000-0002-8348-4455"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Tkatch, T. <a href="https://orcid.org/0000-0001-6626-7435"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Li, J.<sup>3</sup>,
-Dauer, W. <a href="https://orcid.org/0000-0003-1775-7504"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>2</sup>,
-Assous, M. <a href="https://orcid.org/0000-0001-6039-816X"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>5</sup>,
-Tepper, J. M. <a href="https://orcid.org/0000-0002-8643-4082"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>4</sup>,
-Clarke, V. R. J. <a href="https://orcid.org/0000-0002-6154-6555"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>,
-Surmeier, D. J. <a href="https://orcid.org/0000-0002-6376-5225"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a> <sup>1,6</sup>
+Belal, M. <sup>1,2</sup> <a href="https://orcid.org/0000-0001-8778-0617"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Perez-Rosello, T. <sup>1,2</sup> <a href="https://orcid.org/0009-0007-8952-2276"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Guven E. B. <sup>5</sup> <a href="https://orcid.org/0000-0002-9634-0485"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Kocaturk S.<sup>6</sup>,
+Xie, Z. <sup>1,2</sup> <a href="https://orcid.org/0000-0002-8348-4455"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Tkatch, T. <sup>1,2</sup> <a href="https://orcid.org/0000-0001-6626-7435"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Li, J.<sup>4</sup>,
+Dauer, W. <sup>3</sup> <a href="https://orcid.org/0000-0003-1775-7504"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Assous, M. <sup>6</sup> <a href="https://orcid.org/0000-0001-6039-816X"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Tepper, J. M. <sup>5</sup> <a href="https://orcid.org/0000-0002-8643-4082"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Clarke, V. R. J. <sup>1,2</sup> <a href="https://orcid.org/0000-0002-6154-6555"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
+Surmeier, D. J. <sup>1,2</sup> <a href="https://orcid.org/0000-0002-6376-5225"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>
 
 **Affiliations**
 
 <sup>1</sup> Department of Neuroscience, Feinberg School of Medicine, Northwestern University, Chicago, IL USA  
-<sup>2</sup> Peter O’Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA  
-<sup>3</sup> Department of Internal Medicine, University of Michigan Medical School. Ann Arbor, MI, USA  
-<sup>4</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
-<sup>5</sup> School of Biosciences, Cardiff University, Cardiff, UK  
-<sup>6</sup> Aligning Science Across Parkinson's (ASAP) Collaborative Research Network, Chevy Chase, MD 20815
+<sup>2</sup> Aligning Science Across Parkinson's (ASAP) Collaborative Research Network, Chevy Chase, MD 20815  
+<sup>3</sup> Peter O’Donnell Jr. Brain Institute, Departments of Neurology and Neuroscience, University of Texas Southwestern Medical Center, Dallas, TX, USA  
+<sup>4</sup> Department of Internal Medicine, University of Michigan Medical School. Ann Arbor, MI, USA  
+<sup>5</sup> Molecular and Behavioral Neuroscience, Rutgers University, Newark, NJ USA  
+<sup>6</sup> School of Biosciences, Cardiff University, Cardiff, UK
+
 ## Funding
 
 This research was funded by grants to DJS from:
