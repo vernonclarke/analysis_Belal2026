@@ -13,7 +13,7 @@ Kocaturk, S. <sup>4</sup> <a href="https://orcid.org/0000-0002-0248-4825"><img s
 Xie, Z. <sup>1, 2</sup> <a href="https://orcid.org/0000-0002-8348-4455"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Ilijic, E. <sup>1, 2</sup> <a href="https://orcid.org/0000-0002-7112-4401"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Tkatch, T. <sup>1, 2</sup> <a href="https://orcid.org/0000-0001-6626-7435"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
-Li, J.<sup>5</sup>,
+Li, J. <sup>5</sup>,
 Dauer, W. <sup>6</sup> <a href="https://orcid.org/0000-0003-1775-7504"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Assous, M. <sup>4</sup> <a href="https://orcid.org/0000-0001-6039-816X"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Tepper, J. M. <sup>3</sup> <a href="https://orcid.org/0000-0002-8643-4082"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
