@@ -1,6 +1,6 @@
 <h1 align="center">Analysis code</h1>
 
-[![DOI](examples/zenodo_doi_badge.svg)](https://doi.org/10.5281/zenodo.20658500)
+<a href="https://doi.org/10.5281/zenodo.20658500"><img src="examples/zenodo_doi_badge.svg" alt="DOI: 10.5281/zenodo.20658500" width="238" height="20"></a>
 
 The code presented here was used to analyse the datasets in the following manuscript:
 
