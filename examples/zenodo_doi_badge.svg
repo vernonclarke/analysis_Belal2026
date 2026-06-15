@@ -1,21 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="238" height="20" role="img" aria-label="DOI: 10.5281/zenodo.20658501">
-  <title>DOI: 10.5281/zenodo.20658501</title>
-  <linearGradient id="s" x2="0" y2="100%">
-    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-    <stop offset="1" stop-opacity=".1"/>
-  </linearGradient>
-  <clipPath id="r">
-    <rect width="238" height="20" rx="3" fill="#fff"/>
-  </clipPath>
-  <g clip-path="url(#r)">
-    <rect width="31" height="20" fill="#555"/>
-    <rect x="31" width="207" height="20" fill="#007ec6"/>
-    <rect width="238" height="20" fill="url(#s)"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 238 20">
+  <!-- Generator: Adobe Illustrator 30.5.1, SVG Export Plug-In . SVG Version: 2.1.4 Build 3)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+      }
+
+      .st1 {
+        fill: url(#linear-gradient);
+      }
+
+      .st2 {
+        fill: #fff;
+      }
+
+      .st2, .st3 {
+        isolation: isolate;
+      }
+
+      .st2, .st4 {
+        font-family: Verdana, Verdana;
+        font-size: 11px;
+      }
+
+      .st4 {
+        fill: #010101;
+      }
+
+      .st5 {
+        fill: #007ec6;
+      }
+
+      .st6 {
+        fill: #555;
+      }
+
+      .st7 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="st0" width="238" height="20" rx="3" ry="3"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="-184.72" y1="387.75" x2="-184.72" y2="386.75" gradientTransform="translate(44082 7755) scale(238 -20)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+  <g class="st7">
+    <g>
+      <rect class="st6" width="31" height="20"/>
+      <rect class="st5" x="31" width="207" height="20"/>
+      <rect class="st1" width="238" height="20"/>
+    </g>
   </g>
-  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
-    <text x="15.5" y="15" fill="#010101" fill-opacity=".3">DOI</text>
-    <text x="15.5" y="14">DOI</text>
-    <text x="134.5" y="15" fill="#010101" fill-opacity=".3">10.5281/zenodo.20658501</text>
-    <text x="134.5" y="14">10.5281/zenodo.20658501</text>
+  <g>
+    <g class="st3">
+      <text class="st4" transform="translate(4.62 15)"><tspan x="0" y="0">DOI</tspan></text>
+    </g>
+    <text class="st2" transform="translate(4.62 14)"><tspan x="0" y="0">DOI</tspan></text>
+    <g class="st3">
+      <text class="st4" transform="translate(59.39 15)"><tspan x="0" y="0">10.5281/zenodo.20658500</tspan></text>
+    </g>
+    <text class="st2" transform="translate(59.39 14)"><tspan x="0" y="0">10.5281/zenodo.20658500</tspan></text>
   </g>
 </svg>
