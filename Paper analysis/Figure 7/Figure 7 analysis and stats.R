@@ -7,7 +7,7 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-plotsave <- FALSE
+plotsave <- TRUE
 
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 
@@ -41,34 +41,16 @@ model <- lmerTest::lmer(dff ~ Condition + (1 | SliceID), data = d)
 # Summary with p-values
 summary(model)
 
-# Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
-# Formula: dff ~ Condition + (1 | SliceID)
-#    Data: d
+df_name <- 'dF/F0'
 
-# REML criterion at convergence: -14.7
+fe <- as.data.frame(coef(summary(model)))
+fe$parameter <- rownames(fe)
+fe$model <- 'lmer: var ~ Group + (1 | Slice)'
+fe$data <- df_name
+rownames(fe) <- NULL
+names(fe) <- c('estimate', 'se', 'd', 't_value', 'p_value', 'parameter', 'model', 'data')
+fe <- fe[, c('model', 'data', 'parameter', 'estimate', 'se', 'd', 't_value', 'p_value')]
 
-# Scaled residuals: 
-#      Min       1Q   Median       3Q      Max 
-# -1.75185 -0.50399 -0.04547  0.48874  2.12991 
-
-# Random effects:
-#  Groups   Name        Variance Std.Dev.
-#  SliceID  (Intercept) 0.03710  0.1926  
-#  Residual             0.02469  0.1571  
-# Number of obs: 56, groups:  SliceID, 15
-
-# Fixed effects:
-#             Estimate Std. Error       df t value Pr(>|t|)    
-# (Intercept)  0.60908    0.05455 13.11035  11.166 4.54e-08 ***
-# Condition1  -0.11900    0.05455 13.11035  -2.182   0.0479 *  
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-# Correlation of Fixed Effects:
-#            (Intr)
-# Condition1 -0.072
-
-# Bootstrap
 
 RData_path <- file.path(analysis_path, paste0('/', name, '.RData'))
 
@@ -136,6 +118,20 @@ if (file.exists(RData_path)) {
   p_lt0 <- mean(est < 0)
   pval <- 2 * min(p_lt0, 1 - p_lt0)
   pval
+
+  boot_summary <- data.frame(
+    model       = 'rlmer bootstrap: var ~ Group + (1 | Slice)',
+    data        = df_name,
+    parameter   = coef_name,
+    estimate    = unname(fixef(rmod)[coef_name]),
+    p_value     = pval,
+    ci_2.5      = unname(ci['2.5%']),
+    ci_97.5     = unname(ci['97.5%']),
+    n_boot      = B
+  )
+  rownames(boot_summary) <- NULL
+
+
   # 0.04260852
 
   # # Preparatiom for Bayesian analysis
@@ -175,14 +171,6 @@ if (file.exists(RData_path)) {
 
   rstan:::rstan_options(disable_march_warning = TRUE) 
 
-  # m1 <- brm(mod, data=d,
-  #           iter = 1e6, 
-  #           chains = 3,
-  #           seed=42,
-  #           prior=m1.prior, 
-  #           control=list(adapt_delta=0.99)
-  #       )
-
   m1 <- brm(
     bf(dff ~ Condition + (1|SliceID)),
     data = d,
@@ -191,7 +179,7 @@ if (file.exists(RData_path)) {
       prior(normal(0, 20), class = 'b', coef = 'Condition1'),
       prior(student_t(3, 0, 2.5), class = 'sigma')
     ),
-    iter = 1e6,   
+    iter = 4000,   
     chains = 4,
     seed = 42,
     control = list(adapt_delta = 0.99)
@@ -206,23 +194,9 @@ if (file.exists(RData_path)) {
   draws <- as_draws_df(m1)
   p_pos <- mean(draws$b_Condition1 > 0)
   p_pos
-  # [1] 0.029468
 
-  ## posterior predictive checks
-  # pp_check: Perform posterior predictive checks with the help of the bayesplotpackage
-
-  # pp_check(m1, ndraws = 100)
-  # pp_check(m1, type='stat', binwidth=0.002)
-  # pp_check(m1, type='stat', stat='sd', binwidth=0.001)
-  # pp_check(m1, type='stat', stat='max', binwidth=0.01)
-  # pp_check(m1, type='stat', stat='min', binwidth=0.01)
-  # pp_check(m1, type='intervals')
-
-  ## extract parameter for the difference in group means
-  # post_diff <- posterior_samples(m1)$b_fa1
-
-  # post_diff <- as_draws(m1)[[chain = 3]]$b_ConditionMCIMPark
-  # nb. the standard way to calculate diff is control - MCIPark
+  coef_name_b <- 'b_Condition1'
+  ps <- posterior_summary(m1, variable = coef_name_b)
 
   post_diff <- -as_draws_df(m1)$b_Condition1
 
@@ -231,8 +205,6 @@ if (file.exists(RData_path)) {
   # than the MCI-Park group.
 
   p1 <- mean(post_diff > 0)
-  p1
-  # [1] 0.970532
 
   ## calculate a value similar to a classic p-value
   # calculate the probability in the other tail of the distribution (above zero),
@@ -240,8 +212,6 @@ if (file.exists(RData_path)) {
   # classic p-value. This value is 0.20, and the p-value from the classical multilevel model is 0.18.
 
   p2 <- 2 * mean(post_diff < 0)
-  p2
-  # [1] 0.058936
 
   ## new data used to make predictions
   new.data <- data.frame(SliceID=c(1, 1), Condition=c('Control', 'MCI-Park'))
@@ -259,22 +229,47 @@ if (file.exists(RData_path)) {
   p3 <- mean(d$'dff'[d$Condition == 'Control'] > quantile(preds[, 1], 0.025) &
              d$'dff'[d$Condition == 'Control'] < quantile(preds[, 1], 0.975))
 
-  p4 <- mean(d$'dff'[d$Condition == 'MCI-Park'] > quantile(preds[, 1], 0.025) &
-             d$'dff'[d$Condition == 'MCI-Park'] < quantile(preds[, 1], 0.975))
-
-  (p3 + p4)/2
-  # [1]0.8474359
+  p4 <- mean(d$dff[d$Condition == 'MCI-Park'] > quantile(preds[, 2], 0.025) &
+             d$dff[d$Condition == 'MCI-Park'] < quantile(preds[, 2], 0.975))
 
   p5 <- mean(preds[, 2] > preds[, 1])
-  p5
-  # [1] 0.817608
+
+  bayes_summary <- data.frame(
+    model                               = 'brm: dff ~ Condition + (1 | SliceID), family = student()',
+    data                                = df_name,
+    parameter                           = coef_name_b,
+    estimate                            = ps[1, 'Estimate'],
+    ci_2.5                              = ps[1, 'Q2.5'],
+    ci_97.5                             = ps[1, 'Q97.5'],
+    p_control_greater_than_MCIPark      = p_pos,   # 0.0265
+    p_MCIPark_greater_than_control      = p1,      # 0.9735
+    p_classic_2tail                     = p2,      # 0.053
+    p_MCIPark_cell_greater_than_control = p5       # 0.81525
+  )
+  rownames(bayes_summary) <- NULL
 
   setwd(analysis_path)
   save.image(file = RData_path)
 
 }
 
-plotsave <- FALSE
+
+# save all to single 'xlsx'
+if (plotsave) {
+  data_list <- setNames(
+    list(d, fe, boot_summary, bayes_summary),
+    c(
+      'dfF',
+      'lme fixed effect',
+      'robust lme bootstrap',
+      'bayes summary'
+    )
+  )
+  list2excel(data_list, paste0(identifier,'.xlsx'), wd = xlsx_path)
+  list2csv(data_list,   paste0(identifier, '.csv'),  wd = xlsx_path)
+}
+
+
 
 # graph settings
 wid <- 0.3
@@ -453,33 +448,27 @@ legend('topright',
 if (plotsave) save_graph(svg_path=svg_path, filename='Bayesian_Analysis.svg', width=width, height=height, bg='transparent')
 
 
-# dev.off()
-
-# There is strong posterior evidence (97.2%) that MCI-Park increases the signal relative to control.
-# The predictive probability that a future MCI-Park value exceeds a control value is ~83%, consistent with the relevance of the effect.
-# The model fits the data well for both groups, with 73–89% of points within their own 95% prediction intervals.
-
-
-
-# Bootstrap p value vs the Bayesian approach
-# Answers two fundamentally different questions:
-#   1.  Cluster‐bootstrap p-value (≈0.014)
-#   • This is a frequentist test of the null hypothesis 'no difference' (Condition1 = 0).
-#   • Resampled entire slices, refit a robust mixed model N boot times, and found only about 1.4% of those bootstrap estimates were as extreme—or more extreme—than zero.
-#   • A small p-value like 0.014 rejects the null at the 5% level.
-#   2.  Bayesian posterior tail probability (≈0.055)
-#   • This is the probability that the true effect is in the opposite direction, given your prior + data.
-#   • Computed 2 * mean(post_diff < 0) which tells you there’s about a 5.5% chance the effect is ≤0, after seeing the data and your (weakly informative) Normal(0,20) prior.
-#   • Directly interpretable as '94.5% sure the effect is positive'.
-
-# ⸻
-
-# appropriate?
-#   • If goal is a classical hypothesis test ('Is there evidence beyond sampling variability to reject the NULL hypothesis?'), the bootstrap p-value is valid, especially since cluster structure was modelled and a robust model was employed.
-#   • If goal is a probabilistic statement about the magnitude and direction of the effect e.g. 'what is the probability the treatment truly increases signal?'' — then the Bayesian posterior (0.055) is more appropriate.
-
-# In summary
-#   • Want a yes/no decision at α=0.05? Use p-value = 0.014.
-#   • Want the probability the effect is positive, accounting for prior uncertainty? Use P(effect > 0) = 0.945 (i.e. 1 – 0.055).
-
+# There is strong posterior evidence (97.4%) that MCI-Park increases the signal relative to control
+#   (P(MCI-Park > control) = 0.974).
+# The predictive probability that a future MCI-Park cell exceeds a control cell is ~82% (p5 = 0.815),
+#   consistent with the relevance of the effect.
+# The model fits both groups reasonably well: most observed points fall within their own
+#   95% posterior predictive interval (see p3, p4).
+#
+# Bootstrap p-value vs Bayesian posterior — two different questions:
+#   1. Cluster-bootstrap p-value (~0.046; 95% CI [-0.224, -0.002], excludes 0)
+#      - Frequentist test of the null 'no difference' (Condition1 = 0).
+#      - Resampled whole slices, refit the robust mixed model B = 9999 times; ~2.3% of bootstrap
+#        estimates were >= 0 (two-sided p ~ 0.046), so the null is rejected at the 5% level.
+#      - Consistent with the classical lmer p-value of 0.048.
+#   2. Bayesian posterior (directional P(effect > 0) = 0.974; two-tailed pseudo-p ~ 0.053)
+#      - Probability statement about direction/magnitude given prior + data.
+#      - ~2.6% of posterior mass is <= 0, i.e. ~97.4% sure the effect is positive.
+#      - Weakly informative Normal(0, 20) prior, so the data dominate.
+#
+#   - yes/no decision at alpha = 0.05; bootstrap p = 0.046.
+#   - Probability the effect is truly positive; Bayesian P(effect > 0) = 0.974.
+#
+# Note: the bootstrap p (0.046) and Bayesian two-tailed pseudo-p (0.053) agree closely,
+#   both sitting right at ~0.05 — the effect is modest and near the conventional threshold.
 

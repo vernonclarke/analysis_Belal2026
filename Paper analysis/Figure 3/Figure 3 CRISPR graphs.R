@@ -251,7 +251,7 @@ area_2component_SPN <- rbind(area_2component_ctrl, area_2component_test)
 area_2component_SPN$charge_transfer <- area_2component_SPN$charge_transfer/1e3
 
 # create output for stats
-stats_summary1 <- rbind(stats_summary1, MCwilcox(formula=charge_transfer ~ kinetics*condition + Error(s), df=area_2component_SPN))
+stats_summary <- rbind(stats_summary, MCwilcox(formula=charge_transfer ~ kinetics*condition + Error(s), df=area_2component_SPN))
 
 # update graph properties
 ylab <- expression(charge~transfer~(pC))

@@ -1,0 +1,2 @@
+"model","data","parameter","estimate","ci_2.5","ci_97.5","p_control_greater_than_MCIPark","p_MCIPark_greater_than_control","p_classic_2tail","p_MCIPark_cell_greater_than_control"
+"brm: dff ~ Condition + (1 | SliceID), family = student()","dF/F0","b_Condition1",-0.116319410527721,-0.2410932420534,0.0023617609635447,0.0265,0.9735,0.053,0.81525

@@ -1,0 +1,2 @@
+"model","data","parameter","estimate","p_value","ci_2.5","ci_97.5","n_boot"
+"rlmer bootstrap: var ~ Group + (1 | Slice)","dF/F0","Condition1",-0.111950597117902,0.0462046204620461,-0.22400623767097,-0.00203985964242194,9999

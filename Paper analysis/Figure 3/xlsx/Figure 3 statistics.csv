@@ -1,6 +1,10 @@
 "parameter","comparison","contrast","n","test","alternative","test stat","stat","p value","p adjusted"
 "amplitude","within condition (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",19,0.133072809543398,0.133072809543398
 "charge_transfer","within condition (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",60,0.0135746606334842,0.0135746606334842
+"charge_transfer","within kinetics fast (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",23,0.269847799259564,0.269847799259564
+"charge_transfer","within kinetics slow (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",62,0.00678733031674208,0.0135746606334842
+"charge_transfer","within condition ctrl (paired)","fast vs slow","7","Wilcoxon signed rank exact test","two.sided","V",0,0.015625,0.015625
+"charge_transfer","within condition test (paired)","fast vs slow","10","Wilcoxon signed rank exact test","two.sided","V",1,0.00390625,0.0078125
 "tau","within kinetics fast (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",18,0.108802961744138,0.217605923488276
 "tau","within kinetics slow (unpaired)","ctrl vs test","7 vs 10","Wilcoxon rank sum exact test","two.sided","W",40,0.669066227889757,0.669066227889757
 "tau","within condition ctrl (paired)","fast vs slow","7","Wilcoxon signed rank exact test","two.sided","V",0,0.015625,0.015625
