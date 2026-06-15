@@ -1457,13 +1457,18 @@ For queries related to this repository, please [open an issue](https://github.co
 
    **References:**
 
-   - Akaike, H. (1974). A new look at the statistical model identification. *IEEE Transactions on Automatic Control*, 19(6), 716-723.
+   Akaike, H. (1974). A new look at the statistical model identification. *IEEE Transactions on Automatic Control*, 19(6), 716-723.<br>
+     <a href="https://doi.org/10.1109/TAC.1974.1100705"><img src="./examples/doi_akaike.svg" alt="DOI: 10.1109/TAC.1974.1100705" width="238" height="20"></a>
 
-   - Schwarz, G. (1978). Estimating the dimension of a model. *The Annals of Statistics*, 6(2), 461-464.
+   Schwarz, G. (1978). Estimating the dimension of a model. *The Annals of Statistics*, 6(2), 461-464.<br>
+     <a href="https://doi.org/10.1214/aos/1176344136"><img src="./examples/doi_schwarz.svg" alt="DOI: 10.1214/aos/1176344136" width="238" height="20"></a>
 
-   - Kass, R. E., & Raftery, A. E. (1995). Bayes factors. *Journal of the American Statistical Association*, 90(430), 773-795.
+   Kass, R. E., & Raftery, A. E. (1995). Bayes factors. *Journal of the American Statistical Association*, 90(430), 773-795.<br>
+     <a href="https://doi.org/10.1080/01621459.1995.10476572"><img src="./examples/doi_kass_raftery.svg" alt="DOI: 10.1080/01621459.1995.10476572" width="238" height="20"></a>
 
-   - Rousseeuw, P. J., & van Zomeren, B. C. (1990). Unmasking multivariate outliers and leverage points. *Journal of the American Statistical Association*, 85(411), 633–639.
+   Rousseeuw, P. J., & van Zomeren, B. C. (1990). Unmasking multivariate outliers and leverage points. *Journal of the American Statistical Association*, 85(411), 633–639.<br>
+     <a href="https://doi.org/10.1080/01621459.1990.10474920"><img src="./examples/doi_rousseeuw_van_zomeren.svg" alt="DOI: 10.1080/01621459.1990.10474920" width="238" height="20"></a>
 
-   - Rousseeuw, P. J., & Van Driessen, K. (1999). A fast algorithm for the minimum covariance determinant estimator. *Technometrics*, 41(3), 212–223.
+   Rousseeuw, P. J., & Van Driessen, K. (1999). A fast algorithm for the minimum covariance determinant estimator. *Technometrics*, 41(3), 212–223.<br>
+     <a href="https://doi.org/10.1080/00401706.1999.10485670"><img src="./examples/doi_rousseeuw_van_driessen.svg" alt="DOI: 10.1080/00401706.1999.10485670" width="238" height="20"></a>
    
