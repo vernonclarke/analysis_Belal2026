@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" width="238" height="20" viewBox="0 0 238 20" role="img" aria-label="DOI: 10.48324/dandi.001832/0.260611.2102">
+  <title>DOI: 10.48324/dandi.001832/0.260611.2102</title>
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+      }
+
+      .st1 {
+        fill: url(#linear-gradient);
+      }
+
+      .st2 {
+        fill: #fff;
+      }
+
+      .st2, .st3 {
+        isolation: isolate;
+      }
+
+      .st2, .st4 {
+        font-family: Verdana, Verdana;
+        font-size: 11px;
+      }
+
+      .st4 {
+        fill: #010101;
+      }
+
+      .st5 {
+        fill: #007ec6;
+      }
+
+      .st6 {
+        fill: #555;
+      }
+
+      .st7 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="st0" width="238" height="20" rx="3" ry="3"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="-184.72" y1="387.75" x2="-184.72" y2="386.75" gradientTransform="translate(44082 7755) scale(238 -20)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+  <g class="st7">
+    <g>
+      <rect class="st6" width="31" height="20"/>
+      <rect class="st5" x="31" width="207" height="20"/>
+      <rect class="st1" width="238" height="20"/>
+    </g>
+  </g>
+  <g>
+    <g class="st3">
+      <text class="st4" transform="translate(4.62 15)"><tspan x="0" y="0">DOI</tspan></text>
+    </g>
+    <text class="st2" transform="translate(4.62 14)"><tspan x="0" y="0">DOI</tspan></text>
+    <g class="st3">
+      <text class="st4" x="134.5" y="15" text-anchor="middle" textLength="190" lengthAdjust="spacingAndGlyphs">10.48324/dandi.001832/0.260611.2102</text>
+    </g>
+    <text class="st2" x="134.5" y="14" text-anchor="middle" textLength="190" lengthAdjust="spacingAndGlyphs">10.48324/dandi.001832/0.260611.2102</text>
+  </g>
+</svg>

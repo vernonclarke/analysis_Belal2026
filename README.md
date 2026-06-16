@@ -55,6 +55,10 @@ National Institute of Neurological Disorders and Stroke [R37 NS034696], P.O. Box
 
 ## Download DANDI Data
 
+The data are located in the DANDI archive:
+
+<a href="https://doi.org/10.48324/dandi.001832/0.260611.2102"><img src="examples/dandi_doi_badge.svg" alt="DOI: 10.48324/dandi.001832/0.260611.2102" width="238" height="20"></a>
+
 First complete the Python environment setup in [PYTHON instructions.md](PYTHON%20instructions.md#setup-instructions). The `dandi` package is installed in the `image_analysis` environment there.
 
 The commands below assume the repository is in `Documents/Repositories/analysis_Belal2026`. If you cloned the repository somewhere else, replace the `cd` path with your local repository path.
