@@ -4,7 +4,7 @@
 
 The code presented here was used to analyse the datasets in the following manuscript:
 
-**Cholinergic interneuron control of intrastriatal GABAergic circuits targeting spiny projection neurons is disrupted in Parkinson’s disease models**
+**Cholinergic interneuron control of GABAergic circuits targeting spiny projection neurons is disrupted in parkinsonian modelss**
 
 Belal, M. <sup>1, 2</sup> <a href="https://orcid.org/0000-0001-8778-0617"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
 Perez-Rosello, T. <sup>1, 2</sup> <a href="https://orcid.org/0009-0007-8952-2276"><img src="examples/orcid_16x16.png" width="16" height="16" alt="ORCID iD"></a>,
