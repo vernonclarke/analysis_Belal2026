@@ -23,6 +23,7 @@ __pycache__/
 *.Rapp.history
 *.command
 *.pdf
+*Bayesian.R
 
 # Unignore .svg files in images/ but still ignore elsewhere
 !images/**/*.svg

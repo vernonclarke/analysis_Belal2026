@@ -7,7 +7,7 @@
 rm(list = ls(all = TRUE))
 graphics.off()
 
-plotsave <- TRUE
+plotsave <- FALSE
 
 root_dir <- Sys.getenv('ANALYSIS_ROOT', unset = file.path(if (.Platform$OS.type == 'windows') { user_profile <- Sys.getenv('USERPROFILE'); if (nzchar(user_profile)) user_profile else file.path('C:/Users', Sys.getenv('USERNAME')) } else path.expand('~'), 'Documents', 'Repositories', 'analysis_Belal2026'))
 
