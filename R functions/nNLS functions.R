@@ -18617,5 +18617,66 @@ dd_plot <- function(outlier, lwd=0.8,
   invisible(NULL)
 }
 
+# gets animal id from file name
+animal_id_fun <- function(data_list) {
+  animal_offset <- 0
+  animal_map <- lapply(names(data_list), function(data_name) {
+    expt.id <- colnames(data_list[[data_name]])
+    # remove the final three-digit experiment number
+    animal_date <- substr(expt.id, 1, nchar(expt.id) - 3)
+    animal.id <- match(animal_date, unique(animal_date)) + animal_offset
+    animal_offset <<- max(animal.id)
+    data.frame(
+      data=data_name,
+      expt.id=expt.id,
+      animal.id=animal.id
+    )
+  })
+  animal_map <- do.call(rbind, animal_map)
+  rownames(animal_map) <- NULL
+  animal_map
+}
+
+# simple output for CR2 stats test
+CR2output <- function(test_result, formula, df, cluster='animal') {
+
+  var.names <- all.vars(formula)
+
+  parameter <- var.names[1]
+  group <- var.names[2]
+
+  group.levels <- levels(droplevels(factor(df[[group]])))
+
+  if (length(group.levels)!=2) {
+    stop('CR2output requires exactly two groups')
+  }
+
+  cr2.row <- test_result[test_result$Coef!='(Intercept)',]
+
+  if (nrow(cr2.row)!=1) {
+    stop('CR2output requires exactly one group coefficient')
+  }
+
+  group.n <- table(factor(df[[group]], levels=group.levels))
+
+  output <- data.frame(
+    parameter=parameter,
+    comparison=paste0('within ', group, ' (clustered by ', cluster, ')'),
+    contrast=paste(group.levels, collapse=' vs '),
+    n=paste(as.integer(group.n), collapse=' vs '),
+    test='CR2 cluster-robust test with Satterthwaite correction',
+    alternative='two.sided',
+    `test stat`='t',
+    stat=cr2.row$tstat,
+    `p value`=cr2.row$p_Satt,
+    `p adjusted`=cr2.row$p_Satt,
+    check.names=FALSE
+  )
+
+  rownames(output) <- NULL
+
+  output
+}
+
 
 
