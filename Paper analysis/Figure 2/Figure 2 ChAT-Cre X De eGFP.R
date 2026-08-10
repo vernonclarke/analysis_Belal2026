@@ -113,8 +113,8 @@ out6 <- analyse_PSC(response=ChAT_Cre_X_De_eGFP_data[,6], dt=dt, n=n, func=func,
   MLEsettings=MLEsettings, fit.limits=770, stimulation_time=stimulation_time, baseline=baseline, fast.constraint=TRUE)
 
 #            A1  τrise  τdecay  tpeak r20_80  d80_20  delay half_width     area1
-# fast  -80.510  4.679   4.685  4.682  1.835  10.159 17.191     11.454  1024.649
-# slow -140.766 18.813 141.792 43.811 15.906 198.461 21.985    153.210 27185.635
+# fast  -88.302  5.124   5.128  5.126  2.009  11.123 18.266     12.540  1230.388
+# slow -177.971 27.222 232.987 66.176 23.789 325.109  5.281    243.187 55085.135
 
 
 # organise outputs
