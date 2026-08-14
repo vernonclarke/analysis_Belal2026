@@ -4341,6 +4341,143 @@ BoxPlot3_ver0 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab 
   }
 }
 
+# BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PSC amplitude (pA)', main = '',
+#                      xrange = NULL, yrange = c(-400, 0), xlabel_angle = NULL, tick_length = 0.2, 
+#                      x_tick_interval = NULL, y_tick_interval = 100, lwd = 1, type = 6, amount = 0.05, p.cex = 0.5,
+#                      height = 2.5, width = 4, bg = 'transparent', alpha = 0.6, log_y = FALSE, na_rm_subjects = FALSE,
+#                      test_result, alpha_level = 0.05, group_names = NULL, sig_offset = NULL) {
+
+#   f_str <- deparse(formula)
+#   has_error <- grepl('Error', f_str)
+
+#   if (has_error) {
+#     err_part <- sub('.*Error\\((.*)\\).*', '\\1', f_str)
+#     subject_var <- strsplit(err_part, '/')[[1]][1]
+#     subject_var <- gsub('[[:space:]]', '', subject_var)
+#     main_formula_str <- sub('\\+\\s*Error\\(.*\\)', '', f_str)
+#     main_formula <- as.formula(main_formula_str)
+#   } else {
+#     subject_var <- NULL
+#     main_formula <- formula
+#   }
+
+#   response_var <- all.vars(formula(main_formula))[1]
+#   predictors <- all.vars(formula(main_formula))[-1]
+
+#   if (na_rm_subjects && !is.null(subject_var)) {
+#     data <- df[ !ave(is.na(data[[response_var]]), data[[subject_var]], FUN = any), ]
+#   }
+
+#   BoxPlot2(formula = formula, data = data, wid = wid, cap = cap, xlab = xlab, ylab = ylab, xlabel_angle = xlabel_angle, main = main,
+#            xrange = xrange, yrange = yrange, tick_length = tick_length, y_tick_interval = y_tick_interval,
+#            lwd = lwd, type = type, amount = amount, p.cex = p.cex, height = height, width = width, log_y=log_y,
+#            bg = bg, na.rm = TRUE)
+
+#   has_error <- grepl("Error", deparse(formula))
+#   if (missing(test_result) || is.null(test_result) || nrow(test_result) == 0) {
+#     return()
+#   }
+
+#   response   <- response_var
+#   data$y     <- data[[response]]
+
+#   if (length(predictors) == 1) {
+#     data$x        <- factor(data[[predictors[1]]])
+#     single_factor <- TRUE
+#   } else {
+#     data$x        <- interaction(
+#       data[[predictors[1]]],
+#       data[[predictors[2]]],
+#       sep = ' : '
+#     )
+#     single_factor <- FALSE
+#   }
+
+#   x_labels    <- levels(data$x)
+#   x_positions <- setNames(seq_along(x_labels), x_labels)
+
+#   y_span <- diff(range(data$y, na.rm = TRUE))
+#   offset <- if (is.null(sig_offset)) 0.05 * y_span else sig_offset
+#   tick   <- 0.25 * offset
+
+#   for (i in seq_len(nrow(test_result))) {
+#     p_adj <- test_result$`p adjusted`[i]
+#     if (is.na(p_adj) || p_adj >= alpha_level) next
+
+#     parts <- strsplit(as.character(test_result$contrast[i]), ' vs ')[[1]]
+#     if (length(parts) != 2) next
+#     lev1 <- trimws(parts[1])
+#     lev2 <- trimws(parts[2])
+
+#     if (single_factor) {
+#       label1 <- lev1
+#       label2 <- lev2
+#       paired <- FALSE
+#     } else {
+#       comp      <- as.character(test_result$comparison[i])
+#       outer_lev <- sub('.*? ([^ ]+) \\(.*', '\\1', comp)
+#       if (grepl('\\(paired\\)', comp)) {
+#         label1 <- paste0(lev1, ' : ', outer_lev)
+#         label2 <- paste0(lev2, ' : ', outer_lev)
+#         paired <- TRUE
+#       } else {
+#         label1 <- paste0(outer_lev, ' : ', lev1)
+#         label2 <- paste0(outer_lev, ' : ', lev2)
+#         paired <- FALSE
+#       }
+#     }
+
+#     if (!(label1 %in% x_labels) || !(label2 %in% x_labels)) next
+#     x1 <- x_positions[label1]
+#     x2 <- x_positions[label2]
+
+#     if (log_y) {
+#       yvals <- c(data[[response]][data$x == label1], data[[response]][data$x == label2])
+#       yvals <- yvals[!is.na(yvals) & yvals > 0]
+#       if (length(yvals) == 0) next
+#       yvals <- log10(yvals)
+#       y_max <- max(yvals)
+#       y_min <- min(yvals)
+#       y_span_log <- diff(range(log10(data[[response]][data[[response]] > 0]), na.rm = TRUE))
+#       offset <- if (is.null(sig_offset)) 0.05 * y_span_log else sig_offset
+#       tick   <- 0.25 * offset
+#       shift_amt <- if (!single_factor && !paired) 6 * tick else 0
+#       if (y_max > 0) {
+#         y_line <- y_max + offset + shift_amt
+#         segments(x1, y_line, x1, y_line - tick, lwd = lwd)
+#         segments(x2, y_line, x2, y_line - tick, lwd = lwd)
+#         text_y <- y_line + tick
+#       } else {
+#         y_line <- y_min - offset - shift_amt
+#         segments(x1, y_line, x1, y_line + tick, lwd = lwd)
+#         segments(x2, y_line, x2, y_line + tick, lwd = lwd)
+#         text_y <- y_line - tick
+#       }
+#     } else {
+#       yvals <- c(data$y[data$x == label1], data$y[data$x == label2])
+#       yvals <- yvals[!is.na(yvals)]
+#       if (length(yvals) == 0) next
+#       y_max <- max(yvals)
+#       y_min <- min(yvals)
+#       shift_amt <- if (!single_factor && !paired) 6 * tick else 0
+#       if (y_max > 0) {
+#         y_line <- y_max + offset + shift_amt
+#         segments(x1, y_line, x1, y_line - tick, lwd = lwd)
+#         segments(x2, y_line, x2, y_line - tick, lwd = lwd)
+#         text_y <- y_line + tick
+#       } else {
+#         y_line <- y_min - offset - shift_amt
+#         segments(x1, y_line, x1, y_line + tick, lwd = lwd)
+#         segments(x2, y_line, x2, y_line + tick, lwd = lwd)
+#         text_y <- y_line - tick
+#       }
+#     }
+
+#     segments(x1, y_line, x2, y_line, lwd = lwd)
+#     text((x1 + x2) / 2, text_y, labels = '*', cex = 1.2)
+#   }
+# }
+
 BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PSC amplitude (pA)', main = '',
                      xrange = NULL, yrange = c(-400, 0), xlabel_angle = NULL, tick_length = 0.2, 
                      x_tick_interval = NULL, y_tick_interval = 100, lwd = 1, type = 6, amount = 0.05, p.cex = 0.5,
@@ -4378,14 +4515,22 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
     return()
   }
 
-  response   <- response_var
-  data$y     <- data[[response]]
+  if ('p adjusted' %in% names(test_result)) {
+    p_column <- 'p adjusted'
+  } else if ('p value' %in% names(test_result)) {
+    p_column <- 'p value'
+  } else {
+    stop("test_result must contain 'p adjusted' or 'p value'")
+  }
+
+  response <- response_var
+  data$y <- data[[response]]
 
   if (length(predictors) == 1) {
-    data$x        <- factor(data[[predictors[1]]])
+    data$x <- factor(data[[predictors[1]]])
     single_factor <- TRUE
   } else {
-    data$x        <- interaction(
+    data$x <- interaction(
       data[[predictors[1]]],
       data[[predictors[2]]],
       sep = ' : '
@@ -4393,41 +4538,133 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
     single_factor <- FALSE
   }
 
-  x_labels    <- levels(data$x)
+  x_labels <- levels(data$x)
   x_positions <- setNames(seq_along(x_labels), x_labels)
 
   y_span <- diff(range(data$y, na.rm = TRUE))
   offset <- if (is.null(sig_offset)) 0.05 * y_span else sig_offset
-  tick   <- 0.25 * offset
+  tick <- 0.25 * offset
 
   for (i in seq_len(nrow(test_result))) {
-    p_adj <- test_result$`p adjusted`[i]
-    if (is.na(p_adj) || p_adj >= alpha_level) next
+    p_value <- test_result[[p_column]][i]
+    if (is.na(p_value) || p_value >= alpha_level) next
 
-    parts <- strsplit(as.character(test_result$contrast[i]), ' vs ')[[1]]
-    if (length(parts) != 2) next
-    lev1 <- trimws(parts[1])
-    lev2 <- trimws(parts[2])
+    label1 <- NULL
+    label2 <- NULL
+    paired <- FALSE
 
-    if (single_factor) {
-      label1 <- lev1
-      label2 <- lev2
-      paired <- FALSE
-    } else {
-      comp      <- as.character(test_result$comparison[i])
-      outer_lev <- sub('.*? ([^ ]+) \\(.*', '\\1', comp)
-      if (grepl('\\(paired\\)', comp)) {
-        label1 <- paste0(lev1, ' : ', outer_lev)
-        label2 <- paste0(lev2, ' : ', outer_lev)
-        paired <- TRUE
+    contrast.available <- 'contrast' %in% names(test_result) &&
+      !is.na(test_result$contrast[i]) &&
+      nzchar(trimws(as.character(test_result$contrast[i])))
+
+    parameter.available <- 'parameter' %in% names(test_result) &&
+      !is.na(test_result$parameter[i]) &&
+      nzchar(trimws(as.character(test_result$parameter[i])))
+
+    if (contrast.available) {
+      parts <- strsplit(as.character(test_result$contrast[i]), ' vs ')[[1]]
+      if (length(parts) != 2) next
+
+      lev1 <- trimws(parts[1])
+      lev2 <- trimws(parts[2])
+
+      if (single_factor) {
+        label1 <- lev1
+        label2 <- lev2
       } else {
-        label1 <- paste0(outer_lev, ' : ', lev1)
-        label2 <- paste0(outer_lev, ' : ', lev2)
-        paired <- FALSE
+        if (!'comparison' %in% names(test_result) ||
+            is.na(test_result$comparison[i])) next
+
+        comp <- as.character(test_result$comparison[i])
+        outer_lev <- sub('.*? ([^ ]+) \\(.*', '\\1', comp)
+
+        if (grepl('\\(paired\\)', comp)) {
+          label1 <- paste0(lev1, ' : ', outer_lev)
+          label2 <- paste0(lev2, ' : ', outer_lev)
+          paired <- TRUE
+        } else {
+          label1 <- paste0(outer_lev, ' : ', lev1)
+          label2 <- paste0(outer_lev, ' : ', lev2)
+          paired <- FALSE
+        }
       }
+    } else if (parameter.available) {
+      parameter <- trimws(as.character(test_result$parameter[i]))
+
+      if (single_factor) {
+        parts <- strsplit(parameter, ' - ', fixed=TRUE)[[1]]
+
+        if (length(parts) == 2) {
+          label1 <- trimws(parts[1])
+          label2 <- trimws(parts[2])
+        } else if (length(x_labels) == 2) {
+          label1 <- x_labels[1]
+          label2 <- x_labels[2]
+        } else {
+          next
+        }
+      } else {
+        separator <- NULL
+
+        if (grepl(' in ', parameter, fixed=TRUE)) {
+          separator <- ' in '
+          paired <- TRUE
+        } else if (grepl(' for ', parameter, fixed=TRUE)) {
+          separator <- ' for '
+          paired <- FALSE
+        }
+
+        if (is.null(separator)) next
+
+        parameter.parts <- strsplit(
+          parameter,
+          separator,
+          fixed=TRUE
+        )[[1]]
+
+        if (length(parameter.parts) != 2) next
+
+        parts <- strsplit(
+          trimws(parameter.parts[1]),
+          ' - ',
+          fixed=TRUE
+        )[[1]]
+
+        if (length(parts) != 2) next
+
+        lev1 <- trimws(parts[1])
+        lev2 <- trimws(parts[2])
+        outer_lev <- trimws(parameter.parts[2])
+
+        labels.first <- c(
+          paste0(lev1, ' : ', outer_lev),
+          paste0(lev2, ' : ', outer_lev)
+        )
+
+        labels.second <- c(
+          paste0(outer_lev, ' : ', lev1),
+          paste0(outer_lev, ' : ', lev2)
+        )
+
+        if (all(labels.first %in% x_labels)) {
+          label1 <- labels.first[1]
+          label2 <- labels.first[2]
+        } else if (all(labels.second %in% x_labels)) {
+          label1 <- labels.second[1]
+          label2 <- labels.second[2]
+        } else {
+          next
+        }
+      }
+    } else if (single_factor && length(x_labels) == 2) {
+      label1 <- x_labels[1]
+      label2 <- x_labels[2]
+    } else {
+      next
     }
 
     if (!(label1 %in% x_labels) || !(label2 %in% x_labels)) next
+
     x1 <- x_positions[label1]
     x2 <- x_positions[label2]
 
@@ -4435,13 +4672,15 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
       yvals <- c(data[[response]][data$x == label1], data[[response]][data$x == label2])
       yvals <- yvals[!is.na(yvals) & yvals > 0]
       if (length(yvals) == 0) next
+
       yvals <- log10(yvals)
       y_max <- max(yvals)
       y_min <- min(yvals)
       y_span_log <- diff(range(log10(data[[response]][data[[response]] > 0]), na.rm = TRUE))
       offset <- if (is.null(sig_offset)) 0.05 * y_span_log else sig_offset
-      tick   <- 0.25 * offset
+      tick <- 0.25 * offset
       shift_amt <- if (!single_factor && !paired) 6 * tick else 0
+
       if (y_max > 0) {
         y_line <- y_max + offset + shift_amt
         segments(x1, y_line, x1, y_line - tick, lwd = lwd)
@@ -4457,9 +4696,11 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
       yvals <- c(data$y[data$x == label1], data$y[data$x == label2])
       yvals <- yvals[!is.na(yvals)]
       if (length(yvals) == 0) next
+
       y_max <- max(yvals)
       y_min <- min(yvals)
       shift_amt <- if (!single_factor && !paired) 6 * tick else 0
+
       if (y_max > 0) {
         y_line <- y_max + offset + shift_amt
         segments(x1, y_line, x1, y_line - tick, lwd = lwd)
@@ -18679,4 +18920,830 @@ CR2output <- function(test_result, formula, df, cluster='animal') {
 }
 
 
+# rlmer.bootstrap() fits a robust linear mixed-effects model and performs a stratified cluster bootstrap. 
+# Complete clusters are resampled with replacement within their original two-level group, preserving the observed 
+# group sizes and all observations belonging to each cluster.
+# H0=TRUE: removes the fitted group effect, generates a null bootstrap distribution of the studentized coefficient, 
+# and returns a two-sided bootstrap p-value.
+# H0=FALSE: resamples the observed data without removing the group effect and returns the group difference, 
+# percentile confidence interval and sign-tail probability.
+# The function automatically interprets the factor contrasts, so the reported parameter is the second factor level 
+# minus the first. Failed model fits are excluded and reported as Nfailed; successful bootstrap fits are returned in bootstrap.values.
+
+rlmer.cluster.bootstrap <- function(formula, longdata, cluster, group, H0=TRUE,B=1e4,
+              n_cores=1, seed=42, CI=0.95, data.name=''){
+
+  group.contrasts <- contrasts(longdata[[group]])
+  longdata[[group]] <- droplevels(longdata[[group]])
+  longdata[[cluster]] <- droplevels(longdata[[cluster]])
+  group.levels <- levels(longdata[[group]])
+
+  group.contrasts <- group.contrasts[group.levels,,drop=FALSE]
+  contrasts(longdata[[group]]) <- group.contrasts
+
+  if (length(group.levels) != 2) {
+    stop('group must contain exactly two levels')
+  }
+
+  group.contrasts <- contrasts(longdata[[group]])
+
+  if (is.null(group.contrasts) || ncol(group.contrasts) != 1) {
+    stop('group must have one two-level contrast')
+  }
+
+  rfit <- rlmer(formula, data=longdata)
+  coef_name <- setdiff(names(fixef(rfit)), '(Intercept)')
+
+  if (length(coef_name) != 1) {
+    stop('the model must contain one non-intercept fixed-effect coefficient')
+  }
+
+  contrast.multiplier <- unname(group.contrasts[2,1]-group.contrasts[1,1])
+  contrast.name <- paste(group.levels[2], '-', group.levels[1])
+
+  if (H0) {
+    X <- model.matrix(formula(rfit, fixed.only=TRUE), data=longdata)
+
+    longdata.bootstrap <- longdata
+    longdata.bootstrap[[all.vars(formula)[1]]] <- longdata[[all.vars(formula)[1]]]-
+      drop(X[,coef_name,drop=FALSE]%*%fixef(rfit)[coef_name])
+  } else {
+    longdata.bootstrap <- longdata
+  }
+
+  cluster_list <- split(longdata.bootstrap, longdata.bootstrap[[cluster]])
+
+  cluster_group <- vapply(cluster_list, function(x){
+    value <- unique(as.character(x[[group]]))
+
+    if (length(value) != 1) {
+      stop('each cluster must belong to one group')
+    }
+
+    value
+  }, character(1))
+
+  cluster_list <- split(cluster_list, cluster_group)
+  n_clusters <- lengths(cluster_list)
+
+  if (any(n_clusters < 2)) {
+    stop('each group must contain at least two clusters')
+  }
+
+  if (any(n_clusters < 10)) {
+    warning(
+      paste0('bootstrap calibration may be unreliable with fewer than 10 clusters in a group: ', paste(names(n_clusters), n_clusters, sep='=', collapse=', ')),
+      call.=FALSE
+    )
+  }
+
+  cluster.summary <- paste(names(n_clusters), n_clusters, sep='=', collapse=', ')
+
+  bootstrap.fun <- function(ii){
+    samp <- unlist(lapply(seq_along(cluster_list), function(kk){
+      sample_idx <- sample(seq_along(cluster_list[[kk]]), size=n_clusters[kk], replace=TRUE)
+      lapply(seq_along(sample_idx), function(j){
+        tmp <- cluster_list[[kk]][[sample_idx[j]]]
+        tmp[[cluster]] <- paste0('boot_', ii, '*', kk, '*', j)
+        tmp
+      })
+    }), recursive=FALSE)
+
+    dboot <- do.call(rbind, samp)
+    dboot[[group]] <- factor(dboot[[group]], levels=group.levels)
+    contrasts(dboot[[group]]) <- group.contrasts
+
+    fit <- try(rlmer(formula, data=dboot), silent=TRUE)
+
+    if (inherits(fit, 'try-error')) {
+      return(c(estimate=NA_real_, statistic=NA_real_))
+    }
+
+    estimate <- contrast.multiplier*unname(fixef(fit)[coef_name])
+
+    if (H0) {
+      se <- sqrt(diag(vcov(fit)))[coef_name]
+
+      if (!is.finite(se) || se <= 0) {
+        return(c(estimate=NA_real_, statistic=NA_real_))
+      }
+
+      statistic <- sign(contrast.multiplier)*unname(fixef(fit)[coef_name]/se)
+    } else {
+      statistic <- NA_real_
+    }
+
+    c(estimate=estimate, statistic=statistic)
+  }
+
+  old.kind <- RNGkind()
+  had.seed <- exists('.Random.seed', envir=.GlobalEnv, inherits=FALSE)
+  old.seed <- if (had.seed) get('.Random.seed', envir=.GlobalEnv, inherits=FALSE) else NULL
+
+  on.exit({
+    do.call(RNGkind, as.list(old.kind))
+
+    if (had.seed) {
+      assign('.Random.seed', old.seed, envir=.GlobalEnv)
+    } else if (exists('.Random.seed', envir=.GlobalEnv, inherits=FALSE)) {
+      rm('.Random.seed', envir=.GlobalEnv)
+    }
+  }, add=TRUE)
+
+  RNGkind("L'Ecuyer-CMRG")
+  set.seed(seed)
+
+  if (n_cores == 1) {
+    bootstrap.results <- lapply(seq_len(B), bootstrap.fun)
+  } else {
+    bootstrap.results <- parallel::mclapply(seq_len(B), bootstrap.fun, mc.cores=n_cores)
+  }
+
+  bootstrap.results <- do.call(rbind, bootstrap.results)
+
+  if (H0) {
+    successful <- is.finite(bootstrap.results[, 'estimate'])&
+      is.finite(bootstrap.results[, 'statistic'])
+  } else {
+    successful <- is.finite(bootstrap.results[, 'estimate'])
+  }
+
+  bootstrap.results <- bootstrap.results[successful,,drop=FALSE]
+  bootstrap.estimates <- bootstrap.results[, 'estimate']
+
+  if (H0) {
+    bootstrap.values <- bootstrap.results[, 'statistic']
+  } else {
+    bootstrap.values <- bootstrap.estimates
+  }
+
+  observed.estimate <- contrast.multiplier*unname(fixef(rfit)[coef_name])
+  target <- if (H0) 0 else observed.estimate
+  alpha <- 1-CI
+  ci <- quantile(bootstrap.estimates, probs=c(alpha/2, 1-alpha/2))
+
+  summary.boot <- data.frame(
+    parameter=contrast.name,
+    target=target,
+    mean=mean(bootstrap.estimates),
+    bias=mean(bootstrap.estimates)-target,
+    se=sd(bootstrap.estimates),
+    ci.lower=unname(ci[1]),
+    ci.upper=unname(ci[2]),
+    Nboot=length(bootstrap.estimates),
+    Nfailed=B-length(bootstrap.estimates),
+    check.names=FALSE
+  )
+
+  rownames(summary.boot) <- NULL
+  model.name <- paste(deparse(formula), collapse=' ')
+
+  if (H0) {
+    se.observed <- sqrt(diag(vcov(rfit)))[coef_name]
+    statistic.observed <- sign(contrast.multiplier)*unname(fixef(rfit)[coef_name]/se.observed)
+
+    pval <- (sum(abs(bootstrap.values) >= abs(statistic.observed))+1)/(length(bootstrap.values)+1)
+
+    summary <- data.frame(
+      model=paste0('rlmer null-centred stratified cluster bootstrap: ', model.name),
+      data=data.name,
+      parameter=contrast.name,
+      statistic=statistic.observed,
+      'p value'=pval,
+      clusters=cluster.summary,
+      Nboot=length(bootstrap.values),
+      Nfailed=B-length(bootstrap.values),
+      n_cores=n_cores,
+      check.names=FALSE
+    )
+  } else {
+    p_negative <- mean(bootstrap.estimates < 0)
+    p_positive <- mean(bootstrap.estimates > 0)
+    tail.probability <- 2*min(p_negative, p_positive)
+
+    summary <- data.frame(
+      model=paste0('rlmer stratified cluster bootstrap: ', model.name),
+      data=data.name,
+      parameter=contrast.name,
+      estimate=observed.estimate,
+      'CI (2.5)'=unname(ci[1]),
+      'CI (97.5)'=unname(ci[2]),
+      'sign-tail probability'=tail.probability,
+      clusters=cluster.summary,
+      Nboot=length(bootstrap.estimates),
+      Nfailed=B-length(bootstrap.estimates),
+      n_cores=n_cores,
+      check.names=FALSE
+    )
+  }
+
+  rownames(summary) <- NULL
+
+  list(
+    fit=rfit,
+    summary=summary,
+    summary.boot=summary.boot,
+    bootstrap.values=bootstrap.values,
+    bootstrap.estimates=bootstrap.estimates,
+    n.clusters=n_clusters,
+    H0=H0
+  )
+}
+
+# Exact stratified cluster permutation test.
+# rlmer.cluster.permutation() fits a robust linear mixed-effects model and performs a cluster-level permutation test.
+# Complete clusters are reassigned between the two group levels while preserving the number of clusters in each group
+# and, when supplied, preserving the group allocation within each permutation stratum.
+# The function refits the model for every permitted allocation and compares the absolute observed studentized coefficient
+# with the corresponding permutation distribution to calculate a two-sided permutation p-value.
+# Exact enumeration is used when the number of allocations is manageable; otherwise, group allocations are sampled.
+# The function automatically interprets the factor contrasts, so the reported parameter is the second factor level
+# minus the first. The number of permutations, minimum attainable p-value and null distribution are returned.
+
+rlmer.cluster.permutation <- function(formula, longdata, cluster, group, strata=NULL,
+              n_cores=1, CI=0.95, max.permutations=1e4, data.name=''){
+
+  group.contrasts <- contrasts(longdata[[group]])
+  longdata[[group]] <- droplevels(longdata[[group]])
+  longdata[[cluster]] <- droplevels(longdata[[cluster]])
+  group.levels <- levels(longdata[[group]])
+
+  group.contrasts <- group.contrasts[group.levels,,drop=FALSE]
+  contrasts(longdata[[group]]) <- group.contrasts
+
+  if (length(group.levels) != 2) {
+    stop('group must contain exactly two levels')
+  }
+
+  group.contrasts <- contrasts(longdata[[group]])
+
+  if (is.null(group.contrasts) || ncol(group.contrasts) != 1) {
+    stop('group must have one two-level contrast')
+  }
+
+  rfit <- rlmer(formula, data=longdata)
+  coef_name <- setdiff(names(fixef(rfit)), '(Intercept)')
+
+  if (length(coef_name) != 1) {
+    stop('the model must contain one non-intercept fixed-effect coefficient')
+  }
+
+  contrast.multiplier <- unname(group.contrasts[2,1]-group.contrasts[1,1])
+  contrast.name <- paste(group.levels[2], '-', group.levels[1])
+
+  cluster_list <- split(longdata, longdata[[cluster]])
+  cluster.ids <- names(cluster_list)
+
+  cluster_group <- vapply(cluster_list, function(x){
+    value <- unique(as.character(x[[group]]))
+
+    if (length(value) != 1) {
+      stop('each cluster must belong to one group')
+    }
+
+    value
+  }, character(1))
+
+  n_clusters <- table(factor(cluster_group, levels=group.levels))
+
+  if (any(n_clusters < 1)) {
+    stop('each group must contain at least one cluster')
+  }
+
+  cluster.summary <- paste(names(n_clusters), as.numeric(n_clusters), sep='=', collapse=', ')
+
+  if (is.null(strata)) {
+    cluster_stratum <- rep('all', length(cluster.ids))
+    names(cluster_stratum) <- cluster.ids
+    strata.summary <- 'none'
+  } else {
+    cluster_stratum <- vapply(cluster_list, function(x){
+      value <- unique(as.character(x[[strata]]))
+
+      if (length(value) != 1) {
+        stop('each cluster must belong to one permutation stratum')
+      }
+
+      value
+    }, character(1))
+
+    strata.summary <- strata
+  }
+
+  stratum.indices <- split(seq_along(cluster.ids), cluster_stratum)
+
+  permutation.counts <- vapply(stratum.indices, function(index){
+    n.second <- sum(cluster_group[index] == group.levels[2])
+    choose(length(index), n.second)
+  }, numeric(1))
+
+  Npermutations <- prod(permutation.counts)
+
+  if (Npermutations < 2) {
+    stop('the specified strata permit no exchange of group labels')
+  }
+
+  if (Npermutations > max.permutations) {
+    stop(
+      paste0(
+        'the exact permutation design contains ',
+        Npermutations,
+        ' allocations and exceeds max.permutations=',
+        max.permutations
+      )
+    )
+  }
+
+  permutation.parts <- lapply(stratum.indices, function(index){
+    n.second <- sum(cluster_group[index] == group.levels[2])
+
+    if (n.second == 0) {
+      return(list(integer(0)))
+    }
+
+    if (n.second == length(index)) {
+      return(list(index))
+    }
+
+    combn(index, n.second, simplify=FALSE)
+  })
+
+  permutation.grid <- do.call(
+    expand.grid,
+    lapply(permutation.parts, seq_along)
+  )
+
+  permutations <- lapply(seq_len(nrow(permutation.grid)), function(ii){
+    unlist(lapply(seq_along(permutation.parts), function(jj){
+      permutation.parts[[jj]][[permutation.grid[ii,jj]]]
+    }), use.names=FALSE)
+  })
+
+  permutation.fun <- function(second.group){
+    permuted.group <- rep(group.levels[1], length(cluster.ids))
+    permuted.group[second.group] <- group.levels[2]
+    names(permuted.group) <- cluster.ids
+
+    dperm <- longdata
+    dperm[[group]] <- factor(
+      permuted.group[as.character(dperm[[cluster]])],
+      levels=group.levels
+    )
+    contrasts(dperm[[group]]) <- group.contrasts
+
+    fit <- try(rlmer(formula, data=dperm), silent=TRUE)
+
+    if (inherits(fit, 'try-error')) {
+      return(c(estimate=NA_real_, statistic=NA_real_))
+    }
+
+    se <- sqrt(diag(vcov(fit)))[coef_name]
+
+    if (!is.finite(se) || se <= 0) {
+      return(c(estimate=NA_real_, statistic=NA_real_))
+    }
+
+    estimate <- contrast.multiplier*unname(fixef(fit)[coef_name])
+    statistic <- sign(contrast.multiplier)*unname(fixef(fit)[coef_name]/se)
+
+    c(estimate=estimate, statistic=statistic)
+  }
+
+  if (n_cores == 1) {
+    permutation.results <- lapply(permutations, permutation.fun)
+  } else {
+    permutation.results <- parallel::mclapply(permutations, permutation.fun, mc.cores=n_cores)
+  }
+
+  permutation.results <- do.call(rbind, permutation.results)
+
+  successful <- is.finite(permutation.results[, 'estimate'])&
+    is.finite(permutation.results[, 'statistic'])
+
+  if (!all(successful)) {
+    stop(
+      paste0(
+        sum(!successful),
+        ' permutation models failed; the exact permutation p value is unavailable'
+      )
+    )
+  }
+
+  permutation.estimates <- permutation.results[, 'estimate']
+  permutation.statistics <- permutation.results[, 'statistic']
+
+  se.observed <- sqrt(diag(vcov(rfit)))[coef_name]
+  estimate.observed <- contrast.multiplier*unname(fixef(rfit)[coef_name])
+  statistic.observed <- sign(contrast.multiplier)*unname(fixef(rfit)[coef_name]/se.observed)
+
+  if (!any(abs(permutation.statistics-statistic.observed) < 1e-8)) {
+    stop('the observed allocation is missing from the permutation distribution')
+  }
+
+  pval <- sum(
+    abs(permutation.statistics) >= abs(statistic.observed)
+  )/length(permutation.statistics)
+
+  max.statistic <- max(abs(permutation.statistics))
+  minimum.p <- mean(
+    abs(permutation.statistics) >= max.statistic
+  )
+
+  alpha <- 1-CI
+  null.interval <- quantile(
+    permutation.estimates,
+    probs=c(alpha/2, 1-alpha/2)
+  )
+
+  summary.permutation <- data.frame(
+    parameter=contrast.name,
+    target=0,
+    null.mean=mean(permutation.estimates),
+    se=sd(permutation.estimates),
+    null.lower=unname(null.interval[1]),
+    null.upper=unname(null.interval[2]),
+    minimum.p=minimum.p,
+    Npermutations=length(permutation.estimates),
+    check.names=FALSE
+  )
+
+  rownames(summary.permutation) <- NULL
+  model.name <- paste(deparse(formula), collapse=' ')
+
+  summary <- data.frame(
+    model=paste0('rlmer exact stratified cluster permutation: ', model.name),
+    data=data.name,
+    parameter=contrast.name,
+    estimate=estimate.observed,
+    statistic=statistic.observed,
+    'p value'=pval,
+    minimum.p=minimum.p,
+    clusters=cluster.summary,
+    strata=strata.summary,
+    method='exact',
+    Npermutations=length(permutation.statistics),
+    n_cores=n_cores,
+    check.names=FALSE
+  )
+
+  rownames(summary) <- NULL
+
+  list(
+    fit=rfit,
+    summary=summary,
+    summary.permutation=summary.permutation,
+    permutation.estimates=permutation.estimates,
+    permutation.statistics=permutation.statistics,
+    n.clusters=n_clusters,
+    strata=strata,
+    method='exact'
+  )
+}
+
+# bayesian.cluster.analysis() fits a Bayesian hierarchical model and performs prior and posterior predictive analyses.
+# The model includes a fixed two-level group effect and a random intercept for the clustering variable, preserving the
+# dependence among observations from the same cluster.
+# A prior-only model is used to assess whether the specified priors generate plausible outcomes before the observed
+# outcome values are used to estimate the posterior distribution.
+# The population-level group difference is calculated on the original outcome scale from posterior expected values,
+# with the reported parameter defined as the second factor level minus the first.
+# The function returns the posterior estimate, credible interval, directional posterior probabilities, latent-scale ICC
+# and the probability that one new observation from the second group exceeds one new observation from the first group.
+# It also returns prior and posterior group-difference distributions, posterior predictions for new clusters and,
+# when requested, a graph comparing the prior and posterior contrast and the two posterior predictive distributions.
+
+bayesian.cluster.graphs <- function(result, pred_xlim=c(0, 1000), plotsave=FALSE,
+              svg_path=NULL, filename='bayesian_summary.svg',
+              width=9, height=4.5){
+
+  group.levels <- result$group.levels
+  prior_diff <- result$prior.difference
+  post_diff <- result$posterior.difference
+  preds <- result$future.predictions
+
+  p_positive <- mean(post_diff > 0)
+  p_negative <- mean(post_diff < 0)
+  p_two_sided <- min(1, 2*min(p_positive, p_negative))
+  p_future <- mean(preds[,2] > preds[,1])
+
+  diff_xlim <- range(
+    unname(quantile(prior_diff, c(0.001, 0.999))),
+    unname(quantile(post_diff, c(0.001, 0.999)))
+    )
+
+  dev.new(width=width, height=height, noRStudioGD=TRUE)
+
+  par(las=1, mfrow=c(1, 2), mar=c(5.5, 4, 3, 1),
+    cex=1, lwd=1, xaxs='i', yaxs='i', tcl=-0.2)
+
+  # A. Prior and posterior group difference
+
+  prior_dens <- density(prior_diff, adjust=1.25, n=2048,
+    from=diff_xlim[1], to=diff_xlim[2])
+
+  dens <- density(post_diff, adjust=1.25, n=2048,
+    from=diff_xlim[1], to=diff_xlim[2])
+
+  diff_ylim <- c(0, max(c(prior_dens$y, dens$y))*1.2)
+
+  plot(dens, main='Group difference',
+    xlab=paste0('Difference (', group.levels[2], ' - ', group.levels[1], ')'),
+    xlim=diff_xlim, ylim=diff_ylim,
+    lwd=1, cex.axis=0.85, cex.lab=0.85, cex.main=0.95,
+    bty='n', axes=FALSE)
+
+  axis(1, lwd=1, cex.axis=0.85)
+  axis(2, lwd=1, cex.axis=0.85)
+  box(bty='n')
+
+  polygon(c(dens$x[1], dens$x, dens$x[length(dens$x)]),
+    c(0, dens$y, 0),
+    col=rgb(106/255, 90/255, 205/255, 0.6),
+    border='slateblue', lwd=1)
+
+  lines(prior_dens$x, prior_dens$y, col='black', lty=3, lwd=1.5)
+
+  abline(v=0, lty=2, lwd=1)
+
+  mtext('A', side=3, line=1.5, adj=0, font=2, cex=1.5)
+
+  legend('topright', legend=c('Prior', 'Posterior'), col=c('black', 'slateblue'),
+    lty=c(3, 1), lwd=c(1.5, 1), bty='n', box.lwd=0, cex=0.85)
+
+  mtext(paste0('Pr(', group.levels[2], '>', group.levels[1], ')=',
+    round(p_positive, 3), '; Pr(2-tail)=', round(p_two_sided, 3)),
+    side=1, line=4.25, cex=0.75)
+
+  # B. Posterior predictive
+
+  if (any(preds <= 0)) {
+    stop('posterior predictions must be positive for the log-density graph')
+  }
+
+  log_dens1 <- density(log(preds[,1]), adjust=1.25, n=2048)
+  log_dens2 <- density(log(preds[,2]), adjust=1.25, n=2048)
+
+  dens1.x <- exp(log_dens1$x)
+  dens2.x <- exp(log_dens2$x)
+
+  dens1.y <- log_dens1$y/dens1.x
+  dens2.y <- log_dens2$y/dens2.x
+
+  pred_ylim <- c(0, max(c(dens1.y, dens2.y))*1.2)
+
+  plot(dens1.x, dens1.y, type='l',
+    xlab='Predicted outcome for one new observation',
+    main='Posterior predictive',
+    ylim=pred_ylim, xlim=pred_xlim,
+    lwd=1, cex.axis=0.85, cex.lab=0.85, cex.main=0.95,
+    bty='n', axes=FALSE)
+
+  axis(1, lwd=1, cex.axis=0.85)
+  axis(2, lwd=1, cex.axis=0.85)
+  box(bty='n')
+
+  polygon(c(pred_xlim[1], dens1.x, pred_xlim[2]),
+    c(0, dens1.y, 0),
+    col=rgb(106/255, 90/255, 205/255, 0.6),
+    border='slateblue', lwd=1)
+
+  polygon(c(pred_xlim[1], dens2.x, pred_xlim[2]),
+    c(0, dens2.y, 0),
+    col=rgb(205/255, 92/255, 92/255, 0.6),
+    border='indianred', lwd=1)
+
+  mtext('B', side=3, line=1.5, adj=0, font=2, cex=1.5)
+
+  legend('topright',
+    fill=c(rgb(106/255, 90/255, 205/255, 0.6),
+      rgb(205/255, 92/255, 92/255, 0.6)),
+    legend=group.levels, bty='n', box.lwd=0, cex=0.85)
+
+  mtext(paste0('Pr(new ', group.levels[2], ' observation>new ',
+    group.levels[1], ' observation)=', round(p_future, 3)),
+    side=1, line=4.25, cex=0.75)
+
+  if (plotsave) {
+    if (is.null(svg_path)) {
+      stop('svg_path must be supplied when plotsave=TRUE')
+    }
+
+    save_graph(svg_path=svg_path, filename=filename,
+      width=width, height=height, bg='transparent')
+  }
+
+  invisible(result)
+}
+
+
+bayesian.cluster.analysis <- function(formula, longdata, cluster, group, prior_spec,
+              family=lognormal(), prior.iter=4000, iter=8000,
+              chains=4, seed=42, CI=0.95, control=list(adapt_delta=0.99),
+              pred_xlim=c(0, 1000), plot.graph=TRUE, plotsave=FALSE,
+              svg_path=NULL, filename='bayesian_summary.svg',
+              width=9, height=4.5, data.name=''){
+
+  if (!is.factor(longdata[[group]])) {
+    stop('group must be a factor')
+  }
+
+  longdata[[group]] <- droplevels(longdata[[group]])
+  longdata[[cluster]] <- droplevels(factor(longdata[[cluster]]))
+
+  group.levels <- levels(longdata[[group]])
+
+  if (length(group.levels) != 2) {
+    stop('group must contain exactly two levels')
+  }
+
+  group.contrasts <- contrasts(longdata[[group]])
+
+  if (is.null(group.contrasts) || ncol(group.contrasts) != 1) {
+    stop('group must have one two-level contrast')
+  }
+
+  if (!nzchar(data.name)) {
+    data.name <- deparse(substitute(longdata))
+  }
+
+  alpha <- 1-CI
+
+  # Prior predictive model
+
+  prior_model <- brm(bf(formula), data=longdata, family=family,
+    prior=prior_spec, sample_prior='only',
+    iter=prior.iter, chains=chains, seed=seed)
+
+  prior_predictions <- posterior_predict(prior_model)
+
+  prior.predictive.summary <- data.frame(
+    minimum=apply(prior_predictions, 1, min),
+    median=apply(prior_predictions, 1, median),
+    maximum=apply(prior_predictions, 1, max)
+    )
+
+  prior.predictive.quantiles <- rbind(
+    minimum=quantile(prior.predictive.summary$minimum, c(alpha/2, 0.5, 1-alpha/2)),
+    median=quantile(prior.predictive.summary$median, c(alpha/2, 0.5, 1-alpha/2)),
+    maximum=quantile(prior.predictive.summary$maximum, c(alpha/2, 0.5, 1-alpha/2))
+    )
+
+  prior.proportion.above.limit <- mean(prior.predictive.summary$maximum > pred_xlim[2])
+  prior.upper <- unname(quantile(prior.predictive.summary$maximum, 1-alpha/2))
+
+  # Fit the Bayesian model
+
+  fitted_bayesian_model <- brm(bf(formula), data=longdata, family=family,
+    prior=prior_spec, iter=iter, chains=chains, seed=seed,
+    control=control)
+
+  fixed.effects <- fixef(fitted_bayesian_model)
+  coef_name <- setdiff(rownames(fixed.effects), 'Intercept')
+
+  if (length(coef_name) != 1) {
+    stop('the model must contain one non-intercept fixed-effect coefficient')
+  }
+
+  coef_name_b <- paste0('b_', coef_name)
+
+  coefficient.summary <- posterior_summary(fitted_bayesian_model, variable=coef_name_b)
+  draws <- as_draws_df(fitted_bayesian_model)
+
+  # Population-level group difference
+
+  newdata.mean <- longdata[rep(1, 2),,drop=FALSE]
+
+  newdata.mean[[group]] <- factor(group.levels, levels=group.levels)
+  newdata.mean[[cluster]] <- factor(rep(levels(longdata[[cluster]])[1], 2),
+    levels=levels(longdata[[cluster]]))
+
+  contrasts(newdata.mean[[group]]) <- group.contrasts
+
+  epred <- posterior_epred(fitted_bayesian_model, newdata=newdata.mean, re_formula=NA)
+
+  # Difference is the second factor level minus the first factor level.
+
+  post_diff <- epred[,2]-epred[,1]
+
+  post_ci <- quantile(post_diff, c(alpha/2, 1-alpha/2))
+
+  p_positive <- mean(post_diff > 0)
+  p_negative <- mean(post_diff < 0)
+  p_two_sided <- min(1, 2*min(p_positive, p_negative))
+
+  # Prior distribution of the same group difference
+
+  prior_epred <- posterior_epred(prior_model, newdata=newdata.mean, re_formula=NA)
+
+  prior_diff <- prior_epred[,2]-prior_epred[,1]
+
+  prior_ci <- quantile(prior_diff, c(alpha/2, 1-alpha/2))
+
+  # Latent-scale ICC
+
+  cluster.sd.name <- grep('^sd_.*__Intercept$', names(draws), value=TRUE)
+
+  if (length(cluster.sd.name) != 1 || !'sigma' %in% names(draws)) {
+    stop('the model must contain one random-intercept standard deviation and sigma')
+  }
+
+  icc <- draws[[cluster.sd.name]]^2/(draws[[cluster.sd.name]]^2+draws$sigma^2)
+
+  icc_ci <- quantile(icc, c(alpha/2, 1-alpha/2))
+
+  # Predictions for new observations from new clusters
+
+  new.cluster.levels <- paste0('new_', seq_along(group.levels))
+
+  newdata.future <- longdata[rep(1, 2),,drop=FALSE]
+
+  newdata.future[[group]] <- factor(group.levels, levels=group.levels)
+  newdata.future[[cluster]] <- factor(new.cluster.levels,
+    levels=c(levels(longdata[[cluster]]), new.cluster.levels))
+
+  contrasts(newdata.future[[group]]) <- group.contrasts
+
+  set.seed(seed)
+
+  preds <- posterior_predict(fitted_bayesian_model, newdata=newdata.future,
+    re_formula=NULL, allow_new_levels=TRUE, sample_new_levels='gaussian')
+
+  p_future <- mean(preds[,2] > preds[,1])
+
+  # Summary
+
+  model.name <- paste0(
+    'brm: ',
+    paste(deparse(formula), collapse=' '),
+    ', family = ',
+    stats::family(fitted_bayesian_model)$family,
+    '()'
+    )
+
+  parameter.name <- paste(group.levels[2], '-', group.levels[1])
+
+  bayes_summary <- data.frame(
+    model=model.name,
+    data=data.name,
+    parameter=parameter.name,
+    model_parameter=coef_name_b,
+    estimate=mean(post_diff),
+    'CI (2.5)'=unname(post_ci[1]),
+    'CI (97.5)'=unname(post_ci[2]),
+    p_negative,
+    p_positive,
+    p_two_sided,
+    p_future,
+    check.names=FALSE
+    )
+
+  names(bayes_summary)[8:11] <- c(
+    paste0('Pr(', group.levels[1], '>', group.levels[2], ')'),
+    paste0('Pr(', group.levels[2], '>', group.levels[1], ')'),
+    'Pr(2-tail)',
+    paste0('Pr(new ', group.levels[2], ' obs>new ',group.levels[1], ' obs)')
+    )
+
+  rownames(bayes_summary) <- NULL
+
+  icc.summary <- data.frame(
+    median=median(icc),
+    'CI (2.5%)'=unname(icc_ci[1]),
+    'CI (97.5%)'=unname(icc_ci[2]),
+    check.names=FALSE
+    )
+
+  prior.difference.summary <- data.frame(
+    mean=mean(prior_diff),
+    median=median(prior_diff),
+    'CI (2.5%)'=unname(prior_ci[1]),
+    'CI (97.5%)'=unname(prior_ci[2]),
+    check.names=FALSE
+    )
+
+  result <- list(
+    prior.model=prior_model,
+    fitted.model=fitted_bayesian_model,
+    summary=bayes_summary,
+    coefficient.summary=coefficient.summary,
+    prior.predictive.summary=prior.predictive.summary,
+    prior.predictive.quantiles=prior.predictive.quantiles,
+    prior.proportion.above.limit=prior.proportion.above.limit,
+    prior.upper=prior.upper,
+    prior.difference.summary=prior.difference.summary,
+    ICC=icc.summary,
+    group.levels=group.levels,
+    prior.difference=prior_diff,
+    posterior.difference=post_diff,
+    future.predictions=preds
+    )
+
+  if (plot.graph) {
+    bayesian.cluster.graphs(result=result, pred_xlim=pred_xlim,
+      plotsave=plotsave, svg_path=svg_path, filename=filename,
+      width=width, height=height)
+  }
+
+  result
+}
 
