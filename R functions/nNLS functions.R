@@ -19336,17 +19336,21 @@ rlmer.cluster.permutation <- function(formula, longdata, cluster, group, strata=
   estimate.observed <- contrast.multiplier*unname(fixef(rfit)[coef_name])
   statistic.observed <- sign(contrast.multiplier)*unname(fixef(rfit)[coef_name]/se.observed)
 
-  if (!any(abs(permutation.statistics-statistic.observed) < 1e-8)) {
+  tolerance <- sqrt(.Machine$double.eps)*max(1, abs(statistic.observed))
+
+  if (!any(abs(permutation.statistics-statistic.observed) <= tolerance)) {
     stop('the observed allocation is missing from the permutation distribution')
   }
 
-  pval <- sum(
-    abs(permutation.statistics) >= abs(statistic.observed)
-  )/length(permutation.statistics)
+  pval <- mean(
+    abs(permutation.statistics) >= abs(statistic.observed)-tolerance
+  )
 
   max.statistic <- max(abs(permutation.statistics))
+  maximum.tolerance <- sqrt(.Machine$double.eps)*max(1, max.statistic)
+
   minimum.p <- mean(
-    abs(permutation.statistics) >= max.statistic
+    abs(permutation.statistics) >= max.statistic-maximum.tolerance
   )
 
   alpha <- 1-CI
@@ -19746,4 +19750,285 @@ bayesian.cluster.analysis <- function(formula, longdata, cluster, group, prior_s
 
   result
 }
+
+#' p.adjust.ff
+p.adjust.ff <- function (p, method = c("Sidak-Holm", "Bonf", "Sidak-Bonf", "Holm-Bonf", "Hochberg", "Hommel", "BH", "BY", "BH.a", "BH.ts"), alpha = 0.05) {
+    if (is.null(p)) p <- numeric(0L)
+    if (!is.numeric(p) || anyNA(p) || any(!is.finite(p)) ||
+            any(p < 0 | p > 1))
+        stop('p must contain only finite numbers between zero and one', call.=FALSE)
+    if (length(alpha) != 1L || !is.numeric(alpha) || !is.finite(alpha) ||
+            alpha <= 0 || alpha >= 1)
+        stop('alpha must be one number between zero and one', call.=FALSE)
+    # Only use match.arg if method is not NULL
+    if (!is.null(method)) {
+        method <- match.arg(method)
+        if (!length(p)) return(data.frame(
+            p=numeric(0L), sig.level=numeric(0L), p.adj=numeric(0L),
+            sig=logical(0L)))
+        if (length(p)==1L) return(data.frame(
+            p=p, sig.level=alpha, p.adj=p, sig=p<=alpha))
+    }    
+    # Proceed only if method is not NULL
+    if (!is.null(method)) {
+        if (method == "BH") {
+            return(bh.ff(p=p, alpha=alpha))
+        } else if (method == "BY") {
+            return(by.ff(p=p, alpha=alpha))
+        } else if (method == "BH.a") {
+            return(bh.a.ff(p=p, alpha=alpha))
+        } else if (method == "BH.ts") {
+            return(bh.ts.ff(p=p, alpha=alpha))
+        } else if (method == "Bonf") {
+            return(bonferroni.ff(p=p, alpha=alpha))
+        } else if (method == "Sidak-Bonf") {
+            return(sidak.bonferroni.ff(p=p, alpha=alpha))
+        } else if (method == "Holm-Bonf") {
+            return(holm.bonferroni.ff(p=p, alpha=alpha))
+        } else if (method == "Sidak-Holm") {
+            return(sidak.holm.ff(p=p, alpha=alpha))
+        } else if (method == "Hochberg") {
+            return(hochberg.ff(p=p, alpha=alpha))
+        } else if (method == "Hommel") {
+            return(hommel.ff(p=p, alpha=alpha))
+        }
+    } else {
+        # handling if method is NULL
+        alpha.levels <- rep(alpha, length(p))
+        sig <- p <= alpha.levels
+        out <- as.data.frame(cbind(p, alpha = alpha.levels))
+        out$sig <- sig
+        return(out)
+    }
+}
+
+#' bh.ff
+bh.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <-  p[o]
+    alpha.levels <- i/n * alpha 
+    sig <- p.ord < alpha.levels
+    if ( length(which(sig)) != 0 ){
+        ind <- max( which(sig) )
+        sig <- i <= ind
+    }
+    p.adj <- pmin( 1, rev( cummin(rev(alpha/alpha.levels * p.ord ) ) ) )
+    p.adj <- p.adj[ro]  
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj)) 
+    out$sig=sig
+    out
+}
+
+#' bh.a.ff
+bh.a.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <- p[o]
+
+    p.adj.initial <- pmin(1, rev(cummin(rev(n/i*p.ord))))
+    n.rejected <- sum(p.adj.initial <= alpha)
+
+    if (n.rejected==0 || n.rejected==n) {
+        alpha.levels <- i/n*alpha
+        p.adj <- p.adj.initial
+    } else {
+        h0.sequence <- (n+1-i)/(1-p.ord)
+        increase <- which(diff(h0.sequence) > 0)
+
+        if (length(increase)==0) {
+            h0.a <- n
+        } else {
+            stop.index <- increase[1]+1
+            h0.a <- min(ceiling(h0.sequence[stop.index]), n)
+        }
+
+        alpha.levels <- pmin(1, i/h0.a*alpha)
+        p.adj <- pmin(1, rev(cummin(rev(h0.a/i*p.ord))))
+    }
+
+    p.adj <- p.adj[ro]
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj))
+    out$sig <- sig
+    out
+}
+
+#' bh.ts.ff
+bh.ts.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <- p[o]
+
+    alpha.first <- alpha/(1+alpha)
+    p.adj.first <- pmin(1, rev(cummin(rev(n/i*p.ord))))
+    n.rejected <- sum(p.adj.first <= alpha.first)
+
+    if (n.rejected==0 || n.rejected==n) {
+        alpha.levels <- i/n*alpha.first
+        p.adj <- pmin(1, alpha/alpha.first*p.adj.first)
+    } else {
+        h0.TSBH <- n-n.rejected
+        alpha.levels <- pmin(1, i/h0.TSBH*alpha.first)
+        p.adj <- pmin(
+            1,
+            rev(cummin(rev(alpha/alpha.first*h0.TSBH/i*p.ord)))
+        )
+    }
+
+    p.adj <- p.adj[ro]
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj))
+    out$sig <- sig
+    out
+}
+
+#' by.ff
+by.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    q <- sum(1/i)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <-  p[o]
+    alpha.levels <- i/n * alpha/q   #' Theorem 1.3
+    sig <- p.ord < alpha.levels 
+    if ( length(which(sig)) != 0 ){
+        ind <- max( which(sig) )
+        sig <- i <= ind
+    }
+    p.adj <- pmin( 1, rev( cummin(rev(alpha/alpha.levels * p.ord ) ) ) )
+    p.adj <- p.adj[ro]  
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj)) 
+    out$sig=sig
+    out
+}
+
+#' bonferroni.ff
+bonferroni.ff <- function(p, alpha){
+    n <- length(p)
+    alpha.levels <- rep(alpha/n, n)
+    sig <- p <= alpha.levels
+    p.adj <- pmin(1, alpha/alpha.levels * p)
+    out <- as.data.frame( cbind( p, sig.level=alpha.levels,p.adj=p.adj) )
+    out$sig=sig
+    out
+}
+
+#' sidak.bonferroni.ff
+sidak.bonferroni.ff <- function(p, alpha){
+    n <- length(p)
+    alpha.levels <- 1 - (1-alpha)^(1/n)
+    alpha.levels <- rep(alpha.levels, n)
+    sig <- p <= alpha.levels
+    p.adj <- pmin(1, -expm1(n * log1p(-p)))
+    out <- as.data.frame( cbind( p, sig.level=alpha.levels,p.adj=p.adj) )
+    out$sig=sig
+    out
+}
+
+
+#' holm.bonferroni.ff
+holm.bonferroni.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    alpha.levels <- alpha/(n-i+1)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <-  p[o]
+    p.adj <- pmin(1, cummax(alpha/alpha.levels * p.ord))
+    sig <- p.adj <= alpha
+    p.adj <- p.adj[ro]  
+    sig <- sig[ro]
+    alpha.levels <- alpha.levels[ro]
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj)) 
+    out$sig=sig
+    out
+}
+
+#' sidak.holm.ff
+sidak.holm.ff <- function(p, alpha){
+    n <- length(p)
+    remaining <- n:1
+    alpha.levels <- -expm1(log1p(-alpha)/remaining)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <-  p[o]
+    p.adj <- pmin(1, cummax(-expm1(remaining * log1p(-p.ord))))
+    sig <- p.adj <= alpha
+    p.adj <- p.adj[ro]
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj)) 
+    out$sig=sig
+    out
+}
+
+#' hochberg.ff
+hochberg.ff <- function(p, alpha){
+    n <- length(p)
+    i <- n:1
+    alpha.levels <- alpha/(n-i+1)
+    o <- order(p, decreasing = TRUE)
+    ro <- order(o)
+    p.ord <-  p[o]
+    sig <- p.ord < alpha.levels
+    if ( length(which(sig)) != 0 ){
+        ind <- min( which(sig) )
+        sig <- ind <= 1:n
+    }
+    p.adj <- rev( pmin( 1, rev( cummin(alpha/alpha.levels * p.ord ) ) ) )
+    p.adj <- p.adj[ro]  
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj)) 
+    out$sig=sig
+    out
+}
+
+#' hommel.ff
+hommel.ff <- function(p, alpha){
+    n <- length(p)
+    i <- seq_len(n)
+    o <- order(p)
+    ro <- order(o)
+    p.ord <- p[o]
+
+    j.finder <- sapply(seq_len(n), function(j){
+        k <- seq_len(j)
+        sum(p.ord[n-j+k] > k*alpha/j) == j
+    })
+
+    if (sum(j.finder)==0) {
+        alpha.levels <- rep(alpha, n)
+    } else {
+        j <- max(which(j.finder))
+        alpha.levels <- rep(alpha/j, n)
+    }
+
+    p.adj <- stats::p.adjust(p, method="hommel")
+    sig <- p.adj <= alpha
+    alpha.levels <- alpha.levels[ro]
+
+    out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj))
+    out$sig <- sig
+    out
+}
+
+
+
 
