@@ -8731,7 +8731,7 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
 
 
 MCttest <- function(formula, df, alternative = 'two.sided',
-                    na_rm_subjects = TRUE, p_adjust = 'holm') {
+                    na_rm_subjects = TRUE, p_adjust = 'Sidak-Holm') {
   
   f_str     <- deparse(formula)
   has_error <- grepl('Error', f_str)
@@ -8756,6 +8756,23 @@ MCttest <- function(formula, df, alternative = 'two.sided',
   }
   
   results <- list()
+
+  adjust.p.values <- function(p) {
+    if (p_adjust == 'Sidak-Holm') {
+      n <- length(p)
+      remaining <- n:1
+      o <- order(p)
+      ro <- order(o)
+      p.ordered <- p[o]
+      p.adjusted <- pmin(
+        1,
+        cummax(-expm1(remaining*log1p(-p.ordered)))
+        )
+      return(p.adjusted[ro])
+    }
+
+    p.adjust(p, method=p_adjust)
+  }
   
   # Helper: is variable within-subject? (does any subject have >1 value?)
   is_within_subject <- function(var, subject_var, df) {
@@ -8772,7 +8789,7 @@ MCttest <- function(formula, df, alternative = 'two.sided',
     levs <- if (is.factor(df[[wvar]])) levels(df[[wvar]]) else sort(unique(df[[wvar]]))
     if (length(levs) < 2) stop("Need at least two levels of ", wvar)
     for (i in seq_len(length(levs) - 1)) {
-      a <- levs[i]; b <- levs[i + 1]
+      a <- levs[i + 1]; b <- levs[i]
       d1 <- df[df[[wvar]] == a, ]
       d2 <- df[df[[wvar]] == b, ]
       if (!is.null(subject_var)) {
@@ -8797,9 +8814,25 @@ MCttest <- function(formula, df, alternative = 'two.sided',
           paired = paired,
           var.equal = if (paired) TRUE else FALSE,
           alternative = alternative
-          )
+        )
         snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
         snt <- as.numeric(test$statistic)
+        estimate <- if (paired) {
+          unname(test$estimate)
+        } else {
+          unname(test$estimate[1]-test$estimate[2])
+        }
+        se <- unname(test$stderr)
+        n.effect <- if (paired) n_out else 1/sum(1/c(sum(!is.na(y1)), sum(!is.na(y2))))
+        Cohens.d <- snt/sqrt(n.effect)
+        j.df <- if (unname(test$parameter) <= 3e2) {
+          gamma(unname(test$parameter)/2)/(
+            sqrt(unname(test$parameter)/2)*gamma((unname(test$parameter)-1)/2)
+            )
+        } else {
+          1-3/(4*unname(test$parameter)-1)
+        }
+        Hedges.g <- Cohens.d*j.df
         results[[length(results) + 1]] <- data.frame(
           parameter    = response_var,
           comparison   = paste('within', wvar, if (paired) '(paired)' else '(unpaired)'),
@@ -8810,6 +8843,10 @@ MCttest <- function(formula, df, alternative = 'two.sided',
           `test stat`  = snm,
           df           = unname(test$parameter),
           stat         = snt,
+          estimate     = estimate,
+          se           = se,
+          Cohens.d     = Cohens.d,
+          Hedges.g     = Hedges.g,
           `p value`    = test$p.value,
           family       = if (paired) 'paired' else 'unpaired',
           stringsAsFactors = FALSE,
@@ -8818,14 +8855,27 @@ MCttest <- function(formula, df, alternative = 'two.sided',
       }
     }
     out <- do.call(rbind, results)
-    out$`p adjusted` <- p.adjust(out$`p value`, method = p_adjust)
+    out$`p adjusted` <- adjust.p.values(out$`p value`)
     out$family <- NULL
     return(out)
   }
   
   # Two predictors: run BOTH ways
   if (length(predictors) == 2) {
-    for (i in 1:2) {
+    predictor.order <- 2:1
+    if (!is.null(subject_var)) {
+      predictor.within <- vapply(
+        predictors,
+        is_within_subject,
+        logical(1),
+        subject_var=subject_var,
+        df=df
+        )
+      if (sum(predictor.within)==1) {
+        predictor.order <- c(which(predictor.within), which(!predictor.within))
+      }
+    }
+    for (i in predictor.order) {
       pv <- predictors[i]
       uv <- predictors[3 - i]
       
@@ -8835,7 +8885,7 @@ MCttest <- function(formula, df, alternative = 'two.sided',
         lv_u  <- if (is.factor(subdf[[uv]])) levels(subdf[[uv]]) else sort(unique(subdf[[uv]]))
         if (length(lv_u) < 2) next
         for (j in seq_len(length(lv_u) - 1)) {
-          a <- lv_u[j]; b <- lv_u[j + 1]
+          a <- lv_u[j + 1]; b <- lv_u[j]
           d1 <- subdf[subdf[[uv]] == a, ]
           d2 <- subdf[subdf[[uv]] == b, ]
           
@@ -8863,9 +8913,25 @@ MCttest <- function(formula, df, alternative = 'two.sided',
               paired = paired,
               var.equal = if (paired) TRUE else FALSE,
               alternative = alternative
-              )
+            )
             snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
             snt <- as.numeric(test$statistic)
+            estimate <- if (paired) {
+              unname(test$estimate)
+            } else {
+              unname(test$estimate[1]-test$estimate[2])
+            }
+            se <- unname(test$stderr)
+            n.effect <- if (paired) n_out else 1/sum(1/c(sum(!is.na(y1)), sum(!is.na(y2))))
+            Cohens.d <- snt/sqrt(n.effect)
+            j.df <- if (unname(test$parameter) <= 3e2) {
+              gamma(unname(test$parameter)/2)/(
+                sqrt(unname(test$parameter)/2)*gamma((unname(test$parameter)-1)/2)
+                )
+            } else {
+              1-3/(4*unname(test$parameter)-1)
+            }
+            Hedges.g <- Cohens.d*j.df
             results[[length(results) + 1]] <- data.frame(
               parameter    = response_var,
               comparison   = paste('within', pv, lev, if (paired) '(paired)' else '(unpaired)'),
@@ -8876,6 +8942,10 @@ MCttest <- function(formula, df, alternative = 'two.sided',
               `test stat`  = snm,
               df           = unname(test$parameter),
               stat         = snt,
+              estimate     = estimate,
+              se           = se,
+              Cohens.d     = Cohens.d,
+              Hedges.g     = Hedges.g,
               `p value`    = test$p.value,
               family       = if (paired) 'paired' else 'unpaired',
               stringsAsFactors = FALSE,
@@ -8887,12 +8957,8 @@ MCttest <- function(formula, df, alternative = 'two.sided',
     }
     
     out <- do.call(rbind, results)
-    # Adjust p-values by family
-    out$`p adjusted` <- NA
-    for (fam in unique(out$family)) {
-      idx <- which(out$family == fam)
-      out$`p adjusted`[idx] <- p.adjust(out$`p value`[idx], method = p_adjust)
-    }
+    # Adjust p-values across all comparisons
+    out$`p adjusted` <- adjust.p.values(out$`p value`)
     out$family <- NULL
     rownames(out) <- seq_len(nrow(out))
     return(out)
