@@ -4136,7 +4136,7 @@ BoxPlot2 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
 
   if (log_y) {
     data$y[data$y <= 0] <- NA
-    if (any(yrange <= 0, na.rm=TRUE)) stop("yrange must be > 0 when log_y=TRUE")
+    if (any(yrange <= 0, na.rm=TRUE)) stop('yrange must be > 0 when log_y=TRUE')
     data$y <- log10(data$y)
     yrange <- log10(yrange)
   }
@@ -4178,6 +4178,10 @@ BoxPlot2 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
     axis(1, at=at, labels=FALSE, tcl=-tick_length, lwd=lwd)
     usr <- par('usr'); y0 <- usr[3] - 0.1*diff(usr[3:4])
     text(x=at, y=y0, labels=labs, srt=xlabel_angle, adj=1, xpd=TRUE)
+  }
+
+  if (!('s' %in% names(data)) && 'animal_id' %in% names(data)) {
+    data$s <- data$animal_id
   }
 
   set.seed(42)
@@ -8724,6 +8728,179 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
   
   stop('Formula must contain one or two predictors.')
 }
+
+
+MCttest <- function(formula, df, alternative = 'two.sided',
+                    na_rm_subjects = TRUE, p_adjust = 'holm') {
+  
+  f_str     <- deparse(formula)
+  has_error <- grepl('Error', f_str)
+  
+  if (has_error) {
+    err_part         <- sub('.*Error\\((.*)\\).*', '\\1', f_str)
+    subject_var      <- strsplit(err_part, '/')[[1]][1]
+    subject_var      <- gsub('[[:space:]]', '', subject_var)
+    main_formula_str <- sub('\\+\\s*Error\\(.*\\)', '', f_str)
+    main_formula     <- as.formula(main_formula_str)
+  } else {
+    subject_var  <- NULL
+    main_formula <- formula
+  }
+  
+  response_var <- all.vars(formula(main_formula))[1]
+  predictors   <- all.vars(formula(main_formula))[-1]
+  
+  # drop subjects with any missing response, if requested
+  if (na_rm_subjects && !is.null(subject_var)) {
+    df <- df[!ave(is.na(df[[response_var]]), df[[subject_var]], FUN = any), ]
+  }
+  
+  results <- list()
+  
+  # Helper: is variable within-subject? (does any subject have >1 value?)
+  is_within_subject <- function(var, subject_var, df) {
+    tab <- tapply(df[[var]], df[[subject_var]], function(x) length(unique(x)))
+    if (is.null(tab)) return(FALSE)
+    if (length(tab) == 0) return(FALSE)
+    tab <- tab[!is.na(tab)]
+    any(tab > 1)
+  }
+  
+  # Single predictor
+  if (length(predictors) == 1) {
+    wvar <- predictors[1]
+    levs <- if (is.factor(df[[wvar]])) levels(df[[wvar]]) else sort(unique(df[[wvar]]))
+    if (length(levs) < 2) stop("Need at least two levels of ", wvar)
+    for (i in seq_len(length(levs) - 1)) {
+      a <- levs[i]; b <- levs[i + 1]
+      d1 <- df[df[[wvar]] == a, ]
+      d2 <- df[df[[wvar]] == b, ]
+      if (!is.null(subject_var)) {
+        common <- intersect(d1[[subject_var]], d2[[subject_var]])
+        d1 <- d1[d1[[subject_var]] %in% common, ]
+        d2 <- d2[d2[[subject_var]] %in% common, ]
+        d1 <- d1[order(d1[[subject_var]]), ]
+        d2 <- d2[order(d2[[subject_var]]), ]
+        y1 <- d1[[response_var]]; y2 <- d2[[response_var]]
+        paired <- TRUE
+        n_out <- min(sum(!is.na(y1)), sum(!is.na(y2)))
+      } else {
+        y1 <- d1[[response_var]]
+        y2 <- d2[[response_var]]
+        paired <- FALSE
+        n_out <- paste(sum(!is.na(y1)), 'vs', sum(!is.na(y2)))
+      }
+      if (length(y1) > 0 && length(y2) > 0 && (!paired || length(y1) == length(y2))) {
+        test <- t.test(
+          y1,
+          y2,
+          paired = paired,
+          var.equal = if (paired) TRUE else FALSE,
+          alternative = alternative
+          )
+        snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
+        snt <- as.numeric(test$statistic)
+        results[[length(results) + 1]] <- data.frame(
+          parameter    = response_var,
+          comparison   = paste('within', wvar, if (paired) '(paired)' else '(unpaired)'),
+          contrast     = paste(a, 'vs', b),
+          n            = n_out,
+          test         = test$method,
+          alternative  = test$alternative,
+          `test stat`  = snm,
+          df           = unname(test$parameter),
+          stat         = snt,
+          `p value`    = test$p.value,
+          family       = if (paired) 'paired' else 'unpaired',
+          stringsAsFactors = FALSE,
+          check.names  = FALSE
+        )
+      }
+    }
+    out <- do.call(rbind, results)
+    out$`p adjusted` <- p.adjust(out$`p value`, method = p_adjust)
+    out$family <- NULL
+    return(out)
+  }
+  
+  # Two predictors: run BOTH ways
+  if (length(predictors) == 2) {
+    for (i in 1:2) {
+      pv <- predictors[i]
+      uv <- predictors[3 - i]
+      
+      lv_p <- if (is.factor(df[[pv]])) levels(df[[pv]]) else sort(unique(df[[pv]]))
+      for (lev in lv_p) {
+        subdf <- df[df[[pv]] == lev, ]
+        lv_u  <- if (is.factor(subdf[[uv]])) levels(subdf[[uv]]) else sort(unique(subdf[[uv]]))
+        if (length(lv_u) < 2) next
+        for (j in seq_len(length(lv_u) - 1)) {
+          a <- lv_u[j]; b <- lv_u[j + 1]
+          d1 <- subdf[subdf[[uv]] == a, ]
+          d2 <- subdf[subdf[[uv]] == b, ]
+          
+          if (!is.null(subject_var) && is_within_subject(uv, subject_var, subdf)) {
+            # Paired test
+            cm <- intersect(d1[[subject_var]], d2[[subject_var]])
+            d1_ <- d1[d1[[subject_var]] %in% cm, ]
+            d2_ <- d2[d2[[subject_var]] %in% cm, ]
+            d1_ <- d1_[order(d1_[[subject_var]]), ]
+            d2_ <- d2_[order(d2_[[subject_var]]), ]
+            y1 <- d1_[[response_var]]; y2 <- d2_[[response_var]]
+            paired <- TRUE
+            n_out <- min(sum(!is.na(y1)), sum(!is.na(y2)))
+          } else {
+            # Unpaired
+            y1 <- d1[[response_var]]
+            y2 <- d2[[response_var]]
+            paired <- FALSE
+            n_out <- paste(sum(!is.na(y1)), 'vs', sum(!is.na(y2)))
+          }
+          if (length(y1) > 0 && length(y2) > 0 && (!paired || length(y1) == length(y2))) {
+            test <- t.test(
+              y1,
+              y2,
+              paired = paired,
+              var.equal = if (paired) TRUE else FALSE,
+              alternative = alternative
+              )
+            snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
+            snt <- as.numeric(test$statistic)
+            results[[length(results) + 1]] <- data.frame(
+              parameter    = response_var,
+              comparison   = paste('within', pv, lev, if (paired) '(paired)' else '(unpaired)'),
+              contrast     = paste(a, 'vs', b),
+              n            = n_out,
+              test         = test$method,
+              alternative  = test$alternative,
+              `test stat`  = snm,
+              df           = unname(test$parameter),
+              stat         = snt,
+              `p value`    = test$p.value,
+              family       = if (paired) 'paired' else 'unpaired',
+              stringsAsFactors = FALSE,
+              check.names  = FALSE
+            )
+          }
+        }
+      }
+    }
+    
+    out <- do.call(rbind, results)
+    # Adjust p-values by family
+    out$`p adjusted` <- NA
+    for (fam in unique(out$family)) {
+      idx <- which(out$family == fam)
+      out$`p adjusted`[idx] <- p.adjust(out$`p value`[idx], method = p_adjust)
+    }
+    out$family <- NULL
+    rownames(out) <- seq_len(nrow(out))
+    return(out)
+  }
+  
+  stop('Formula must contain one or two predictors.')
+}
+
 
 
 # MCwilcox <- function(formula, df, alternative = 'two.sided',
@@ -20028,7 +20205,3 @@ hommel.ff <- function(p, alpha){
     out$sig <- sig
     out
 }
-
-
-
-
