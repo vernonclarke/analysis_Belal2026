@@ -8730,244 +8730,306 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
 }
 
 
-MCttest <- function(formula, df, alternative = 'two.sided',
-                    na_rm_subjects = TRUE, p_adjust = 'Sidak-Holm') {
-  
-  f_str     <- deparse(formula)
-  has_error <- grepl('Error', f_str)
-  
-  if (has_error) {
-    err_part         <- sub('.*Error\\((.*)\\).*', '\\1', f_str)
-    subject_var      <- strsplit(err_part, '/')[[1]][1]
-    subject_var      <- gsub('[[:space:]]', '', subject_var)
-    main_formula_str <- sub('\\+\\s*Error\\(.*\\)', '', f_str)
-    main_formula     <- as.formula(main_formula_str)
+MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
+  p_adjust='Sidak-Holm', contr=NULL){
+
+  formula.string <- paste(deparse(formula), collapse='')
+  has.error <- grepl('Error', formula.string)
+
+  if (has.error){
+    error.part <- sub('.*Error\\((.*)\\).*', '\\1', formula.string)
+    subject.name <- strsplit(error.part, '/')[[1]][1]
+    subject.name <- gsub('[[:space:]]', '', subject.name)
+    main.formula.string <- sub('\\+\\s*Error\\(.*\\)', '', formula.string)
+    main.formula <- as.formula(main.formula.string)
   } else {
-    subject_var  <- NULL
-    main_formula <- formula
+    subject.name <- NULL
+    main.formula <- formula
   }
-  
-  response_var <- all.vars(formula(main_formula))[1]
-  predictors   <- all.vars(formula(main_formula))[-1]
-  
-  # drop subjects with any missing response, if requested
-  if (na_rm_subjects && !is.null(subject_var)) {
-    df <- df[!ave(is.na(df[[response_var]]), df[[subject_var]], FUN = any), ]
-  }
-  
-  results <- list()
 
-  adjust.p.values <- function(p) {
-    if (p_adjust == 'Sidak-Holm') {
-      n <- length(p)
-      remaining <- n:1
-      o <- order(p)
-      ro <- order(o)
-      p.ordered <- p[o]
-      p.adjusted <- pmin(
-        1,
-        cummax(-expm1(remaining*log1p(-p.ordered)))
-        )
-      return(p.adjusted[ro])
+  formula.variables <- all.vars(main.formula)
+  response.name <- formula.variables[1]
+  predictor.names <- formula.variables[-1]
+
+  if (!(length(predictor.names) %in% c(1,2))){
+    stop('formula must contain one or two predictors')
+  }
+
+  required.names <- c(response.name, predictor.names, subject.name)
+
+  if (!all(required.names %in% names(df))){
+    stop('formula or subject variables are missing from df')
+  }
+
+  if (na_rm_subjects && !is.null(subject.name)){
+    remove.subject <- ave(is.na(df[[response.name]]), df[[subject.name]], FUN=any)
+    df <- df[!remove.subject,,drop=FALSE]
+  }
+
+  analysis.data <- df[,required.names,drop=FALSE]
+  analysis.data <- analysis.data[complete.cases(analysis.data),,drop=FALSE]
+
+  if (!nrow(analysis.data)){
+    stop('no complete observations are available')
+  }
+
+  for (predictor in predictor.names){
+    analysis.data[[predictor]] <- droplevels(factor(analysis.data[[predictor]]))
+
+    if (nlevels(analysis.data[[predictor]])<2){
+      stop('each predictor must contain at least two levels')
+    }
+  }
+
+  if (!is.null(subject.name)){
+    analysis.data[[subject.name]] <- droplevels(factor(analysis.data[[subject.name]]))
+  }
+
+  if (length(predictor.names)==1){
+    cell <- analysis.data[[predictor.names]]
+  } else {
+    cell <- do.call(interaction, c(analysis.data[predictor.names],
+      list(sep=':', drop=TRUE, lex.order=FALSE)))
+  }
+
+  cell <- droplevels(factor(cell))
+  cell.levels <- levels(cell)
+  cell.grid <- analysis.data[match(cell.levels, as.character(cell)),predictor.names,drop=FALSE]
+  rownames(cell.grid) <- cell.levels
+
+  if (is.null(contr)){
+
+    result.contrasts <- list()
+
+    if (length(predictor.names)==1){
+      predictor.levels <- levels(analysis.data[[predictor.names]])
+
+      for (i in seq_len(length(predictor.levels)-1)){
+        contrast.row <- rep(0, length(cell.levels))
+        contrast.row[match(predictor.levels[i], cell.levels)] <- -1
+        contrast.row[match(predictor.levels[i+1], cell.levels)] <- 1
+        result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+      }
+
+    } else {
+
+      predictor.order <- predictor.names
+
+      if (!is.null(subject.name)){
+        subject.rows <- split(seq_len(nrow(analysis.data)), analysis.data[[subject.name]])
+
+        varies.within.subject <- vapply(predictor.names, function(predictor){
+          any(vapply(subject.rows, function(i){
+            length(unique(analysis.data[[predictor]][i]))>1
+          }, logical(1)))
+        }, logical(1))
+
+        if (sum(varies.within.subject)==1){
+          predictor.order <- c(predictor.names[!varies.within.subject],
+            predictor.names[varies.within.subject])
+        }
+      }
+
+      for (target.name in predictor.order){
+
+        conditioning.name <- setdiff(predictor.names, target.name)
+        conditioning.levels <- levels(analysis.data[[conditioning.name]])
+        target.levels <- levels(analysis.data[[target.name]])
+
+        for (conditioning.level in conditioning.levels){
+          for (i in seq_len(length(target.levels)-1)){
+
+            negative.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i]
+              ]
+
+            positive.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i+1]
+              ]
+
+            if (length(negative.cell)==1 && length(positive.cell)==1){
+              contrast.row <- rep(0, length(cell.levels))
+              contrast.row[match(negative.cell, cell.levels)] <- -1
+              contrast.row[match(positive.cell, cell.levels)] <- 1
+              result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+            }
+          }
+        }
+      }
     }
 
-    p.adjust(p, method=p_adjust)
+    contr <- do.call(rbind, result.contrasts)
+    colnames(contr) <- cell.levels
+
+  } else {
+
+    if (is.numeric(contr) && is.null(dim(contr))){
+      contr <- matrix(contr, nrow=1)
+    }
+
+    if (!is.matrix(contr) || !is.numeric(contr) || !nrow(contr) ||
+      anyNA(contr) || any(!is.finite(contr)) || ncol(contr)!=length(cell.levels)){
+      stop('contr must be a finite numeric matrix with one column per factor-level combination')
+    }
+
+    if (!is.null(colnames(contr))){
+      if (!setequal(colnames(contr), cell.levels)){
+        stop(paste('contr column names must match:', paste(cell.levels, collapse=', ')))
+      }
+
+      contr <- contr[,cell.levels,drop=FALSE]
+    } else {
+      colnames(contr) <- cell.levels
+    }
   }
-  
-  # Helper: is variable within-subject? (does any subject have >1 value?)
-  is_within_subject <- function(var, subject_var, df) {
-    tab <- tapply(df[[var]], df[[subject_var]], function(x) length(unique(x)))
-    if (is.null(tab)) return(FALSE)
-    if (length(tab) == 0) return(FALSE)
-    tab <- tab[!is.na(tab)]
-    any(tab > 1)
+
+  pairwise.contrast <- apply(contr, 1, function(x){
+    identical(sort(unname(x[x!=0])), c(-1, 1))
+  })
+
+  if (any(!pairwise.contrast)){
+    stop('each row of contr must contain one -1, one 1 and zeros elsewhere')
   }
-  
-  # Single predictor
-  if (length(predictors) == 1) {
-    wvar <- predictors[1]
-    levs <- if (is.factor(df[[wvar]])) levels(df[[wvar]]) else sort(unique(df[[wvar]]))
-    if (length(levs) < 2) stop("Need at least two levels of ", wvar)
-    for (i in seq_len(length(levs) - 1)) {
-      a <- levs[i + 1]; b <- levs[i]
-      d1 <- df[df[[wvar]] == a, ]
-      d2 <- df[df[[wvar]] == b, ]
-      if (!is.null(subject_var)) {
-        common <- intersect(d1[[subject_var]], d2[[subject_var]])
-        d1 <- d1[d1[[subject_var]] %in% common, ]
-        d2 <- d2[d2[[subject_var]] %in% common, ]
-        d1 <- d1[order(d1[[subject_var]]), ]
-        d2 <- d2[order(d2[[subject_var]]), ]
-        y1 <- d1[[response_var]]; y2 <- d2[[response_var]]
+
+  results <- vector('list', nrow(contr))
+
+  for (i in seq_len(nrow(contr))){
+
+    negative.cell <- cell.levels[contr[i,]==-1]
+    positive.cell <- cell.levels[contr[i,]==1]
+    keep <- cell %in% c(negative.cell, positive.cell)
+
+    test.data <- analysis.data[keep,,drop=FALSE]
+
+    if (!is.null(subject.name)){
+      test.data[[subject.name]] <- droplevels(test.data[[subject.name]])
+    }
+
+    test.data$.cell <- factor(as.character(cell[keep]), levels=c(negative.cell, positive.cell))
+
+    negative.data <- test.data[test.data$.cell==negative.cell,,drop=FALSE]
+    positive.data <- test.data[test.data$.cell==positive.cell,,drop=FALSE]
+
+    paired <- FALSE
+
+    if (!is.null(subject.name)){
+      negative.subjects <- unique(as.character(negative.data[[subject.name]]))
+      positive.subjects <- unique(as.character(positive.data[[subject.name]]))
+      common.subjects <- intersect(negative.subjects, positive.subjects)
+
+      if (setequal(negative.subjects, positive.subjects)){
         paired <- TRUE
-        n_out <- min(sum(!is.na(y1)), sum(!is.na(y2)))
-      } else {
-        y1 <- d1[[response_var]]
-        y2 <- d2[[response_var]]
-        paired <- FALSE
-        n_out <- paste(sum(!is.na(y1)), 'vs', sum(!is.na(y2)))
-      }
-      if (length(y1) > 0 && length(y2) > 0 && (!paired || length(y1) == length(y2))) {
-        test <- t.test(
-          y1,
-          y2,
-          paired = paired,
-          var.equal = if (paired) TRUE else FALSE,
-          alternative = alternative
-        )
-        snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
-        snt <- as.numeric(test$statistic)
-        estimate <- if (paired) {
-          unname(test$estimate)
-        } else {
-          unname(test$estimate[1]-test$estimate[2])
-        }
-        se <- unname(test$stderr)
-        n.effect <- if (paired) n_out else 1/sum(1/c(sum(!is.na(y1)), sum(!is.na(y2))))
-        Cohens.d <- snt/sqrt(n.effect)
-        j.df <- if (unname(test$parameter) <= 3e2) {
-          gamma(unname(test$parameter)/2)/(
-            sqrt(unname(test$parameter)/2)*gamma((unname(test$parameter)-1)/2)
-            )
-        } else {
-          1-3/(4*unname(test$parameter)-1)
-        }
-        Hedges.g <- Cohens.d*j.df
-        results[[length(results) + 1]] <- data.frame(
-          parameter    = response_var,
-          comparison   = paste('within', wvar, if (paired) '(paired)' else '(unpaired)'),
-          contrast     = paste(a, 'vs', b),
-          n            = n_out,
-          test         = test$method,
-          alternative  = test$alternative,
-          `test stat`  = snm,
-          df           = unname(test$parameter),
-          stat         = snt,
-          estimate     = estimate,
-          se           = se,
-          Cohens.d     = Cohens.d,
-          Hedges.g     = Hedges.g,
-          `p value`    = test$p.value,
-          family       = if (paired) 'paired' else 'unpaired',
-          stringsAsFactors = FALSE,
-          check.names  = FALSE
-        )
+      } else if (length(common.subjects)){
+        stop('a contrast cannot contain a mixture of paired and unpaired subjects')
       }
     }
-    out <- do.call(rbind, results)
-    out$`p adjusted` <- adjust.p.values(out$`p value`)
-    out$family <- NULL
-    return(out)
+
+    if (paired){
+      pair.table <- table(test.data[[subject.name]], test.data$.cell)
+
+      if (any(pair.table!=1)){
+        stop('paired comparisons require one complete observation per subject and contrast level')
+      }
+
+      negative.data <- negative.data[order(negative.data[[subject.name]]),,drop=FALSE]
+      positive.data <- positive.data[order(positive.data[[subject.name]]),,drop=FALSE]
+      n.output <- nrow(positive.data)
+    } else {
+      if (!is.null(subject.name) &&
+        (anyDuplicated(negative.data[[subject.name]]) || anyDuplicated(positive.data[[subject.name]]))){
+        stop('unpaired comparisons require one observation per subject and contrast level')
+      }
+
+      n.output <- paste(nrow(positive.data), 'vs', nrow(negative.data))
+    }
+
+    positive.values <- positive.data[[response.name]]
+    negative.values <- negative.data[[response.name]]
+
+    test <- t.test(positive.values, negative.values, paired=paired, var.equal=paired,
+      alternative=alternative)
+
+    estimate <- if (paired){
+      unname(test$estimate)
+    } else {
+      unname(test$estimate[1]-test$estimate[2])
+    }
+
+    statistic <- unname(test$statistic)
+    df.test <- unname(test$parameter)
+    se <- unname(test$stderr)
+    n.effect <- if (paired) n.output else 1/sum(1/c(length(positive.values), length(negative.values)))
+    Cohens.d <- statistic/sqrt(n.effect)
+
+    j.df <- if (df.test<=3e2){
+      gamma(df.test/2)/(sqrt(df.test/2)*gamma((df.test-1)/2))
+    } else {
+      1-3/(4*df.test-1)
+    }
+
+    Hedges.g <- Cohens.d*j.df
+    differing <- predictor.names[
+      vapply(predictor.names, function(x){
+        as.character(cell.grid[negative.cell,x])!=as.character(cell.grid[positive.cell,x])
+      }, logical(1))
+      ]
+
+    same <- setdiff(predictor.names, differing)
+
+    if (length(predictor.names)==1){
+      parameter <- response.name
+      comparison <- paste('within', predictor.names, if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(as.character(cell.grid[positive.cell,differing]), 'vs',
+        as.character(cell.grid[negative.cell,differing]))
+    } else if (length(differing)==1){
+      parameter <- response.name
+      comparison <- paste('within', same, as.character(cell.grid[positive.cell,same]),
+        if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(as.character(cell.grid[positive.cell,differing]), 'vs',
+        as.character(cell.grid[negative.cell,differing]))
+    } else {
+      parameter <- response.name
+      comparison <- paste('between cells', if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(positive.cell, 'vs', negative.cell)
+    }
+
+    results[[i]] <- data.frame(
+      parameter=parameter,
+      comparison=comparison,
+      contrast=contrast.name,
+      n=n.output,
+      test=test$method,
+      alternative=test$alternative,
+      'test stat'=names(test$statistic),
+      df=df.test,
+      stat=statistic,
+      estimate=estimate,
+      se=se,
+      Cohens.d=Cohens.d,
+      Hedges.g=Hedges.g,
+      'p value'=test$p.value,
+      family=if (paired) 'paired' else 'unpaired',
+      check.names=FALSE
+      )
   }
-  
-  # Two predictors: run BOTH ways
-  if (length(predictors) == 2) {
-    predictor.order <- 2:1
-    if (!is.null(subject_var)) {
-      predictor.within <- vapply(
-        predictors,
-        is_within_subject,
-        logical(1),
-        subject_var=subject_var,
-        df=df
-        )
-      if (sum(predictor.within)==1) {
-        predictor.order <- c(which(predictor.within), which(!predictor.within))
-      }
-    }
-    for (i in predictor.order) {
-      pv <- predictors[i]
-      uv <- predictors[3 - i]
-      
-      lv_p <- if (is.factor(df[[pv]])) levels(df[[pv]]) else sort(unique(df[[pv]]))
-      for (lev in lv_p) {
-        subdf <- df[df[[pv]] == lev, ]
-        lv_u  <- if (is.factor(subdf[[uv]])) levels(subdf[[uv]]) else sort(unique(subdf[[uv]]))
-        if (length(lv_u) < 2) next
-        for (j in seq_len(length(lv_u) - 1)) {
-          a <- lv_u[j + 1]; b <- lv_u[j]
-          d1 <- subdf[subdf[[uv]] == a, ]
-          d2 <- subdf[subdf[[uv]] == b, ]
-          
-          if (!is.null(subject_var) && is_within_subject(uv, subject_var, subdf)) {
-            # Paired test
-            cm <- intersect(d1[[subject_var]], d2[[subject_var]])
-            d1_ <- d1[d1[[subject_var]] %in% cm, ]
-            d2_ <- d2[d2[[subject_var]] %in% cm, ]
-            d1_ <- d1_[order(d1_[[subject_var]]), ]
-            d2_ <- d2_[order(d2_[[subject_var]]), ]
-            y1 <- d1_[[response_var]]; y2 <- d2_[[response_var]]
-            paired <- TRUE
-            n_out <- min(sum(!is.na(y1)), sum(!is.na(y2)))
-          } else {
-            # Unpaired
-            y1 <- d1[[response_var]]
-            y2 <- d2[[response_var]]
-            paired <- FALSE
-            n_out <- paste(sum(!is.na(y1)), 'vs', sum(!is.na(y2)))
-          }
-          if (length(y1) > 0 && length(y2) > 0 && (!paired || length(y1) == length(y2))) {
-            test <- t.test(
-              y1,
-              y2,
-              paired = paired,
-              var.equal = if (paired) TRUE else FALSE,
-              alternative = alternative
-            )
-            snm <- if (!is.null(names(test$statistic))) names(test$statistic) else NA
-            snt <- as.numeric(test$statistic)
-            estimate <- if (paired) {
-              unname(test$estimate)
-            } else {
-              unname(test$estimate[1]-test$estimate[2])
-            }
-            se <- unname(test$stderr)
-            n.effect <- if (paired) n_out else 1/sum(1/c(sum(!is.na(y1)), sum(!is.na(y2))))
-            Cohens.d <- snt/sqrt(n.effect)
-            j.df <- if (unname(test$parameter) <= 3e2) {
-              gamma(unname(test$parameter)/2)/(
-                sqrt(unname(test$parameter)/2)*gamma((unname(test$parameter)-1)/2)
-                )
-            } else {
-              1-3/(4*unname(test$parameter)-1)
-            }
-            Hedges.g <- Cohens.d*j.df
-            results[[length(results) + 1]] <- data.frame(
-              parameter    = response_var,
-              comparison   = paste('within', pv, lev, if (paired) '(paired)' else '(unpaired)'),
-              contrast     = paste(a, 'vs', b),
-              n            = n_out,
-              test         = test$method,
-              alternative  = test$alternative,
-              `test stat`  = snm,
-              df           = unname(test$parameter),
-              stat         = snt,
-              estimate     = estimate,
-              se           = se,
-              Cohens.d     = Cohens.d,
-              Hedges.g     = Hedges.g,
-              `p value`    = test$p.value,
-              family       = if (paired) 'paired' else 'unpaired',
-              stringsAsFactors = FALSE,
-              check.names  = FALSE
-            )
-          }
-        }
-      }
-    }
-    
-    out <- do.call(rbind, results)
-    # Adjust p-values across all comparisons
-    out$`p adjusted` <- adjust.p.values(out$`p value`)
-    out$family <- NULL
-    rownames(out) <- seq_len(nrow(out))
-    return(out)
+
+  stats_summary <- do.call(rbind, results)
+  rownames(stats_summary) <- NULL
+
+  stats_summary$'p adjusted' <- NA_real_
+
+  for (family in unique(stats_summary$family)){
+    index <- which(stats_summary$family==family)
+    adjusted <- p.adjust.ff(stats_summary$'p value'[index], method=p_adjust, alpha=0.05)
+    stats_summary$'p adjusted'[index] <- adjusted[,'p.adj']
   }
-  
-  stop('Formula must contain one or two predictors.')
+
+  stats_summary$family <- NULL
+
+  stats_summary
 }
-
-
 
 # MCwilcox <- function(formula, df, alternative = 'two.sided',
 #                      exact = NULL, na_rm_subjects = TRUE,
@@ -20270,4 +20332,572 @@ hommel.ff <- function(p, alpha){
     out <- as.data.frame(cbind(p, sig.level=alpha.levels, p.adj=p.adj))
     out$sig <- sig
     out
+}
+
+# summary for nonparametric Brunner-Munzel nonparametric Behrens-Fisher test
+nparcomp.summary <- function(object, paired.method=c('BM', 'PERM', 'both')){
+
+  model.data <- model.frame(formula=object$input$formula, data=object$input$data, na.action=na.omit)
+
+  response.name <- names(model.data)[1]
+  group.name <- names(model.data)[2]
+  group.levels <- as.character(object$Info$Sample)
+  group.n <- object$Info$Size
+
+  lower.name <- paste0('CI (', format((1-object$input$conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+  upper.name <- paste0('CI (', format(1-(1-object$input$conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+
+  if (inherits(object, 'nparttest')){
+
+    result.df <- NA_real_
+
+    if (!is.null(object$AsyMethod) && grepl(' with .* DF$', object$AsyMethod)){
+      result.df <- as.numeric(sub(' DF$', '', sub('.* with ', '', object$AsyMethod)))
+    }
+
+    stats_summary <- data.frame(
+      parameter=response.name,
+      comparison=paste('within', group.name, '(unpaired)'),
+      contrast=paste(group.levels[2], 'vs', group.levels[1]),
+      n=paste(group.n[2], 'vs', group.n[1]),
+      test='Brunner-Munzel nonparametric Behrens-Fisher test',
+      alternative=object$input$alternative[1],
+      'test stat'='T',
+      df=result.df,
+      stat=object$Analysis$T,
+      estimand=object$Analysis$Effect,
+      'relative effect'=object$Analysis$Estimator,
+      lower=object$Analysis$Lower,
+      upper=object$Analysis$Upper,
+      'p value'=object$Analysis$p.Value,
+      check.names=FALSE
+      )
+
+  } else if (inherits(object, 'nparttestpaired')){
+
+    paired.method <- match.arg(paired.method)
+
+    if (paired.method=='both'){
+      result.rows <- rownames(object$Analysis)
+    } else {
+      result.rows <- paired.method
+    }
+
+    result.analysis <- object$Analysis[result.rows,,drop=FALSE]
+
+    test.names <- c(
+      BM='Paired Brunner-Munzel test',
+      PERM='Paired studentized permutation test'
+      )
+
+    stats_summary <- data.frame(
+      parameter=rep(response.name, nrow(result.analysis)),
+      comparison=rep(paste('within', group.name, '(paired)'), nrow(result.analysis)),
+      contrast=rep(paste(group.levels[2], 'vs', group.levels[1]), nrow(result.analysis)),
+      n=rep(group.n[1], nrow(result.analysis)),
+      test=unname(test.names[rownames(result.analysis)]),
+      alternative=rep(object$input$alternative[1], nrow(result.analysis)),
+      'test stat'=rep('T', nrow(result.analysis)),
+      df=ifelse(rownames(result.analysis)=='BM', group.n[1]-1, NA_real_),
+      stat=result.analysis[, 'T'],
+      estimand=rep(paste0('p(', group.levels[1], ',', group.levels[2], ')'), nrow(result.analysis)),
+      'relative effect'=result.analysis[, 'p.hat'],
+      lower=result.analysis[, 'Lower'],
+      upper=result.analysis[, 'Upper'],
+      'p value'=result.analysis[, 'p.value'],
+      check.names=FALSE
+      )
+
+  } else {
+    stop('object must be returned by npar.t.test() or npar.t.test.paired()')
+  }
+
+  names(stats_summary)[names(stats_summary)=='lower'] <- lower.name
+  names(stats_summary)[names(stats_summary)=='upper'] <- upper.name
+
+  rownames(stats_summary) <- NULL
+
+  stats_summary
+}
+
+# add adjusted p values to a combined nparcomp summary
+nparcomp.adjust <- function(x){
+
+  if (!is.data.frame(x)){
+    stop('x must be a data frame')
+  }
+
+  if (!'p value' %in% names(x)){
+    stop("x must contain a 'p value' column")
+  }
+
+  npar.adjusted <- p.adjust.ff(x[['p value']], method='Sidak-Holm', alpha=0.05)
+  x[['p adjusted']] <- npar.adjusted[,'p.adj']
+
+  x
+}
+
+nparcomp2w <- function(formula, longdata, subject, alternative='two.sided', CI=0.95, alpha=0.05){
+
+  formula.variables <- all.vars(formula)
+  response.name <- formula.variables[1]
+  predictor.names <- formula.variables[-1]
+
+  if (length(predictor.names)!=2){
+    stop('formula must contain exactly two predictors')
+  }
+
+  required.names <- c(response.name, predictor.names, subject)
+
+  if (!all(required.names %in% names(longdata))){
+    stop('formula or subject variables are missing from longdata')
+  }
+
+  analysis.data <- longdata[,required.names,drop=FALSE]
+  analysis.data <- analysis.data[complete.cases(analysis.data),,drop=FALSE]
+
+  if (!nrow(analysis.data)){
+    stop('no complete observations are available')
+  }
+
+  analysis.data[[subject]] <- droplevels(factor(analysis.data[[subject]]))
+
+  for (predictor in predictor.names){
+    analysis.data[[predictor]] <- droplevels(factor(analysis.data[[predictor]]))
+
+    if (nlevels(analysis.data[[predictor]])!=2){
+      stop('each predictor must contain exactly two levels')
+    }
+  }
+
+  subject.rows <- split(seq_len(nrow(analysis.data)), analysis.data[[subject]])
+
+  varies.within.subject <- vapply(predictor.names, function(predictor){
+    any(vapply(subject.rows, function(i){
+      length(unique(analysis.data[[predictor]][i]))>1
+    }, logical(1)))
+  }, logical(1))
+
+  if (sum(varies.within.subject)!=1){
+    stop('one predictor must vary within subject and one must vary between subjects')
+  }
+
+  within.name <- predictor.names[varies.within.subject]
+  between.name <- predictor.names[!varies.within.subject]
+
+  within.levels <- levels(analysis.data[[within.name]])
+  between.levels <- levels(analysis.data[[between.name]])
+
+  between.per.subject <- vapply(subject.rows, function(i){
+    length(unique(analysis.data[[between.name]][i]))
+  }, integer(1))
+
+  if (any(between.per.subject!=1)){
+    stop('the between-subject factor must be constant within subject')
+  }
+
+  result.summary <- vector('list', length(within.levels)+length(between.levels))
+  result.index <- 1
+
+  for (within.level in within.levels){
+
+    test.data <- analysis.data[analysis.data[[within.name]]==within.level,,drop=FALSE]
+    test.data <- droplevels(test.data)
+
+    if (anyDuplicated(test.data[[subject]])){
+      stop('independent comparisons require one observation per subject and factor level')
+    }
+
+    result <- nparcomp::npar.t.test(formula=reformulate(between.name, response=response.name), data=test.data,
+      method='t.app', alternative=alternative, conf.level=CI, info=FALSE, rounds=Inf)
+
+    result.summary[[result.index]] <- transform(nparcomp.summary(result),
+      parameter=paste(within.level, response.name))
+
+    result.index <- result.index+1
+  }
+
+  for (between.level in between.levels){
+
+    test.data <- analysis.data[analysis.data[[between.name]]==between.level,,drop=FALSE]
+    test.data <- droplevels(test.data)
+    test.data <- test.data[order(test.data[[subject]], test.data[[within.name]]),,drop=FALSE]
+
+    pair.table <- table(test.data[[subject]], test.data[[within.name]])
+
+    if (any(pair.table!=1)){
+      stop('paired comparisons require one complete observation per subject and factor level')
+    }
+
+    result <- nparcomp::npar.t.test.paired(formula=reformulate(within.name, response=response.name), data=test.data,
+      alternative=alternative, conf.level=CI, info=FALSE, plot.simci=FALSE, rounds=Inf)
+
+    result.summary[[result.index]] <- transform(nparcomp.summary(result, paired.method='BM'),
+      parameter=paste(between.level, response.name))
+
+    result.index <- result.index+1
+  }
+
+  stats_summary <- do.call(rbind, result.summary)
+  rownames(stats_summary) <- NULL
+
+  npar.adjusted <- p.adjust.ff(stats_summary$'p value', method='Sidak-Holm', alpha=alpha)
+  stats_summary$'p adjusted' <- npar.adjusted[,'p.adj']
+
+  stats_summary
+}
+
+MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0.95,
+  alternative=c('two.sided', 'less', 'greater'),
+  independent.method=c('t.app', 'logit', 'probit', 'normal', 'permu'),
+  paired.method=c('BM', 'PERM', 'both'), rounds=Inf, plot.simci=FALSE,
+  info=FALSE, nperm=10000, p.adjust.method='Sidak-Holm', alpha=0.05){
+
+  alternative <- match.arg(alternative)
+  independent.method <- match.arg(independent.method)
+  paired.method <- match.arg(paired.method)
+
+  formula.variables <- all.vars(formula)
+  response.name <- formula.variables[1]
+  predictor.names <- formula.variables[-1]
+
+  if (!(length(predictor.names) %in% c(1,2))){
+    stop('formula must contain one or two predictors')
+  }
+
+  if (length(predictor.names)==2 && is.null(subject)){
+    stop('subject must be specified for a two-factor design')
+  }
+
+  required.names <- c(response.name, predictor.names, subject)
+
+  if (!all(required.names %in% names(longdata))){
+    stop('formula or subject variables are missing from longdata')
+  }
+
+  analysis.data <- longdata[,required.names,drop=FALSE]
+  analysis.data <- analysis.data[complete.cases(analysis.data),,drop=FALSE]
+
+  if (!nrow(analysis.data)){
+    stop('no complete observations are available')
+  }
+
+  for (predictor in predictor.names){
+    analysis.data[[predictor]] <- droplevels(factor(analysis.data[[predictor]]))
+
+    if (nlevels(analysis.data[[predictor]])<2){
+      stop('each predictor must contain at least two levels')
+    }
+  }
+
+  if (!is.null(subject)){
+    analysis.data[[subject]] <- droplevels(factor(analysis.data[[subject]]))
+  }
+
+  if (length(predictor.names)==1){
+    cell <- analysis.data[[predictor.names]]
+  } else {
+    cell <- do.call(interaction, c(analysis.data[predictor.names],
+      list(sep=':', drop=TRUE, lex.order=FALSE)))
+  }
+
+  cell <- droplevels(factor(cell))
+  cell.levels <- levels(cell)
+  cell.grid <- analysis.data[match(cell.levels, as.character(cell)),predictor.names,drop=FALSE]
+  rownames(cell.grid) <- cell.levels
+
+  if (is.null(contr)){
+
+    result.contrasts <- list()
+
+    if (length(predictor.names)==1){
+      predictor.levels <- levels(analysis.data[[predictor.names]])
+
+      for (i in seq_len(length(predictor.levels)-1)){
+        contrast.row <- rep(0, length(cell.levels))
+        contrast.row[match(predictor.levels[i], cell.levels)] <- -1
+        contrast.row[match(predictor.levels[i+1], cell.levels)] <- 1
+        result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+      }
+
+    } else {
+
+      subject.rows <- split(seq_len(nrow(analysis.data)), analysis.data[[subject]])
+
+      varies.within.subject <- vapply(predictor.names, function(predictor){
+        any(vapply(subject.rows, function(i){
+          length(unique(analysis.data[[predictor]][i]))>1
+        }, logical(1)))
+      }, logical(1))
+
+      if (sum(varies.within.subject)!=1){
+        stop('one predictor must vary within subject and one must vary between subjects')
+      }
+
+      predictor.order <- c(predictor.names[!varies.within.subject],
+        predictor.names[varies.within.subject])
+
+      for (target.name in predictor.order){
+
+        conditioning.name <- setdiff(predictor.names, target.name)
+        conditioning.levels <- levels(analysis.data[[conditioning.name]])
+        target.levels <- levels(analysis.data[[target.name]])
+
+        for (conditioning.level in conditioning.levels){
+          for (i in seq_len(length(target.levels)-1)){
+
+            negative.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i]
+              ]
+
+            positive.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i+1]
+              ]
+
+            if (length(negative.cell)==1 && length(positive.cell)==1){
+              contrast.row <- rep(0, length(cell.levels))
+              contrast.row[match(negative.cell, cell.levels)] <- -1
+              contrast.row[match(positive.cell, cell.levels)] <- 1
+              result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+            }
+          }
+        }
+      }
+    }
+
+    contr <- do.call(rbind, result.contrasts)
+    colnames(contr) <- cell.levels
+
+  } else {
+
+    if (is.numeric(contr) && is.null(dim(contr))){
+      contr <- matrix(contr, nrow=1)
+    }
+
+    if (!is.matrix(contr) || !is.numeric(contr) || !nrow(contr) ||
+      anyNA(contr) || any(!is.finite(contr)) || ncol(contr)!=length(cell.levels)){
+      stop('contr must be a finite numeric matrix with one column per factor-level combination')
+    }
+
+    if (!is.null(colnames(contr))){
+      if (!setequal(colnames(contr), cell.levels)){
+        stop(paste('contr column names must match:', paste(cell.levels, collapse=', ')))
+      }
+
+      contr <- contr[,cell.levels,drop=FALSE]
+    } else {
+      colnames(contr) <- cell.levels
+    }
+  }
+
+  pairwise.contrast <- apply(contr, 1, function(x){
+    identical(sort(unname(x[x!=0])), c(-1, 1))
+  })
+
+  if (any(!pairwise.contrast)){
+    stop('each row of contr must contain one -1, one 1 and zeros elsewhere')
+  }
+
+  lower.name <- paste0('CI (', format((1-conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+  upper.name <- paste0('CI (', format(1-(1-conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+  results <- list()
+
+  for (i in seq_len(nrow(contr))){
+
+    negative.cell <- cell.levels[contr[i,]==-1]
+    positive.cell <- cell.levels[contr[i,]==1]
+    keep <- cell %in% c(negative.cell, positive.cell)
+
+    test.data <- analysis.data[keep,,drop=FALSE]
+
+    if (!is.null(subject)){
+      test.data[[subject]] <- droplevels(test.data[[subject]])
+    }
+
+    test.data$.response <- test.data[[response.name]]
+    test.data$.cell <- factor(as.character(cell[keep]), levels=c(negative.cell, positive.cell))
+
+    negative.data <- test.data[test.data$.cell==negative.cell,,drop=FALSE]
+    positive.data <- test.data[test.data$.cell==positive.cell,,drop=FALSE]
+
+    paired <- FALSE
+
+    if (!is.null(subject)){
+      negative.subjects <- unique(as.character(negative.data[[subject]]))
+      positive.subjects <- unique(as.character(positive.data[[subject]]))
+      common.subjects <- intersect(negative.subjects, positive.subjects)
+
+      if (setequal(negative.subjects, positive.subjects)){
+        paired <- TRUE
+      } else if (length(common.subjects)){
+        stop('a contrast cannot contain a mixture of paired and unpaired subjects')
+      }
+    }
+
+    if (paired){
+      pair.table <- table(test.data[[subject]], test.data$.cell)
+
+      if (any(pair.table!=1)){
+        stop('paired comparisons require one complete observation per subject and contrast level')
+      }
+
+      test.data <- test.data[order(test.data[[subject]], test.data$.cell),,drop=FALSE]
+
+      result <- nparcomp::npar.t.test.paired(.response ~ .cell, data=test.data,
+        conf.level=conf.level, alternative=alternative, nperm=nperm, rounds=rounds,
+        info=info, plot.simci=plot.simci)
+
+      result.rows <- if (paired.method=='both') rownames(result$Analysis) else paired.method
+      result.analysis <- result$Analysis[result.rows,,drop=FALSE]
+
+      test.names <- c(
+        BM='Paired Brunner-Munzel test',
+        PERM='Paired studentized permutation test'
+        )
+
+      result.summary <- data.frame(
+        test=unname(test.names[rownames(result.analysis)]),
+        'test stat'=rep('T', nrow(result.analysis)),
+        df=ifelse(rownames(result.analysis)=='BM', nrow(positive.data)-1, NA_real_),
+        stat=result.analysis[, 'T'],
+        estimand=rep(paste0('p(', negative.cell, ',', positive.cell, ')'), nrow(result.analysis)),
+        'relative effect'=result.analysis[, 'p.hat'],
+        lower=result.analysis[, 'Lower'],
+        upper=result.analysis[, 'Upper'],
+        'p value'=result.analysis[, 'p.value'],
+        check.names=FALSE
+        )
+
+      n.output <- nrow(positive.data)
+
+    } else {
+
+      if (!is.null(subject) &&
+        (anyDuplicated(negative.data[[subject]]) || anyDuplicated(positive.data[[subject]]))){
+        stop('unpaired comparisons require one observation per subject and contrast level')
+      }
+
+      result <- nparcomp::npar.t.test(.response ~ .cell, data=test.data,
+        conf.level=conf.level, alternative=alternative, rounds=rounds,
+        method=independent.method, plot.simci=plot.simci, info=info, nperm=nperm)
+
+      if (independent.method=='permu'){
+
+        method.names <- c(
+          id='Studentized permutation test',
+          logit='Studentized permutation test (logit)',
+          probit='Studentized permutation test (probit)'
+          )
+
+        result.summary <- data.frame(
+          test=unname(method.names[rownames(result$Analysis)]),
+          'test stat'=rep('T', nrow(result$Analysis)),
+          df=rep(NA_real_, nrow(result$Analysis)),
+          stat=result$Analysis[, 'Statistic'],
+          estimand=rep(paste0('p(', negative.cell, ',', positive.cell, ')'), nrow(result$Analysis)),
+          'relative effect'=result$Analysis[, 'Estimator'],
+          lower=result$Analysis[, 'Lower'],
+          upper=result$Analysis[, 'Upper'],
+          'p value'=result$Analysis[, 'p.value'],
+          check.names=FALSE
+          )
+
+      } else {
+
+        method.names <- c(
+          't.app'='Brunner-Munzel nonparametric Behrens-Fisher test',
+          logit='Nonparametric Behrens-Fisher logit approximation',
+          probit='Nonparametric Behrens-Fisher probit approximation',
+          normal='Nonparametric Behrens-Fisher normal approximation'
+          )
+
+        result.df <- NA_real_
+
+        if (independent.method=='t.app' && grepl(' with .* DF$', result$AsyMethod)){
+          result.df <- as.numeric(sub(' DF$', '', sub('.* with ', '', result$AsyMethod)))
+        }
+
+        result.summary <- data.frame(
+          test=unname(method.names[independent.method]),
+          'test stat'='T',
+          df=result.df,
+          stat=result$Analysis[, 'T'],
+          estimand=result$Analysis[, 'Effect'],
+          'relative effect'=result$Analysis[, 'Estimator'],
+          lower=result$Analysis[, 'Lower'],
+          upper=result$Analysis[, 'Upper'],
+          'p value'=result$Analysis[, 'p.Value'],
+          check.names=FALSE
+          )
+      }
+
+      n.output <- paste(nrow(positive.data), 'vs', nrow(negative.data))
+    }
+
+    differing <- predictor.names[
+      vapply(predictor.names, function(x){
+        as.character(cell.grid[negative.cell,x])!=as.character(cell.grid[positive.cell,x])
+      }, logical(1))
+      ]
+
+    same <- setdiff(predictor.names, differing)
+
+    if (length(predictor.names)==1){
+      parameter <- response.name
+      comparison <- paste('within', predictor.names, if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(as.character(cell.grid[positive.cell,differing]), 'vs',
+        as.character(cell.grid[negative.cell,differing]))
+    } else if (length(differing)==1){
+      parameter <- response.name
+      comparison <- paste('within', same, as.character(cell.grid[positive.cell,same]),
+        if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(as.character(cell.grid[positive.cell,differing]), 'vs',
+        as.character(cell.grid[negative.cell,differing]))
+    } else {
+      parameter <- response.name
+      comparison <- paste('between cells', if (paired) '(paired)' else '(unpaired)')
+      contrast.name <- paste(positive.cell, 'vs', negative.cell)
+    }
+
+    result.summary <- data.frame(
+      parameter=rep(parameter, nrow(result.summary)),
+      comparison=rep(comparison, nrow(result.summary)),
+      contrast=rep(contrast.name, nrow(result.summary)),
+      n=rep(n.output, nrow(result.summary)),
+      test=result.summary$test,
+      alternative=rep(alternative, nrow(result.summary)),
+      'test stat'=result.summary$'test stat',
+      df=result.summary$df,
+      stat=result.summary$stat,
+      estimand=result.summary$estimand,
+      'relative effect'=result.summary$'relative effect',
+      lower=result.summary$lower,
+      upper=result.summary$upper,
+      'p value'=result.summary$'p value',
+      family=rep(if (paired) 'paired' else 'unpaired', nrow(result.summary)),
+      check.names=FALSE
+      )
+
+    names(result.summary)[names(result.summary)=='lower'] <- lower.name
+    names(result.summary)[names(result.summary)=='upper'] <- upper.name
+
+    results[[length(results)+1]] <- result.summary
+  }
+
+  stats_summary <- do.call(rbind, results)
+  rownames(stats_summary) <- NULL
+
+  stats_summary$'p adjusted' <- NA_real_
+
+  for (family in unique(stats_summary$family)){
+    index <- which(stats_summary$family==family)
+    adjusted <- p.adjust.ff(stats_summary$'p value'[index], method=p.adjust.method, alpha=alpha)
+    stats_summary$'p adjusted'[index] <- adjusted[,'p.adj']
+  }
+
+  stats_summary$family <- NULL
+
+  stats_summary
 }
