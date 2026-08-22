@@ -8731,7 +8731,11 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
 
 
 MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
-  p_adjust='Sidak-Holm', contr=NULL){
+  p_adjust='Sidak-Holm', contr=NULL, var.equal=FALSE){
+
+  if (!is.logical(var.equal) || length(var.equal)!=1 || is.na(var.equal)){
+    stop('var.equal must be TRUE or FALSE')
+  }
 
   formula.string <- paste(deparse(formula), collapse='')
   has.error <- grepl('Error', formula.string)
@@ -8886,7 +8890,8 @@ MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
   }
 
   pairwise.contrast <- apply(contr, 1, function(x){
-    identical(sort(unname(x[x!=0])), c(-1, 1))
+    nonzero <- sort(as.numeric(x[x!=0]))
+    length(nonzero)==2 && all(nonzero==c(-1,1))
   })
 
   if (any(!pairwise.contrast)){
@@ -8948,7 +8953,8 @@ MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
     positive.values <- positive.data[[response.name]]
     negative.values <- negative.data[[response.name]]
 
-    test <- t.test(positive.values, negative.values, paired=paired, var.equal=paired,
+    test <- t.test(positive.values, negative.values, paired=paired,
+      var.equal=if (paired) TRUE else var.equal,
       alternative=alternative)
 
     estimate <- if (paired){
@@ -8960,16 +8966,29 @@ MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
     statistic <- unname(test$statistic)
     df.test <- unname(test$parameter)
     se <- unname(test$stderr)
-    n.effect <- if (paired) n.output else 1/sum(1/c(length(positive.values), length(negative.values)))
-    Cohens.d <- statistic/sqrt(n.effect)
 
-    j.df <- if (df.test<=3e2){
-      gamma(df.test/2)/(sqrt(df.test/2)*gamma((df.test-1)/2))
+    if (paired){
+      Cohens.d <- statistic/sqrt(n.output)
+      df.effect <- df.test
     } else {
-      1-3/(4*df.test-1)
+      n.positive <- length(positive.values)
+      n.negative <- length(negative.values)
+      pooled.sd <- sqrt(
+        ((n.positive-1)*var(positive.values)+(n.negative-1)*var(negative.values))/
+          (n.positive+n.negative-2)
+        )
+      Cohens.d <- estimate/pooled.sd
+      df.effect <- n.positive+n.negative-2
+    }
+
+    j.df <- if (df.effect<=3e2){
+      gamma(df.effect/2)/(sqrt(df.effect/2)*gamma((df.effect-1)/2))
+    } else {
+      1-3/(4*df.effect-1)
     }
 
     Hedges.g <- Cohens.d*j.df
+    n.output <- as.character(n.output)
     differing <- predictor.names[
       vapply(predictor.names, function(x){
         as.character(cell.grid[negative.cell,x])!=as.character(cell.grid[positive.cell,x])
@@ -20344,8 +20363,14 @@ nparcomp.summary <- function(object, paired.method=c('BM', 'PERM', 'both')){
   group.levels <- as.character(object$Info$Sample)
   group.n <- object$Info$Size
 
-  lower.name <- paste0('CI (', format((1-object$input$conf.level)/2, trim=TRUE, scientific=FALSE), ')')
-  upper.name <- paste0('CI (', format(1-(1-object$input$conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+  CI.probabilities <- switch(object$input$alternative[1],
+    two.sided=c((1-object$input$conf.level)/2, 1-(1-object$input$conf.level)/2),
+    less=c(0, object$input$conf.level),
+    greater=c(1-object$input$conf.level, 1)
+    )
+
+  lower.name <- paste0('CI (', format(CI.probabilities[1], trim=TRUE, scientific=FALSE), ')')
+  upper.name <- paste0('CI (', format(CI.probabilities[2], trim=TRUE, scientific=FALSE), ')')
 
   if (inherits(object, 'nparttest')){
 
@@ -20693,15 +20718,22 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
   }
 
   pairwise.contrast <- apply(contr, 1, function(x){
-    identical(sort(unname(x[x!=0])), c(-1, 1))
+    nonzero <- sort(as.numeric(x[x!=0]))
+    length(nonzero)==2 && all(nonzero==c(-1,1))
   })
 
   if (any(!pairwise.contrast)){
     stop('each row of contr must contain one -1, one 1 and zeros elsewhere')
   }
 
-  lower.name <- paste0('CI (', format((1-conf.level)/2, trim=TRUE, scientific=FALSE), ')')
-  upper.name <- paste0('CI (', format(1-(1-conf.level)/2, trim=TRUE, scientific=FALSE), ')')
+  CI.probabilities <- switch(alternative,
+    two.sided=c((1-conf.level)/2, 1-(1-conf.level)/2),
+    less=c(0, conf.level),
+    greater=c(1-conf.level, 1)
+    )
+
+  lower.name <- paste0('CI (', format(CI.probabilities[1], trim=TRUE, scientific=FALSE), ')')
+  upper.name <- paste0('CI (', format(CI.probabilities[2], trim=TRUE, scientific=FALSE), ')')
   results <- list()
 
   for (i in seq_len(nrow(contr))){
@@ -20745,8 +20777,21 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
 
       test.data <- test.data[order(test.data[[subject]], test.data$.cell),,drop=FALSE]
 
+      n.pairs <- nrow(positive.data)
+
+      if (paired.method!='BM' && n.pairs>13){
+        if (!is.numeric(nperm) || length(nperm)!=1 || is.na(nperm) ||
+          !is.finite(nperm) || nperm!=10000){
+          stop("paired.method='PERM' or 'both' requires nperm=10000 when there are more than 13 pairs")
+        }
+
+        paired.nperm <- nperm
+      } else {
+        paired.nperm <- 10000
+      }
+
       result <- nparcomp::npar.t.test.paired(.response ~ .cell, data=test.data,
-        conf.level=conf.level, alternative=alternative, nperm=nperm, rounds=rounds,
+        conf.level=conf.level, alternative=alternative, nperm=paired.nperm, rounds=rounds,
         info=info, plot.simci=plot.simci)
 
       result.rows <- if (paired.method=='both') rownames(result$Analysis) else paired.method
@@ -20767,10 +20812,11 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
         lower=result.analysis[, 'Lower'],
         upper=result.analysis[, 'Upper'],
         'p value'=result.analysis[, 'p.value'],
+        adjustment.method=rownames(result.analysis),
         check.names=FALSE
         )
 
-      n.output <- nrow(positive.data)
+      n.output <- as.character(nrow(positive.data))
 
     } else {
 
@@ -20801,6 +20847,7 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
           lower=result$Analysis[, 'Lower'],
           upper=result$Analysis[, 'Upper'],
           'p value'=result$Analysis[, 'p.value'],
+          adjustment.method=rownames(result$Analysis),
           check.names=FALSE
           )
 
@@ -20829,6 +20876,7 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
           lower=result$Analysis[, 'Lower'],
           upper=result$Analysis[, 'Upper'],
           'p value'=result$Analysis[, 'p.Value'],
+          adjustment.method=independent.method,
           check.names=FALSE
           )
       }
@@ -20877,6 +20925,7 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
       upper=result.summary$upper,
       'p value'=result.summary$'p value',
       family=rep(if (paired) 'paired' else 'unpaired', nrow(result.summary)),
+      adjustment.method=result.summary$adjustment.method,
       check.names=FALSE
       )
 
@@ -20891,13 +20940,17 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
 
   stats_summary$'p adjusted' <- NA_real_
 
-  for (family in unique(stats_summary$family)){
-    index <- which(stats_summary$family==family)
+  adjustment.family <- interaction(stats_summary$family, stats_summary$adjustment.method,
+    drop=TRUE)
+
+  for (family in levels(adjustment.family)){
+    index <- which(adjustment.family==family)
     adjusted <- p.adjust.ff(stats_summary$'p value'[index], method=p.adjust.method, alpha=alpha)
     stats_summary$'p adjusted'[index] <- adjusted[,'p.adj']
   }
 
   stats_summary$family <- NULL
+  stats_summary$adjustment.method <- NULL
 
   stats_summary
 }
