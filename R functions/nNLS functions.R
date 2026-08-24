@@ -8721,6 +8721,8 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
       idx <- which(out$family == fam)
       out$`p adjusted`[idx] <- p.adjust(out$`p value`[idx], method = p_adjust)
     }
+    family.order <- match(out$family, c('unpaired', 'paired'))
+    out <- out[order(family.order),,drop=FALSE]
     out$family <- NULL
     rownames(out) <- seq_len(nrow(out))
     return(out)
@@ -8729,6 +8731,102 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
   stop('Formula must contain one or two predictors.')
 }
 
+
+MCtest.summary <- function(out, formula=formula.MCtest, longdata=longdata.MCtest,
+    alternative='two.sided', var.method='unequal') {
+  test <- as.data.frame(out$test)
+  formula.text <- paste(deparse(formula), collapse=' ')
+  has.error <- grepl('Error\\(', formula.text)
+
+  if (has.error) {
+    error.text <- sub('.*Error\\((.*)\\).*', '\\1', formula.text)
+    subject <- trimws(strsplit(error.text, '/', fixed=TRUE)[[1]][1])
+  } else {
+    error.text <- ''
+    subject <- NULL
+  }
+
+  formula.variables <- all.vars(formula)
+  response <- formula.variables[1]
+  predictors <- setdiff(formula.variables[-1], subject)
+  repeated <- predictors[vapply(predictors, function(x) grepl(x, error.text, fixed=TRUE), logical(1))]
+
+  comparison <- contrast <- n <- test.method <- character(nrow(test))
+
+  for (i in seq_len(nrow(test))) {
+    row.label <- rownames(test)[i]
+    data.subset <- longdata
+
+    if (length(predictors)==1) {
+      comparison.variable <- predictors[1]
+      contrast.text <- row.label
+      contrast.levels <- strsplit(contrast.text, ' - ', fixed=TRUE)[[1]]
+    } else {
+      row.parts <- strsplit(row.label, ': ', fixed=TRUE)[[1]]
+      condition.label <- predictors[startsWith(row.parts[1], paste0(predictors, ' '))][1]
+      condition.level <- substring(row.parts[1], nchar(condition.label)+2)
+      comparison.label <- predictors[startsWith(row.parts[2], paste0(predictors, ' '))][1]
+      contrast.text <- substring(row.parts[2], nchar(comparison.label)+2)
+      contrast.levels <- strsplit(contrast.text, ' - ', fixed=TRUE)[[1]]
+      condition.matches <- predictors[vapply(predictors, function(x) condition.level %in% as.character(longdata[[x]]), logical(1))]
+      comparison.matches <- predictors[vapply(predictors, function(x) all(contrast.levels %in% as.character(longdata[[x]])), logical(1))]
+      condition.variable <- if (length(condition.matches)==1) condition.matches else condition.label
+      comparison.variable <- if (length(comparison.matches)==1) comparison.matches else comparison.label
+      data.subset <- data.subset[as.character(data.subset[[condition.variable]])==condition.level,,drop=FALSE]
+    }
+
+    paired <- comparison.variable %in% repeated
+    comparison[i] <- paste(
+      'within',
+      if (length(predictors)==1) comparison.variable else paste(condition.variable, condition.level),
+      if (paired) '(paired)' else '(unpaired)'
+      )
+    contrast[i] <- paste(contrast.levels, collapse=' vs ')
+
+    if (paired) {
+      subject.1 <- unique(as.character(data.subset[[subject]][
+        as.character(data.subset[[comparison.variable]])==contrast.levels[1] & is.finite(data.subset[[response]])
+        ]))
+      subject.2 <- unique(as.character(data.subset[[subject]][
+        as.character(data.subset[[comparison.variable]])==contrast.levels[2] & is.finite(data.subset[[response]])
+        ]))
+      n[i] <- length(intersect(subject.1, subject.2))
+      test.method[i] <- 'Paired t-test'
+    } else {
+      n.1 <- sum(as.character(data.subset[[comparison.variable]])==contrast.levels[1] & is.finite(data.subset[[response]]))
+      n.2 <- sum(as.character(data.subset[[comparison.variable]])==contrast.levels[2] & is.finite(data.subset[[response]]))
+      n[i] <- paste(n.1, 'vs', n.2)
+      test.method[i] <- if (var.method=='unequal') 'Welch Two Sample t-test' else 'Two Sample t-test'
+    }
+  }
+
+  test.column <- function(columns) {
+    column <- columns[columns %in% names(test)][1]
+    if (length(column)) unname(test[[column]]) else rep(NA_real_, nrow(test))
+  }
+
+  output <- data.frame(
+    parameter=rep(response, nrow(test)),
+    comparison=comparison,
+    contrast=contrast,
+    n=n,
+    test=test.method,
+    alternative=rep(alternative, nrow(test)),
+    'test stat'=rep('t', nrow(test)),
+    df=test.column('df'),
+    stat=test.column('t'),
+    estimate=test.column('diff'),
+    se=test.column('se'),
+    Cohens.d=test.column(c('Cohens.d', 'Cohens.d.z')),
+    Hedges.g=test.column(c('Hedges.g', 'Hedges.g.z')),
+    'p value'=test.column('p'),
+    'p adjusted'=unname(out$sig.tests[,'p.adj']),
+    check.names=FALSE
+    )
+
+  rownames(output) <- NULL
+  output
+}
 
 MCttest <- function(formula, df, alternative='two.sided', na_rm_subjects=TRUE,
   p_adjust='Sidak-Holm', contr=NULL, var.equal=FALSE){
@@ -20953,4 +21051,309 @@ MCnpartest <- function(formula, longdata, subject=NULL, contr=NULL, conf.level=0
   stats_summary$adjustment.method <- NULL
 
   stats_summary
+}
+
+LMsummary <- function(fit, between, data.name, p.adjust.method='Sidak-Holm',
+  alpha=0.05, CI=95){
+
+  CI.level <- CI/100
+  analysis.data <- model.frame(fit)
+  response <- all.vars(formula(fit))[1]
+  results <- NULL
+  comparison <- NULL
+  n <- NULL
+
+  for (i in seq_along(between)){
+
+    other <- setdiff(between, between[i])
+    specs <- if (length(other)==0){
+      as.formula(paste('~', between[i]))
+    } else {
+      as.formula(paste('~', between[i], '|', paste(other, collapse='*')))
+    }
+
+    emm <- emmeans::emmeans(fit, specs=specs)
+    comparisons <- emmeans::contrast(emm, method='revpairwise', adjust='none')
+    result <- as.data.frame(summary(comparisons, infer=c(TRUE,TRUE),
+      by=NULL, adjust='none', level=CI.level))
+
+    contrast.levels <- strsplit(as.character(result$contrast), ' - ', fixed=TRUE)
+
+    result.n <- vapply(seq_len(nrow(result)), function(j){
+
+      positive <- as.character(analysis.data[[between[i]]])==contrast.levels[[j]][1]
+      negative <- as.character(analysis.data[[between[i]]])==contrast.levels[[j]][2]
+
+      if (length(other)>0){
+        for (k in other){
+          positive <- positive & as.character(analysis.data[[k]])==as.character(result[[k]][j])
+          negative <- negative & as.character(analysis.data[[k]])==as.character(result[[k]][j])
+        }
+      }
+
+      paste(sum(positive), 'vs', sum(negative))
+    }, character(1))
+
+    result.comparison <- if (length(other)==0){
+      rep(paste('within', between[i], '(unpaired)'), nrow(result))
+    } else {
+      apply(result[, other, drop=FALSE], 1, function(x){
+        paste('within', paste(other, x, collapse=' '), '(unpaired)')
+      })
+    }
+
+    results <- rbind(results, result[, c('contrast', 'estimate', 'SE', 'df',
+      't.ratio', 'p.value', 'lower.CL', 'upper.CL')])
+    comparison <- c(comparison, result.comparison)
+    n <- c(n, result.n)
+  }
+
+  adjusted <- p.adjust.ff(results$p.value, method=p.adjust.method, alpha=alpha)
+
+  model.name <- paste0(
+    'lm: ',
+    paste(deparse(formula(fit)), collapse=' '),
+    '; residual degrees-of-freedom inference'
+    )
+
+  CI.probability <- c((1-CI.level)/2, 1-(1-CI.level)/2)
+  CI.names <- paste0('CI (', formatC(CI.probability, format='f', digits=3), ')')
+
+  lm_summary <- data.frame(
+    model=model.name,
+    data=data.name,
+    parameter=rep(response, nrow(results)),
+    comparison=comparison,
+    contrast=gsub(' - ', ' vs ', results$contrast, fixed=TRUE),
+    n=n,
+    test='Linear model with residual degrees-of-freedom inference',
+    alternative='two.sided',
+    'test stat'='t',
+    df=results$df,
+    stat=results$t.ratio,
+    estimate=results$estimate,
+    se=results$SE,
+    lower=results$lower.CL,
+    upper=results$upper.CL,
+    'p value'=results$p.value,
+    'p adjusted'=adjusted[,'p.adj'],
+    check.names=FALSE
+    )
+
+  names(lm_summary)[names(lm_summary)=='lower'] <- CI.names[1]
+  names(lm_summary)[names(lm_summary)=='upper'] <- CI.names[2]
+
+  rownames(lm_summary) <- NULL
+
+  lm_summary
+}
+
+
+LMEsummary <- function(fit, between, within, subject, data.name,
+  df=c('kenward-roger', 'satterthwaite'), p.adjust.method='Sidak-Holm',
+  alpha=0.05, CI=95){
+
+  df <- match.arg(df)
+  CI.level <- CI/100
+
+  df.label <- if (df=='kenward-roger'){
+    'Kenward-Roger'
+  } else {
+    'Satterthwaite'
+  }
+
+  analysis.data <- model.frame(fit)
+  response <- all.vars(formula(fit))[1]
+
+  if (is.null(between)){
+
+    emm.paired <- emmeans::emmeans(fit,
+      specs=as.formula(paste('~', within)), lmer.df=df)
+
+    comparisons.paired <- emmeans::contrast(emm.paired,
+      method='revpairwise', adjust='none')
+
+    results.paired <- as.data.frame(summary(comparisons.paired,
+      infer=c(TRUE,TRUE), by=NULL, adjust='none', level=CI.level))
+
+    adjusted.paired <- p.adjust.ff(results.paired$p.value,
+      method=p.adjust.method, alpha=alpha)
+
+    subject.values <- as.character(analysis.data[[subject]])
+    within.values <- as.character(analysis.data[[within]])
+    paired.levels <- strsplit(as.character(results.paired$contrast),
+      ' - ', fixed=TRUE)
+
+    n.paired <- vapply(seq_len(nrow(results.paired)), function(i){
+
+      positive.subjects <- unique(subject.values[
+        within.values==paired.levels[[i]][1]
+        ])
+
+      negative.subjects <- unique(subject.values[
+        within.values==paired.levels[[i]][2]
+        ])
+
+      as.character(length(intersect(positive.subjects, negative.subjects)))
+    }, character(1))
+
+    model.name <- paste0(
+      'lmer (REML): ',
+      paste(deparse(formula(fit)), collapse=' '),
+      '; ',
+      df.label,
+      ' inference'
+      )
+
+    CI.probability <- c((1-CI.level)/2, 1-(1-CI.level)/2)
+    CI.names <- paste0('CI (',
+      formatC(CI.probability, format='f', digits=3), ')')
+
+    lme_summary <- data.frame(
+      model=model.name,
+      data=data.name,
+      parameter=rep(response, nrow(results.paired)),
+      comparison=rep(paste('within', within, '(paired)'), nrow(results.paired)),
+      contrast=gsub(' - ', ' vs ', results.paired$contrast, fixed=TRUE),
+      n=n.paired,
+      test=paste('Linear mixed-effects model with', df.label, 'inference'),
+      alternative='two.sided',
+      'test stat'='t',
+      df=results.paired$df,
+      stat=results.paired$t.ratio,
+      estimate=results.paired$estimate,
+      se=results.paired$SE,
+      lower=results.paired$lower.CL,
+      upper=results.paired$upper.CL,
+      'p value'=results.paired$p.value,
+      'p adjusted'=adjusted.paired[,'p.adj'],
+      check.names=FALSE
+      )
+
+    names(lme_summary)[names(lme_summary)=='lower'] <- CI.names[1]
+    names(lme_summary)[names(lme_summary)=='upper'] <- CI.names[2]
+
+    rownames(lme_summary) <- NULL
+
+    return(lme_summary)
+  }
+
+  emm.unpaired <- emmeans::emmeans(fit,
+    specs=as.formula(paste('~', between, '|', within)), lmer.df=df)
+
+  comparisons.unpaired <- emmeans::contrast(emm.unpaired,
+    method='revpairwise', adjust='none')
+
+  results.unpaired <- as.data.frame(summary(comparisons.unpaired,
+    infer=c(TRUE,TRUE), by=NULL, adjust='none', level=CI.level))
+
+  adjusted.unpaired <- p.adjust.ff(results.unpaired$p.value,
+    method=p.adjust.method, alpha=alpha)
+
+  results.unpaired$'p adjusted' <- adjusted.unpaired[,'p.adj']
+
+  emm.paired <- emmeans::emmeans(fit,
+    specs=as.formula(paste('~', within, '|', between)), lmer.df=df)
+
+  comparisons.paired <- emmeans::contrast(emm.paired,
+    method='revpairwise', adjust='none')
+
+  results.paired <- as.data.frame(summary(comparisons.paired,
+    infer=c(TRUE,TRUE), by=NULL, adjust='none', level=CI.level))
+
+  adjusted.paired <- p.adjust.ff(results.paired$p.value,
+    method=p.adjust.method, alpha=alpha)
+
+  results.paired$'p adjusted' <- adjusted.paired[,'p.adj']
+
+  subject.values <- as.character(analysis.data[[subject]])
+  between.values <- as.character(analysis.data[[between]])
+  within.values <- as.character(analysis.data[[within]])
+
+  unpaired.levels <- strsplit(as.character(results.unpaired$contrast),
+    ' - ', fixed=TRUE)
+
+  n.unpaired <- vapply(seq_len(nrow(results.unpaired)), function(i){
+
+    within.level <- as.character(results.unpaired[[within]][i])
+
+    positive.subjects <- unique(subject.values[
+      within.values==within.level &
+        between.values==unpaired.levels[[i]][1]
+      ])
+
+    negative.subjects <- unique(subject.values[
+      within.values==within.level &
+        between.values==unpaired.levels[[i]][2]
+      ])
+
+    paste(length(positive.subjects), 'vs', length(negative.subjects))
+  }, character(1))
+
+  paired.levels <- strsplit(as.character(results.paired$contrast),
+    ' - ', fixed=TRUE)
+
+  n.paired <- vapply(seq_len(nrow(results.paired)), function(i){
+
+    between.level <- as.character(results.paired[[between]][i])
+
+    positive.subjects <- unique(subject.values[
+      between.values==between.level &
+        within.values==paired.levels[[i]][1]
+      ])
+
+    negative.subjects <- unique(subject.values[
+      between.values==between.level &
+        within.values==paired.levels[[i]][2]
+      ])
+
+    as.character(length(intersect(positive.subjects, negative.subjects)))
+  }, character(1))
+
+  model.name <- paste0(
+    'lmer (REML): ',
+    paste(deparse(formula(fit)), collapse=' '),
+    '; ',
+    df.label,
+    ' inference'
+    )
+
+  CI.probability <- c((1-CI.level)/2, 1-(1-CI.level)/2)
+  CI.names <- paste0('CI (',
+    formatC(CI.probability, format='f', digits=3), ')')
+
+  lme_summary <- data.frame(
+    model=model.name,
+    data=data.name,
+    parameter=rep(response, nrow(results.unpaired)+nrow(results.paired)),
+    comparison=c(
+      paste('within', within, results.unpaired[[within]], '(unpaired)'),
+      paste('within', between, results.paired[[between]], '(paired)')
+      ),
+    contrast=gsub(' - ', ' vs ',
+      c(results.unpaired$contrast, results.paired$contrast), fixed=TRUE),
+    n=c(n.unpaired, n.paired),
+    test=paste('Linear mixed-effects model with', df.label, 'inference'),
+    alternative='two.sided',
+    'test stat'='t',
+    df=c(results.unpaired$df, results.paired$df),
+    stat=c(results.unpaired$t.ratio, results.paired$t.ratio),
+    estimate=c(results.unpaired$estimate, results.paired$estimate),
+    se=c(results.unpaired$SE, results.paired$SE),
+    lower=c(results.unpaired$lower.CL, results.paired$lower.CL),
+    upper=c(results.unpaired$upper.CL, results.paired$upper.CL),
+    'p value'=c(results.unpaired$p.value, results.paired$p.value),
+    'p adjusted'=c(
+      results.unpaired$'p adjusted',
+      results.paired$'p adjusted'
+      ),
+    check.names=FALSE
+    )
+
+  names(lme_summary)[names(lme_summary)=='lower'] <- CI.names[1]
+  names(lme_summary)[names(lme_summary)=='upper'] <- CI.names[2]
+
+  rownames(lme_summary) <- NULL
+
+  lme_summary
 }
