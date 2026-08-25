@@ -21357,3 +21357,383 @@ LMEsummary <- function(fit, between, within, subject, data.name,
 
   lme_summary
 }
+
+BayesMCtest <- function(formula, df, na_rm_subjects=TRUE, contr=NULL, mu=0,
+  rscale='medium'){
+
+  formula.string <- paste(deparse(formula), collapse='')
+  has.error <- grepl('Error', formula.string)
+
+  if (has.error){
+    error.part <- sub('.*Error\\((.*)\\).*', '\\1', formula.string)
+    subject.name <- strsplit(error.part, '/')[[1]][1]
+    subject.name <- gsub('[[:space:]]', '', subject.name)
+    main.formula.string <- sub('\\+\\s*Error\\(.*\\)', '', formula.string)
+    main.formula <- as.formula(main.formula.string)
+  } else {
+    subject.name <- NULL
+    main.formula <- formula
+  }
+
+  formula.variables <- all.vars(main.formula)
+  response.name <- formula.variables[1]
+  predictor.names <- formula.variables[-1]
+
+  if (!(length(predictor.names) %in% c(1,2))){
+    stop('formula must contain one or two predictors')
+  }
+
+  required.names <- c(response.name, predictor.names, subject.name)
+
+  if (!all(required.names %in% names(df))){
+    stop('formula or subject variables are missing from df')
+  }
+
+  if (na_rm_subjects && !is.null(subject.name)){
+    remove.subject <- ave(is.na(df[[response.name]]), df[[subject.name]], FUN=any)
+    df <- df[!remove.subject,,drop=FALSE]
+  }
+
+  analysis.data <- df[,required.names,drop=FALSE]
+  analysis.data <- analysis.data[complete.cases(analysis.data),,drop=FALSE]
+
+  if (!nrow(analysis.data)){
+    stop('no complete observations are available')
+  }
+
+  for (predictor in predictor.names){
+    analysis.data[[predictor]] <- droplevels(factor(analysis.data[[predictor]]))
+
+    if (nlevels(analysis.data[[predictor]])<2){
+      stop('each predictor must contain at least two levels')
+    }
+  }
+
+  if (!is.null(subject.name)){
+    analysis.data[[subject.name]] <- droplevels(factor(analysis.data[[subject.name]]))
+  }
+
+  if (length(predictor.names)==1){
+    cell <- analysis.data[[predictor.names]]
+  } else {
+    cell <- do.call(interaction, c(analysis.data[predictor.names],
+      list(sep=':', drop=TRUE, lex.order=FALSE)))
+  }
+
+  cell <- droplevels(factor(cell))
+  cell.levels <- levels(cell)
+
+  cell.grid <- analysis.data[
+    match(cell.levels, as.character(cell)),
+    predictor.names,
+    drop=FALSE
+    ]
+
+  rownames(cell.grid) <- cell.levels
+
+
+  # Create default adjacent-level contrasts
+
+  if (is.null(contr)){
+
+    result.contrasts <- list()
+
+    if (length(predictor.names)==1){
+
+      predictor.levels <- levels(analysis.data[[predictor.names]])
+
+      for (i in seq_len(length(predictor.levels)-1)){
+        contrast.row <- rep(0, length(cell.levels))
+        contrast.row[match(predictor.levels[i], cell.levels)] <- -1
+        contrast.row[match(predictor.levels[i+1], cell.levels)] <- 1
+
+        result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+      }
+
+    } else {
+
+      predictor.order <- predictor.names
+
+      if (!is.null(subject.name)){
+        subject.rows <- split(seq_len(nrow(analysis.data)),
+          analysis.data[[subject.name]])
+
+        varies.within.subject <- vapply(predictor.names, function(predictor){
+          any(vapply(subject.rows, function(i){
+            length(unique(analysis.data[[predictor]][i]))>1
+            }, logical(1)))
+          }, logical(1))
+
+        if (sum(varies.within.subject)==1){
+          predictor.order <- c(
+            predictor.names[!varies.within.subject],
+            predictor.names[varies.within.subject]
+            )
+        }
+      }
+
+      for (target.name in predictor.order){
+
+        conditioning.name <- setdiff(predictor.names, target.name)
+        conditioning.levels <- levels(analysis.data[[conditioning.name]])
+        target.levels <- levels(analysis.data[[target.name]])
+
+        for (conditioning.level in conditioning.levels){
+
+          for (i in seq_len(length(target.levels)-1)){
+
+            negative.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i]
+              ]
+
+            positive.cell <- rownames(cell.grid)[
+              cell.grid[[conditioning.name]]==conditioning.level &
+                cell.grid[[target.name]]==target.levels[i+1]
+              ]
+
+            if (length(negative.cell)==1 && length(positive.cell)==1){
+              contrast.row <- rep(0, length(cell.levels))
+              contrast.row[match(negative.cell, cell.levels)] <- -1
+              contrast.row[match(positive.cell, cell.levels)] <- 1
+
+              result.contrasts[[length(result.contrasts)+1]] <- contrast.row
+            }
+          }
+        }
+      }
+    }
+
+    contr <- do.call(rbind, result.contrasts)
+    colnames(contr) <- cell.levels
+
+  } else {
+
+    if (is.numeric(contr) && is.null(dim(contr))){
+      contr <- matrix(contr, nrow=1)
+    }
+
+    if (!is.matrix(contr) || !is.numeric(contr) || !nrow(contr) ||
+      anyNA(contr) || any(!is.finite(contr)) ||
+      ncol(contr)!=length(cell.levels)){
+      stop('contr must be a finite numeric matrix with one column per factor-level combination')
+    }
+
+    if (!is.null(colnames(contr))){
+
+      if (!setequal(colnames(contr), cell.levels)){
+        stop(paste('contr column names must match:',
+          paste(cell.levels, collapse=', ')))
+      }
+
+      contr <- contr[,cell.levels,drop=FALSE]
+
+    } else {
+      colnames(contr) <- cell.levels
+    }
+  }
+
+  pairwise.contrast <- apply(contr, 1, function(x){
+    nonzero <- sort(as.numeric(x[x!=0]))
+    length(nonzero)==2 && all(nonzero==c(-1,1))
+    })
+
+  if (any(!pairwise.contrast)){
+    stop('each row of contr must contain one -1, one 1 and zeros elsewhere')
+  }
+
+
+  # Perform Bayesian paired or independent-samples t-tests
+
+  results <- vector('list', nrow(contr))
+  BayesFactor.results <- vector('list', nrow(contr))
+
+  for (i in seq_len(nrow(contr))){
+
+    negative.cell <- cell.levels[contr[i,]==-1]
+    positive.cell <- cell.levels[contr[i,]==1]
+    keep <- cell %in% c(negative.cell, positive.cell)
+
+    test.data <- analysis.data[keep,,drop=FALSE]
+
+    if (!is.null(subject.name)){
+      test.data[[subject.name]] <- droplevels(test.data[[subject.name]])
+    }
+
+    test.data$.cell <- factor(as.character(cell[keep]),
+      levels=c(negative.cell, positive.cell))
+
+    negative.data <- test.data[
+      test.data$.cell==negative.cell,
+      ,
+      drop=FALSE
+      ]
+
+    positive.data <- test.data[
+      test.data$.cell==positive.cell,
+      ,
+      drop=FALSE
+      ]
+
+    paired <- FALSE
+
+    if (!is.null(subject.name)){
+      negative.subjects <- unique(as.character(
+        negative.data[[subject.name]]
+        ))
+
+      positive.subjects <- unique(as.character(
+        positive.data[[subject.name]]
+        ))
+
+      common.subjects <- intersect(negative.subjects, positive.subjects)
+
+      if (setequal(negative.subjects, positive.subjects)){
+        paired <- TRUE
+      } else if (length(common.subjects)){
+        stop('a contrast cannot contain a mixture of paired and unpaired subjects')
+      }
+    }
+
+    if (paired){
+
+      pair.table <- table(test.data[[subject.name]], test.data$.cell)
+
+      if (any(pair.table!=1)){
+        stop('paired comparisons require one complete observation per subject and contrast level')
+      }
+
+      negative.data <- negative.data[
+        order(negative.data[[subject.name]]),
+        ,
+        drop=FALSE
+        ]
+
+      positive.data <- positive.data[
+        order(positive.data[[subject.name]]),
+        ,
+        drop=FALSE
+        ]
+
+      n.output <- as.character(nrow(positive.data))
+
+    } else {
+
+      if (!is.null(subject.name) &&
+        (anyDuplicated(negative.data[[subject.name]]) ||
+        anyDuplicated(positive.data[[subject.name]]))){
+        stop('unpaired comparisons require one observation per subject and contrast level')
+      }
+
+      n.output <- paste(nrow(positive.data), 'vs', nrow(negative.data))
+    }
+
+    positive.values <- positive.data[[response.name]]
+    negative.values <- negative.data[[response.name]]
+
+    test <- BayesFactor::ttestBF(
+      x=positive.values,
+      y=negative.values,
+      paired=paired,
+      mu=mu,
+      rscale=rscale
+      )
+
+    BF10 <- unname(BayesFactor::extractBF(test, onlybf=TRUE)[1])
+
+    differing <- predictor.names[
+      vapply(predictor.names, function(x){
+        as.character(cell.grid[negative.cell,x])!=
+          as.character(cell.grid[positive.cell,x])
+        }, logical(1))
+      ]
+
+    same <- setdiff(predictor.names, differing)
+
+    if (length(predictor.names)==1){
+
+      parameter <- response.name
+
+      comparison <- paste(
+        'within',
+        predictor.names,
+        if (paired) '(paired)' else '(unpaired)'
+        )
+
+      contrast.name <- paste(
+        as.character(cell.grid[positive.cell,differing]),
+        'vs',
+        as.character(cell.grid[negative.cell,differing])
+        )
+
+    } else if (length(differing)==1){
+
+      parameter <- response.name
+
+      comparison <- paste(
+        'within',
+        same,
+        as.character(cell.grid[positive.cell,same]),
+        if (paired) '(paired)' else '(unpaired)'
+        )
+
+      contrast.name <- paste(
+        as.character(cell.grid[positive.cell,differing]),
+        'vs',
+        as.character(cell.grid[negative.cell,differing])
+        )
+
+    } else {
+
+      parameter <- response.name
+
+      comparison <- paste(
+        'between cells',
+        if (paired) '(paired)' else '(unpaired)'
+        )
+
+      contrast.name <- paste(positive.cell, 'vs', negative.cell)
+    }
+
+    prior.name <- if (is.character(rscale)){
+      paste('Cauchy,', rscale, 'scale')
+    } else {
+      paste('Cauchy, rscale =', rscale)
+    }
+
+    results[[i]] <- data.frame(
+      parameter=parameter,
+      comparison=comparison,
+      contrast=contrast.name,
+      n=as.character(n.output),
+      test=if (paired){
+        'Bayesian paired t-test'
+      } else {
+        'Bayesian independent-samples t-test'
+      },
+      alternative='two.sided',
+      prior=prior.name,
+      BF10=BF10,
+      family=if (paired) 'paired' else 'unpaired',
+      check.names=FALSE
+      )
+
+    BayesFactor.results[[i]] <- test
+  }
+
+  bayes_summary <- do.call(rbind, results)
+  rownames(bayes_summary) <- NULL
+
+  family.order <- match(bayes_summary$family, c('unpaired','paired'))
+  result.order <- order(family.order)
+
+  bayes_summary <- bayes_summary[result.order,,drop=FALSE]
+  BayesFactor.results <- BayesFactor.results[result.order]
+
+  bayes_summary$family <- NULL
+  rownames(bayes_summary) <- NULL
+
+  attr(bayes_summary, 'BayesFactor') <- BayesFactor.results
+
+  bayes_summary
+}
