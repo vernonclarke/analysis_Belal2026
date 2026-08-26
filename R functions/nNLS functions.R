@@ -4121,7 +4121,8 @@ BoxPlot2_ver0 <- function(formula, data, wid = 0.2, cap = 0.05,
 BoxPlot2 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PSC amplitude (pA)', main = '',
                      xrange = NULL, yrange = c(-400, 0), tick_length = 0.2, x_tick_interval = NULL, y_tick_interval = 100,
                      xlabel_angle = NULL, lwd = 1, type = 6, amount = 0.05, p.cex = 0.5, filename = 'boxplot.svg', 
-                     height = 2.5, width = 4, bg = 'transparent', alpha = 0.6, log_y = FALSE, na.rm = FALSE, save = FALSE) {
+                     height = 2.5, width = 4, bg = 'transparent', alpha = 0.6, log_y = FALSE, na.rm = FALSE, save = FALSE,
+                     colour_by = NULL, colour_values = NULL) {
 
   response   <- as.character(formula[[2]])
   predictors <- all.vars(formula[[3]])
@@ -4200,11 +4201,24 @@ BoxPlot2 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
 
   gray_col <- adjustcolor('#A9A9A9', alpha.f=alpha)
   red_col  <- adjustcolor('#CD5C5C', alpha.f=alpha)
-  pts <- data$paired | !('s' %in% names(data))
-  points(data$x_jitter[pts], data$y[pts], pch=19, col=gray_col, cex=p.cex, lwd=lwd/3)
-  if ('s' %in% names(data)) {
-    up <- !data$paired & !is.na(data$y)
-    points(data$x_jitter[up], data$y[up], pch=19, col=red_col, cex=p.cex, lwd=lwd/3)
+  if (is.null(colour_by)) {
+    pts <- data$paired | !('s' %in% names(data))
+    points(data$x_jitter[pts], data$y[pts], pch=19, col=gray_col, cex=p.cex, lwd=lwd/3)
+    if ('s' %in% names(data)) {
+      up <- !data$paired & !is.na(data$y)
+      points(data$x_jitter[up], data$y[up], pch=19, col=red_col, cex=p.cex, lwd=lwd/3)
+    }
+  } else {
+    colour_group <- factor(data[[colour_by]])
+    if (is.null(colour_values)) {
+      point_col <- palette()[colour_group]
+    } else if (is.null(names(colour_values))) {
+      point_col <- colour_values[colour_group]
+    } else {
+      point_col <- colour_values[as.character(colour_group)]
+    }
+    point_col <- adjustcolor(point_col, alpha.f=alpha)
+    points(data$x_jitter, data$y, pch=19, col=point_col, cex=p.cex, lwd=lwd/3)
   }
 
   if (log_y) {
@@ -4486,7 +4500,8 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
                      xrange = NULL, yrange = c(-400, 0), xlabel_angle = NULL, tick_length = 0.2, 
                      x_tick_interval = NULL, y_tick_interval = 100, lwd = 1, type = 6, amount = 0.05, p.cex = 0.5,
                      height = 2.5, width = 4, bg = 'transparent', alpha = 0.6, log_y = FALSE, na_rm_subjects = FALSE,
-                     test_result, alpha_level = 0.05, group_names = NULL, sig_offset = NULL) {
+                     test_result, alpha_level = 0.05, group_names = NULL, sig_offset = NULL,
+                     colour_by = NULL, colour_values = NULL) {
 
   f_str <- deparse(formula)
   has_error <- grepl('Error', f_str)
@@ -4512,7 +4527,7 @@ BoxPlot3 <- function(formula, data, wid = 0.2, cap = 0.05, xlab = '', ylab = 'PS
   BoxPlot2(formula = formula, data = data, wid = wid, cap = cap, xlab = xlab, ylab = ylab, xlabel_angle = xlabel_angle, main = main,
            xrange = xrange, yrange = yrange, tick_length = tick_length, y_tick_interval = y_tick_interval,
            lwd = lwd, type = type, amount = amount, p.cex = p.cex, height = height, width = width, log_y=log_y,
-           bg = bg, na.rm = TRUE)
+           bg = bg, na.rm = TRUE, colour_by = colour_by, colour_values = colour_values)
 
   has_error <- grepl("Error", deparse(formula))
   if (missing(test_result) || is.null(test_result) || nrow(test_result) == 0) {
