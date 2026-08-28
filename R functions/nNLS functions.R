@@ -8632,8 +8632,8 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
     data.frame(
       estimand=names(test$estimate),
       estimate=as.numeric(test$estimate),
-      'CI lower'=as.numeric(test$conf.int[1]),
-      'CI upper'=as.numeric(test$conf.int[2]),
+      'CI (0.025)'=as.numeric(test$conf.int[1]),
+      'CI (0.975)'=as.numeric(test$conf.int[2]),
       'confidence level'=as.numeric(attr(test$conf.int, 'conf.level')),
       check.names=FALSE
       )
@@ -8814,7 +8814,7 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
     levs <- if (is.factor(df[[wvar]])) levels(df[[wvar]]) else sort(unique(df[[wvar]]))
     if (length(levs) < 2) stop("Need at least two levels of ", wvar)
     for (i in seq_len(length(levs) - 1)) {
-      a <- levs[i]; b <- levs[i + 1]
+      a <- levs[i + 1]; b <- levs[i]
       d1 <- df[df[[wvar]] == a, ]
       d2 <- df[df[[wvar]] == b, ]
       if (!is.null(subject_var)) {
@@ -8873,7 +8873,7 @@ MCwilcox <- function(formula, df, alternative = 'two.sided',
         lv_u  <- if (is.factor(subdf[[uv]])) levels(subdf[[uv]]) else sort(unique(subdf[[uv]]))
         if (length(lv_u) < 2) next
         for (j in seq_len(length(lv_u) - 1)) {
-          a <- lv_u[j]; b <- lv_u[j + 1]
+          a <- lv_u[j + 1]; b <- lv_u[j]
           d1 <- subdf[subdf[[uv]] == a, ]
           d2 <- subdf[subdf[[uv]] == b, ]
           
